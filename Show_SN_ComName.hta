@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <meta charset="utf-8">
+    <title>System Information</title>
+    <hta:application 
+        applicationname="SystemInfo" 
+        border="thick" 
+        caption="yes" 
+        contextmenu="no" 
+        scroll="no" 
+        singleinstance="yes" 
+        sysmenu="yes"
+        windowstate="normal"
+    >
+    <style>
+        body {
+            font-family: 'Segoe UI', Tahoma, sans-serif;
+            background-color: #f4f4f9;
+            padding: 20px;
+            margin: 0;
+        }
+        h2 { color: #333; text-align: center; margin-bottom: 15px; }
+        .center { text-align: center; }
+        button {
+            background-color: #0078d7;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            font-size: 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover { background-color: #005a9e; }
+        #result {
+            margin-top: 20px;
+            font-size: 14px;
+            color: #222;
+            background: #fff;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            line-height: 1.8;
+            word-break: break-all;
+        }
+        .label { font-weight: bold; color: #555; }
+        .highlight-comp {
+            color: #0078d7;
+            font-weight: bold;
+            font-size: 15px;
+        }
+        .highlight-val {
+            color: #d9534f;
+            font-weight: bold;
+        }
+    </style>
+    <script language="VBScript">
+        Sub Window_OnLoad
+            Window.ResizeTo 580, 540
+        End Sub
+
+        Function IsValid(val)
+            If IsNull(val) Then 
+                IsValid = False
+                Exit Function
+            End If
+            Dim s
+            s = UCase(Trim(val))
+            If s = "" Or s = "DEFAULT STRING" Or s = "TO BE FILLED BY O.E.M." Or s = "SYSTEM SERIAL NUMBER" Then
+                IsValid = False
+            Else
+                IsValid = True
+            End If
+        End Function
+
+        Function FormatCommercialSize(bytes, rawModel)
+            On Error Resume Next
+            Dim gb, m
+            gb = CDbl(bytes) / (1024 * 1024 * 1024)
+            m = UCase(Trim(rawModel))
+            
+            ' ป้องกันความเพี้ยนสำหรับรุ่นความจุ 500GB ที่ Windows อ่านได้ราว 465-470 GB
+            If (InStr(m, "SA2000M8") > 0 Or InStr(m, "WDS500G") > 0 Or InStr(m, "MZ-V7E500") > 0) And (gb >= 450 And gb <= 480) Then
+                FormatCommercialSize = "500 GB"
+                Exit Function
+            End If
+            
+            ' การปัดเศษขนาดมาตรฐานทั่วไป
+            If gb >= 1800 Then
+                FormatCommercialSize = Round(gb / 1000, 0) & " TB"
+            ElseIf gb >= 900 Then
+                FormatCommercialSize = "1 TB"
+            ElseIf gb >= 480 And gb <= 520 Then
+                FormatCommercialSize = "512 GB"
+            ElseIf gb >= 220 And gb <= 260 Then
+                FormatCommercialSize = "256 GB"
+            ElseIf gb >= 110 And gb <= 130 Then
+                FormatCommercialSize = "128 GB"
+            ElseIf gb >= 900000 Then
+                FormatCommercialSize = "2 TB"
+            Else
+                FormatCommercialSize = Round(gb, 0) & " GB"
+            End If
+        End Function
+
+        ' ฟังก์ชันแปลงรหัสฮาร์ดดิสก์ดิบให้เป็นชื่อที่เป็นมิตร
+        Function GetFriendlyDiskName(rawModel)
+            Dim m
+            m = UCase(Trim(rawModel))
+            
+            ' Kingston
+            If InStr(m, "SA2000M8") > 0 Then
+                GetFriendlyDiskName = "Kingston A2000 NVMe PCIe SSD"
+            ElseIf InStr(m, "KC2500") > 0 Then
+                GetFriendlyDiskName = "Kingston KC2500 NVMe SSD"
+            ElseIf InStr(m, "KC3000") > 0 Then
+                GetFriendlyDiskName = "Kingston KC3000 PCIe 4.0 NVMe SSD"
+            ElseIf InStr(m, "NV2") > 0 Then
+                GetFriendlyDiskName = "Kingston NV2 PCIe 4.0 NVMe SSD"
+            ElseIf InStr(m, "SA400S37") > 0 Then
+                GetFriendlyDiskName = "Kingston A400 SSD"
+            
+            ' Seagate
+            ElseIf InStr(m, "ST1000DM") > 0 Then
+                GetFriendlyDiskName = "Seagate Barracuda 1TB HDD"
+            ElseIf InStr(m, "ST2000DM") > 0 Then
+                GetFriendlyDiskName = "Seagate Barracuda 2TB HDD"
+            ElseIf InStr(m, "FIRECUDA") > 0 Then
+                GetFriendlyDiskName = "Seagate FireCuda SSD"
+            
+            ' Western Digital (WD)
+            ElseIf InStr(m, "WD10") > 0 Or InStr(m, "WD20") > 0 Or (InStr(m, "BLUE") > 0 And InStr(m, "WDC") > 0) Then
+                GetFriendlyDiskName = "Western Digital Blue HDD"
+            ElseIf InStr(m, "WDS250G") > 0 Or InStr(m, "WDS500G") > 0 Or InStr(m, "WDS1T") > 0 Then
+                GetFriendlyDiskName = "Western Digital Blue SSD"
+            ElseIf InStr(m, "SN550") > 0 Or InStr(m, "SN570") > 0 Or InStr(m, "SN580") > 0 Then
+                GetFriendlyDiskName = "WD Blue SN500 Series NVMe SSD"
+            ElseIf InStr(m, "SN850") > 0 Then
+                GetFriendlyDiskName = "WD Black SN850X NVMe SSD"
+            
+            ' Samsung
+            ElseIf InStr(m, "MZ-V7E") > 0 Or InStr(m, "970 EVO") > 0 Then
+                GetFriendlyDiskName = "Samsung 970 EVO Plus NVMe SSD"
+            ElseIf InStr(m, "MZ-V8V") > 0 Or InStr(m, "980") > 0 Then
+                GetFriendlyDiskName = "Samsung 980 NVMe SSD"
+            ElseIf InStr(m, "MZ-V9P") > 0 Or InStr(m, "990 PRO") > 0 Then
+                GetFriendlyDiskName = "Samsung 990 PRO NVMe SSD"
+            ElseIf InStr(m, "MZ-76E") > 0 Or InStr(m, "860 EVO") > 0 Then
+                GetFriendlyDiskName = "Samsung 860 EVO SSD"
+            ElseIf InStr(m, "MZ-77E") > 0 Or InStr(m, "870 EVO") > 0 Then
+                GetFriendlyDiskName = "Samsung 870 EVO SSD"
+
+            ' Crucial
+            ElseIf InStr(m, "CT1000P") > 0 Or InStr(m, "CT500P") > 0 Then
+                GetFriendlyDiskName = "Crucial NVMe M.2 SSD"
+            ElseIf InStr(m, "CT1000MX") > 0 Then
+                GetFriendlyDiskName = "Crucial MX500 SSD"
+
+            ' ค่าเริ่มต้นถ้าไม่ตรงกับเงื่อนไขใดๆ
+            Else
+                GetFriendlyDiskName = rawModel
+            End If
+        End Function
+
+        Sub GetSystemInfo
+            Dim objWMIService, colItems, objItem
+            Dim compName, manufacturer, modelName, serialNum
+            Dim cpuName, ramSize, diskInfo, gpuInfo
+            
+            compName = ""
+            manufacturer = ""
+            modelName = ""
+            serialNum = ""
+            cpuName = ""
+            ramSize = ""
+            diskInfo = ""
+            gpuInfo = ""
+            
+            On Error Resume Next
+            Set objWMIService = GetObject("winmgmts:\\.\root\cimv2")
+            
+            ' 1. Computer Name, Manufacturer, Model
+            Set colItems = objWMIService.ExecQuery("Select Name, Manufacturer, Model from Win32_ComputerSystem")
+            For Each objItem in colItems
+                compName = objItem.Name
+                If IsValid(objItem.Manufacturer) Then manufacturer = objItem.Manufacturer
+                If IsValid(objItem.Model) Then modelName = objItem.Model
+            Next
+            
+            ' 2. Serial Number
+            Set colItems = objWMIService.ExecQuery("Select SerialNumber from Win32_BIOS")
+            For Each objItem in colItems
+                If IsValid(objItem.SerialNumber) Then serialNum = objItem.SerialNumber
+            Next
+            
+            If serialNum = "" Then
+                Set colItems = objWMIService.ExecQuery("Select SerialNumber from Win32_BaseBoard")
+                For Each objItem in colItems
+                    If IsValid(objItem.SerialNumber) Then serialNum = objItem.SerialNumber
+                Next
+            End If
+            
+            If serialNum = "" Then
+                Set colItems = objWMIService.ExecQuery("Select IdentifyingNumber, UUID from Win32_ComputerSystemProduct")
+                For Each objItem in colItems
+                    If IsValid(objItem.IdentifyingNumber) Then 
+                        serialNum = objItem.IdentifyingNumber
+                    ElseIf IsValid(objItem.UUID) Then 
+                        serialNum = objItem.UUID
+                    End If
+                Next
+            End If
+
+            ' 3. CPU
+            Set colItems = objWMIService.ExecQuery("Select Name from Win32_Processor")
+            For Each objItem in colItems
+                If IsValid(objItem.Name) Then cpuName = Trim(objItem.Name)
+            Next
+
+            ' 4. RAM
+            Dim totalRamBytes
+            totalRamBytes = 0
+            Set colItems = objWMIService.ExecQuery("Select Capacity from Win32_PhysicalMemory")
+            For Each objItem in colItems
+                totalRamBytes = totalRamBytes + CDbl(objItem.Capacity)
+            Next
+            If totalRamBytes > 0 Then
+                ramSize = FormatCommercialSize(totalRamBytes, "")
+            End If
+
+            ' 5. Hard Disk / SSD
+            Dim diskCount
+            diskCount = 0
+            Set colItems = objWMIService.ExecQuery("Select Model, Size, MediaType, InterfaceType from Win32_DiskDrive")
+            For Each objItem in colItems
+                If IsValid(objItem.Size) Then
+                    diskCount = diskCount + 1
+                    Dim dModel, dRawModel, dType, dSizeText, friendlyName
+                    dRawModel = Trim(objItem.Model)
+                    dModel = UCase(objItem.Model & " " & objItem.MediaType & " " & objItem.InterfaceType)
+                    
+                    ' เรียกใช้งานฟังก์ชันคำนวณความจุโดยส่งชื่อรุ่นไปตรวจสอบด้วย
+                    dSizeText = FormatCommercialSize(objItem.Size, dRawModel)
+                    
+                    ' แปลงชื่อรุ่นเป็นชื่อที่เป็นมิตร
+                    friendlyName = GetFriendlyDiskName(dRawModel)
+                    
+                    ' ตรวจสอบประเภท
+                    If InStr(dModel, "NVME") > 0 Then
+                        dType = "M.2 NVMe"
+                    ElseIf InStr(dModel, "M.2") > 0 Then
+                        dType = "M.2"
+                    ElseIf InStr(dModel, "SSD") > 0 Or InStr(dModel, "SOLID STATE") > 0 Then
+                        dType = "SSD"
+                    Else
+                        dType = "HDD"
+                    End If
+                    
+                    diskInfo = diskInfo & "<br>&nbsp;&nbsp;&nbsp;&nbsp;" & diskCount & ". " & dType & " ขนาด " & dSizeText & " (" & friendlyName & ")"
+                End If
+            Next
+
+            ' 6. GPU
+            Set colItems = objWMIService.ExecQuery("Select Name from Win32_VideoController")
+            For Each objItem in colItems
+                If IsValid(objItem.Name) Then
+                    Dim gName
+                    gName = UCase(objItem.Name)
+                    If InStr(gName, "NVIDIA") > 0 Or InStr(gName, "AMD") > 0 Or InStr(gName, "RADEON") > 0 Or InStr(gName, "GEFORCE") > 0 Or InStr(gName, "RTX") > 0 Or InStr(gName, "GTX") > 0 Then
+                        gpuInfo = objItem.Name
+                        Exit For
+                    End If
+                End If
+            Next
+            On Error Goto 0
+
+            ' Construct Output
+            Dim html
+            html = ""
+            If compName <> "" Then 
+                html = html & "<div><span class='label'>Computer Name:</span> <span class='highlight-comp'>" & compName & "</span></div>"
+            End If
+            If manufacturer <> "" Then 
+                html = html & "<div><span class='label'>ยี่ห้อ:</span> <span class='highlight-val'>" & manufacturer & "</span></div>"
+            End If
+            If modelName <> "" Then 
+                html = html & "<div><span class='label'>Model:</span> <span class='highlight-val'>" & modelName & "</span></div>"
+            End If
+            If serialNum <> "" Then 
+                html = html & "<div><span class='label'>Serial Number:</span> <span class='highlight-val'>" & serialNum & "</span></div>"
+            End If
+            If cpuName <> "" Then 
+                html = html & "<div><span class='label'>CPU:</span> <span class='highlight-val'>" & cpuName & "</span></div>"
+            End If
+            If ramSize <> "" Then 
+                html = html & "<div><span class='label'>RAM:</span> <span class='highlight-val'>" & ramSize & "</span></div>"
+            End If
+            If diskInfo <> "" Then 
+                html = html & "<div><span class='label'>Hard Disk:</span>" & diskInfo & "</div>"
+            End If
+            If gpuInfo <> "" Then 
+                html = html & "<div><span class='label'>การ์ดจอ:</span> <span class='highlight-val'>" & gpuInfo & "</span></div>"
+            End If
+
+            If html = "" Then html = "ไม่พบข้อมูลระบบ"
+
+            Document.getElementById("result").innerHTML = html
+        End Sub
+    </script>
+</head>
+<body>
+
+    <h2>ข้อมูลระบบคอมพิวเตอร์</h2>
+    <div class="center">
+        <button onclick="GetSystemInfo()">ตรวจสอบข้อมูล</button>
+    </div>
+    <div id="result">กดปุ่มเพื่อเริ่มตรวจสอบ</div>
+
+</body>
+</html>

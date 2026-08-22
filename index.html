@@ -1,10 +1,13 @@
 <!DOCTYPE html>
 <html lang="th">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Aun's Script Vault</title>
-    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Prompt:wght@300;400;500&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Prompt:wght@300;400;500&display=swap"
+        rel="stylesheet">
     <style>
         :root {
             --bg-color: #f4f5f7;
@@ -104,7 +107,8 @@
             text-overflow: ellipsis;
         }
 
-        .menu-item:hover, .menu-item.active {
+        .menu-item:hover,
+        .menu-item.active {
             background-color: #eff6ff;
             color: var(--accent-color);
             font-weight: 500;
@@ -120,7 +124,7 @@
             min-height: 100vh;
         }
 
-        .sidebar.collapsed ~ .main-container {
+        .sidebar.collapsed~.main-container {
             margin-left: 0;
         }
 
@@ -186,31 +190,43 @@
 
         .script-grid {
             display: grid;
-            grid-template-columns: repeat(4, 1fr); /* ปรับเป็น 4 คอลัมน์ */
+            grid-template-columns: repeat(4, 1fr);
+            /* ปรับเป็น 4 คอลัมน์ */
             gap: 20px;
         }
 
         @media (max-width: 1200px) {
             .script-grid {
-                grid-template-columns: repeat(3, 1fr); /* หน้าจอขนาดกลางลดเหลือ 3 */
+                grid-template-columns: repeat(3, 1fr);
+                /* หน้าจอขนาดกลางลดเหลือ 3 */
             }
         }
 
         @media (max-width: 900px) {
             .script-grid {
-                grid-template-columns: repeat(2, 1fr); /* แท็บเล็ตลดเหลือ 2 */
+                grid-template-columns: repeat(2, 1fr);
+                /* แท็บเล็ตลดเหลือ 2 */
+            }
+        }
+
+        @media (max-width: 768px) {
+            .sidebar {
+                transform: translateX(-100%);
+            }
+
+            .sidebar.mobile-show {
+                transform: translateX(0);
+            }
+
+            .main-container {
+                margin-left: 0;
             }
         }
 
         @media (max-width: 600px) {
             .script-grid {
-                grid-template-columns: 1fr; /* มือถือเหลือ 1 */
-            }
-            .sidebar {
-                transform: translateX(-100%);
-            }
-            .main-container {
-                margin-left: 0;
+                grid-template-columns: 1fr;
+                /* มือถือเหลือ 1 */
             }
         }
 
@@ -222,14 +238,14 @@
             display: flex;
             flex-direction: column;
             justify-content: space-between;
-            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            box-shadow: 0 1px 3px rgba(0, 0, 0, 0.02);
             transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s;
             scroll-margin-top: 100px;
         }
 
         .card:hover {
             transform: translateY(-2px);
-            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
         }
 
         .card.highlight {
@@ -297,6 +313,7 @@
         }
     </style>
 </head>
+
 <body>
 
     <!-- Sidebar เมนูด้านซ้าย -->
@@ -334,7 +351,8 @@
                         <div class="file-desc">สคริปต์สำหรับดึงข้อมูล Serial Number และชื่อคอมพิวเตอร์</div>
                         <span class="file-meta">.HTA • ~13.8 KB</span>
                     </div>
-                    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Show_SN_ComName.hta" class="btn-download">ดาวน์โหลด</a>
+                    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Show_SN_ComName.hta"
+                        class="btn-download">ดาวน์โหลด</a>
                 </div>
 
                 <!-- การ์ดที่ 2 -->
@@ -344,11 +362,12 @@
                         <div class="file-desc">ชุดแพ็กเกจสคริปต์เปลี่ยนชื่อเครื่องคอมพิวเตอร์พร้อมค่าตั้งค่า</div>
                         <span class="file-meta">.RAR • 3 ไฟล์ ~3.87 KB</span>
                     </div>
-                    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/RenamedPC.rar" class="btn-download">ดาวน์โหลด</a>
+                    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/RenamedPC.rar"
+                        class="btn-download">ดาวน์โหลด</a>
                 </div>
 
                 <!-- 💡 วิธีเพิ่มสคริปต์ใหม่: ก๊อปปี้บล็อก <div class="card">...</div> นี้ไปวางต่อข้างล่าง -->
-                
+
             </div>
             <div id="noResult" class="no-result">ไม่พบสคริปต์ที่คุณค้นหา</div>
         </div>
@@ -359,83 +378,84 @@
     </div>
 
     <script>
-    const sidebar = document.getElementById('sidebar');
-    const toggleBtn = document.getElementById('toggleSidebar');
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleSidebar');
 
-    // แก้ไขตรงปุ่มกดสลับเมนู ให้รองรับทั้งคอมและมือถือ
-    toggleBtn.addEventListener('click', () => {
-        if (window.innerWidth <= 768) {
-            sidebar.classList.toggle('mobile-show');
-        } else {
-            sidebar.classList.toggle('collapsed');
-        }
-    });
-
-    const scriptGrid = document.getElementById('scriptGrid');
-    const sidebarMenu = document.getElementById('sidebarMenu');
-    const cards = scriptGrid.getElementsByClassName('card');
-
-    function generateSidebarMenu() {
-        const label = sidebarMenu.querySelector('.menu-label');
-        sidebarMenu.innerHTML = '';
-        sidebarMenu.appendChild(label);
-
-        for (let i = 0; i < cards.length; i++) {
-            const card = cards[i];
-            const title = card.querySelector('.file-title').innerText;
-            const cardId = card.id || `script-${i+1}`;
-            card.id = cardId;
-
-            const menuLink = document.createElement('a');
-            menuLink.href = `#${cardId}`;
-            menuLink.className = 'menu-item';
-            menuLink.innerText = `📄 ${title}`;
-
-            menuLink.addEventListener('click', (e) => {
-                e.preventDefault();
-                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                for (let c of cards) c.classList.remove('highlight');
-                for (let m of sidebarMenu.getElementsByClassName('menu-item')) m.classList.remove('active');
-
-                card.classList.add('highlight');
-                menuLink.classList.add('active');
-
-                // ถ้ากดบนมือถือ พอลือกเสร็จให้ปิดเมนูด้านซ้ายอัตโนมัติด้วย จะได้ดูเว็บสะดวก
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.remove('mobile-show');
-                }
-
-                setTimeout(() => {
-                    card.classList.remove('highlight');
-                }, 1500);
-            });
-
-            sidebarMenu.appendChild(menuLink);
-        }
-    }
-
-    generateSidebarMenu();
-
-    const searchInput = document.getElementById('searchInput');
-    const noResult = document.getElementById('noResult');
-
-    searchInput.addEventListener('input', (e) => {
-        const term = e.target.value.toLowerCase().trim();
-        let count = 0;
-
-        for (let card of cards) {
-            const keywords = card.getAttribute('data-name').toLowerCase();
-            if (keywords.includes(term)) {
-                card.style.display = "flex";
-                count++;
+        // แก้ไขตรงปุ่มกดสลับเมนู ให้รองรับทั้งคอมและมือถือ
+        toggleBtn.addEventListener('click', () => {
+            if (window.innerWidth <= 768) {
+                sidebar.classList.toggle('mobile-show');
             } else {
-                card.style.display = "none";
+                sidebar.classList.toggle('collapsed');
+            }
+        });
+
+        const scriptGrid = document.getElementById('scriptGrid');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const cards = scriptGrid.getElementsByClassName('card');
+
+        function generateSidebarMenu() {
+            const label = sidebarMenu.querySelector('.menu-label');
+            sidebarMenu.innerHTML = '';
+            sidebarMenu.appendChild(label);
+
+            for (let i = 0; i < cards.length; i++) {
+                const card = cards[i];
+                const title = card.querySelector('.file-title').innerText;
+                const cardId = card.id || `script-${i + 1}`;
+                card.id = cardId;
+
+                const menuLink = document.createElement('a');
+                menuLink.href = `#${cardId}`;
+                menuLink.className = 'menu-item';
+                menuLink.innerText = `📄 ${title}`;
+
+                menuLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    for (let c of cards) c.classList.remove('highlight');
+                    for (let m of sidebarMenu.getElementsByClassName('menu-item')) m.classList.remove('active');
+
+                    card.classList.add('highlight');
+                    menuLink.classList.add('active');
+
+                    // ถ้ากดบนมือถือ พอลือกเสร็จให้ปิดเมนูด้านซ้ายอัตโนมัติด้วย จะได้ดูเว็บสะดวก
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('mobile-show');
+                    }
+
+                    setTimeout(() => {
+                        card.classList.remove('highlight');
+                    }, 1500);
+                });
+
+                sidebarMenu.appendChild(menuLink);
             }
         }
-        noResult.style.display = count === 0 ? "block" : "none";
-    });
-</script>
+
+        generateSidebarMenu();
+
+        const searchInput = document.getElementById('searchInput');
+        const noResult = document.getElementById('noResult');
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            let count = 0;
+
+            for (let card of cards) {
+                const keywords = card.getAttribute('data-name').toLowerCase();
+                if (keywords.includes(term)) {
+                    card.style.display = "flex";
+                    count++;
+                } else {
+                    card.style.display = "none";
+                }
+            }
+            noResult.style.display = count === 0 ? "block" : "none";
+        });
+    </script>
 
 </body>
+
 </html>

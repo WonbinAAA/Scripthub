@@ -7,13 +7,14 @@
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Prompt:wght@300;400;500&display=swap" rel="stylesheet">
     <style>
         :root {
-            --bg-color: #fafafa;
+            --bg-color: #f4f5f7;
             --card-bg: #ffffff;
-            --text-main: #262626;
-            --text-secondary: #8e8e8e;
-            --border-color: #dbdbdb;
-            --accent-color: #0095f6;
-            --accent-hover: #1877f2;
+            --text-main: #1f2937;
+            --text-secondary: #6b7280;
+            --border-color: #e5e7eb;
+            --accent-color: #2563eb;
+            --accent-hover: #1d4ed8;
+            --sidebar-width: 260px;
         }
 
         * {
@@ -27,250 +28,402 @@
             background-color: var(--bg-color);
             color: var(--text-main);
             display: flex;
-            justify-content: center;
             min-height: 100vh;
-            padding: 40px 20px;
         }
 
-        .container {
-            width: 100%;
-            max-width: 460px;
+        /* Sidebar เมนูด้านซ้าย */
+        .sidebar {
+            width: var(--sidebar-width);
+            background-color: #ffffff;
+            border-right: 1px solid var(--border-color);
+            display: flex;
+            flex-direction: column;
+            position: fixed;
+            top: 0;
+            bottom: 0;
+            left: 0;
+            transition: transform 0.3s ease;
+            z-index: 100;
         }
 
-        /* Profile Header */
-        .profile-header {
-            text-align: center;
-            margin-bottom: 24px;
+        .sidebar.collapsed {
+            transform: translateX(-100%);
         }
 
-        .profile-avatar {
-            width: 76px;
-            height: 76px;
+        .sidebar-header {
+            padding: 20px;
+            border-bottom: 1px solid var(--border-color);
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .sidebar-avatar {
+            width: 40px;
+            height: 40px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #f09433, #e6683c, #dc2743, #cc2366, #bc1888);
+            background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
             display: flex;
             justify-content: center;
             align-items: center;
-            margin: 0 auto 12px auto;
-            padding: 3px;
-        }
-
-        .avatar-inner {
-            width: 100%;
-            height: 100%;
-            background-color: #fff;
-            border-radius: 50%;
-            display: flex;
-            justify-content: center;
-            align-items: center;
+            color: white;
             font-weight: 600;
-            font-size: 24px;
-            color: var(--text-main);
         }
 
-        .profile-name {
-            font-size: 16px;
+        .sidebar-title {
+            font-size: 15px;
             font-weight: 600;
-            margin-bottom: 4px;
         }
 
-        .profile-bio {
-            font-size: 14px;
+        .sidebar-menu {
+            padding: 15px;
+            overflow-y: auto;
+            flex: 1;
+        }
+
+        .menu-label {
+            font-size: 11px;
             color: var(--text-secondary);
-            font-weight: 300;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+            margin-bottom: 8px;
+            font-weight: 600;
         }
 
-        /* ช่องค้นหา */
-        .search-box {
-            margin-bottom: 20px;
+        .menu-item {
+            display: block;
+            padding: 9px 12px;
+            color: var(--text-main);
+            text-decoration: none;
+            border-radius: 6px;
+            font-size: 13px;
+            margin-bottom: 4px;
+            transition: background 0.2s, color 0.2s;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .menu-item:hover, .menu-item.active {
+            background-color: #eff6ff;
+            color: var(--accent-color);
+            font-weight: 500;
+        }
+
+        /* Main Content พื้นที่แสดงผลหลัก */
+        .main-container {
+            flex: 1;
+            margin-left: var(--sidebar-width);
+            transition: margin-left 0.3s ease;
+            display: flex;
+            flex-direction: column;
+            min-height: 100vh;
+        }
+
+        .sidebar.collapsed ~ .main-container {
+            margin-left: 0;
+        }
+
+        /* Top Navbar ด้านบน */
+        .topbar {
+            background-color: #ffffff;
+            border-bottom: 1px solid var(--border-color);
+            padding: 15px 30px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            position: sticky;
+            top: 0;
+            z-index: 99;
+        }
+
+        .toggle-btn {
+            background: none;
+            border: 1px solid var(--border-color);
+            padding: 8px 12px;
+            border-radius: 6px;
+            cursor: pointer;
+            font-family: 'Prompt', sans-serif;
+            font-size: 14px;
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            background-color: #fafafa;
+        }
+
+        .toggle-btn:hover {
+            background-color: #f3f4f6;
         }
 
         .search-input {
-            width: 100%;
-            padding: 10px 14px;
+            padding: 8px 14px;
             font-family: 'Prompt', sans-serif;
             font-size: 14px;
-            background-color: #efefef;
             border: 1px solid var(--border-color);
-            border-radius: 8px;
+            border-radius: 6px;
+            width: 240px;
             outline: none;
-            transition: background-color 0.2s, border-color 0.2s;
         }
 
         .search-input:focus {
-            background-color: #fff;
-            border-color: var(--text-secondary);
+            border-color: var(--accent-color);
         }
 
-        /* รายการการ์ดทั้งหมด */
-        .script-list {
-            display: flex;
-            flex-direction: column;
-            gap: 14px;
+        /* เนื้อหาและการ์ด Grid 4 ช่อง */
+        .content {
+            padding: 30px;
+            flex: 1;
+        }
+
+        .page-header {
+            margin-bottom: 20px;
+        }
+
+        .page-title {
+            font-size: 20px;
+            font-weight: 600;
+        }
+
+        .script-grid {
+            display: grid;
+            grid-template-columns: repeat(4, 1fr); /* ปรับเป็น 4 คอลัมน์ */
+            gap: 20px;
+        }
+
+        @media (max-width: 1200px) {
+            .script-grid {
+                grid-template-columns: repeat(3, 1fr); /* หน้าจอขนาดกลางลดเหลือ 3 */
+            }
+        }
+
+        @media (max-width: 900px) {
+            .script-grid {
+                grid-template-columns: repeat(2, 1fr); /* แท็บเล็ตลดเหลือ 2 */
+            }
+        }
+
+        @media (max-width: 600px) {
+            .script-grid {
+                grid-template-columns: 1fr; /* มือถือเหลือ 1 */
+            }
+            .sidebar {
+                transform: translateX(-100%);
+            }
+            .main-container {
+                margin-left: 0;
+            }
         }
 
         .card {
             background-color: var(--card-bg);
             border: 1px solid var(--border-color);
-            border-radius: 12px;
-            padding: 18px;
-            box-shadow: 0 1px 2px rgba(0, 0, 0, 0.02);
-            transition: transform 0.2s ease, box-shadow 0.2s ease;
+            border-radius: 10px;
+            padding: 20px;
+            display: flex;
+            flex-direction: column;
+            justify-content: space-between;
+            box-shadow: 0 1px 3px rgba(0,0,0,0.02);
+            transition: transform 0.2s, box-shadow 0.2s, border-color 0.3s;
+            scroll-margin-top: 100px;
         }
 
         .card:hover {
-            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.05);
+            transform: translateY(-2px);
+            box-shadow: 0 4px 12px rgba(0,0,0,0.05);
         }
 
-        .file-info {
-            margin-bottom: 14px;
+        .card.highlight {
+            border-color: var(--accent-color);
+            box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.15);
         }
 
         .file-title {
             font-size: 15px;
-            font-weight: 500;
+            font-weight: 600;
+            margin-bottom: 8px;
             color: var(--text-main);
-            margin-bottom: 4px;
-            display: flex;
-            align-items: center;
-            gap: 6px;
         }
 
         .file-desc {
             font-size: 13px;
             color: var(--text-secondary);
-            font-weight: 300;
+            margin-bottom: 16px;
             line-height: 1.4;
         }
 
         .file-meta {
-            display: inline-block;
             font-size: 11px;
-            background-color: #efefef;
-            color: #555;
-            padding: 2px 8px;
-            border-radius: 4px;
-            margin-top: 8px;
             font-family: monospace;
+            background: #f3f4f6;
+            padding: 3px 6px;
+            border-radius: 4px;
+            display: inline-block;
+            margin-bottom: 14px;
+            color: #4b5563;
         }
 
         .btn-download {
             display: block;
-            width: 100%;
             text-align: center;
             background-color: var(--accent-color);
             color: white;
-            font-weight: 500;
-            font-size: 14px;
-            padding: 10px 0;
-            border-radius: 8px;
+            padding: 8px 0;
+            border-radius: 6px;
             text-decoration: none;
-            transition: background-color 0.2s;
+            font-size: 13px;
+            font-weight: 500;
+            transition: background 0.2s;
         }
 
         .btn-download:hover {
             background-color: var(--accent-hover);
         }
 
-        /* ข้อความเวลาค้นหาไม่เจอ */
-        .no-result {
-            text-align: center;
-            color: var(--text-secondary);
-            font-size: 14px;
-            padding: 20px;
-            display: none;
-        }
-
         .footer {
             text-align: center;
-            margin-top: 30px;
+            padding: 20px;
             font-size: 12px;
             color: var(--text-secondary);
+            border-top: 1px solid var(--border-color);
+            background-color: #ffffff;
+        }
+
+        .no-result {
+            grid-column: 1 / -1;
+            text-align: center;
+            color: var(--text-secondary);
+            padding: 40px;
+            display: none;
         }
     </style>
 </head>
 <body>
 
-    <div class="container">
-        <!-- ส่วนโปรไฟล์ -->
-        <div class="profile-header">
-            <div class="profile-avatar">
-                <div class="avatar-inner">A</div>
-            </div>
-            <div class="profile-name">Aun's Scripts</div>
-            <div class="profile-bio">Tools & Utilities Collection</div>
+    <!-- Sidebar เมนูด้านซ้าย -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="sidebar-avatar">A</div>
+            <div class="sidebar-title">Aun's Scripts</div>
         </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="menu-label">Scripts List</div>
+        </div>
+    </aside>
 
-        <!-- ช่องค้นหา -->
-        <div class="search-box">
+    <!-- Main Content -->
+    <div class="main-container">
+        <header class="topbar">
+            <button class="toggle-btn" id="toggleSidebar">
+                ☰ เมนู
+            </button>
             <input type="text" id="searchInput" class="search-input" placeholder="🔍 ค้นหาสคริปต์...">
-        </div>
+        </header>
 
-        <!-- รายการสคริปต์ทั้งหมด (สามารถก๊อปปี้การ์ดเพิ่มข้างล่างนี้ได้เลยเวลาจะเพิ่มตัวใหม่) -->
-        <div class="script-list" id="scriptList">
-            
-            <!-- สคริปต์ตัวที่ 1 -->
-            <div class="card" data-name="show_sn_comname.hta serial number คอมพิวเตอร์">
-                <div class="file-info">
-                    <div class="file-title">
-                        <svg aria-label="File" fill="currentColor" height="16" role="img" viewBox="0 0 24 24" width="16"><path d="M19 24H5c-1.103 0-2-.897-2-2V2c0-1.103.897-2 2-2h7.586a2 2 0 0 1 1.414.586l7 7A2 2 0 0 1 21 9v13c0 1.103-.897 2-2 2ZM5 2v20h14V10h-6V2H5z"/></svg>
-                        Show_SN_ComName.hta
+        <div class="content">
+            <div class="page-header">
+                <h1 class="page-title">รายการสคริปต์ทั้งหมด</h1>
+            </div>
+
+            <!-- Grid แสดงสคริปต์ (4 ช่องแนวนอน) -->
+            <div class="script-grid" id="scriptGrid">
+
+                <!-- การ์ดที่ 1 -->
+                <div class="card" id="script-1" data-name="show_sn_comname.hta serial number ชื่อคอมพิวเตอร์">
+                    <div>
+                        <div class="file-title">Show_SN_ComName.hta</div>
+                        <div class="file-desc">สคริปต์สำหรับดึงข้อมูล Serial Number และชื่อคอมพิวเตอร์</div>
+                        <span class="file-meta">.HTA • ~13.8 KB</span>
                     </div>
-                    <div class="file-desc">สคริปต์สำหรับดึงข้อมูล Serial Number และชื่อคอมพิวเตอร์</div>
-                    <span class="file-meta">.HTA • ~13.8 KB</span>
+                    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Show_SN_ComName.ht" class="btn-download">ดาวน์โหลด</a>
                 </div>
-                <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Show_SN_ComName.hta" class="btn-download">ดาวน์โหลดไฟล์</a>
-            </div>
 
-            <!-- สคริปต์ตัวที่ 2 -->
-            <div class="card" data-name="เปลี่ยนชื่อคอม Renamecom">
-                <div class="file-info">
-                <div class="file-title">RenamedPC.rar</div>
-                <div class="file-desc">เปลี่ยนชื่อเครื่อง</div>
-                <span class="file-meta">3 ไฟล์ • ~3.87 KB</span>
-            </div>
-            <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/RenamedPC.rar" class="btn-download">ดาวน์โหลดไฟล์</a>
-            </div>
+                <!-- การ์ดที่ 2 -->
+                <div class="card" id="script-2" data-name="renamedpc.rar เปลี่ยนชื่อเครื่อง">
+                    <div>
+                        <div class="file-title">RenamedPC.rar</div>
+                        <div class="file-desc">ชุดแพ็กเกจสคริปต์เปลี่ยนชื่อเครื่องคอมพิวเตอร์พร้อมค่าตั้งค่า</div>
+                        <span class="file-meta">.RAR • 3 ไฟล์ ~3.87 KB</span>
+                    </div>
+                    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/RenamedPC.rar" class="btn-download">ดาวน์โหลด</a>
+                </div>
 
-            <!-- 💡 วิธีเพิ่มสคริปต์ใหม่ในอนาคต: ก๊อปปี้โค้ดบล็อก <div class="card">...</div> ด้านบนนี้มาวางต่อข้างล่าง แล้วเปลี่ยนชื่อ/ลิงก์ได้เลย -->
-
+                <!-- 💡 วิธีเพิ่มสคริปต์ใหม่: ก๊อปปี้บล็อก <div class="card">...</div> นี้ไปวางต่อข้างล่าง -->
+                
+            </div>
+            <div id="noResult" class="no-result">ไม่พบสคริปต์ที่คุณค้นหา</div>
         </div>
 
-        <div id="noResult" class="no-result">ไม่พบสคริปต์ที่คุณค้นหา</div>
-
-        <div class="footer">
+        <footer class="footer">
             © 2026 • Powered by GitHub Pages
-        </div>
+        </footer>
     </div>
 
     <script>
-        // ระบบค้นหาสคริปต์
-        const searchInput = document.getElementById('searchInput');
-        const scriptList = document.getElementById('scriptList');
-        const cards = scriptList.getElementsByClassName('card');
-        const noResult = document.getElementById('noResult');
+        const sidebar = document.getElementById('sidebar');
+        const toggleBtn = document.getElementById('toggleSidebar');
 
-        searchInput.addEventListener('input', function(e) {
-            const term = e.target.value.toLowerCase().trim();
-            let count = 0;
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+        });
+
+        const scriptGrid = document.getElementById('scriptGrid');
+        const sidebarMenu = document.getElementById('sidebarMenu');
+        const cards = scriptGrid.getElementsByClassName('card');
+
+        function generateSidebarMenu() {
+            const label = sidebarMenu.querySelector('.menu-label');
+            sidebarMenu.innerHTML = '';
+            sidebarMenu.appendChild(label);
 
             for (let i = 0; i < cards.length; i++) {
                 const card = cards[i];
-                const keywords = card.getAttribute('data-name').toLowerCase();
+                const title = card.querySelector('.file-title').innerText;
+                const cardId = card.id || `script-${i+1}`;
+                card.id = cardId;
 
+                const menuLink = document.createElement('a');
+                menuLink.href = `#${cardId}`;
+                menuLink.className = 'menu-item';
+                menuLink.innerText = `📄 ${title}`;
+
+                menuLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    for (let c of cards) c.classList.remove('highlight');
+                    for (let m of sidebarMenu.getElementsByClassName('menu-item')) m.classList.remove('active');
+
+                    card.classList.add('highlight');
+                    menuLink.classList.add('active');
+
+                    setTimeout(() => {
+                        card.classList.remove('highlight');
+                    }, 1500);
+                });
+
+                sidebarMenu.appendChild(menuLink);
+            }
+        }
+
+        generateSidebarMenu();
+
+        const searchInput = document.getElementById('searchInput');
+        const noResult = document.getElementById('noResult');
+
+        searchInput.addEventListener('input', (e) => {
+            const term = e.target.value.toLowerCase().trim();
+            let count = 0;
+
+            for (let card of cards) {
+                const keywords = card.getAttribute('data-name').toLowerCase();
                 if (keywords.includes(term)) {
-                    card.style.display = "block";
+                    card.style.display = "flex";
                     count++;
                 } else {
                     card.style.display = "none";
                 }
             }
-
-            if (count === 0) {
-                noResult.style.display = "block";
-            } else {
-                noResult.style.display = "none";
-            }
+            noResult.style.display = count === 0 ? "block" : "none";
         });
     </script>
 

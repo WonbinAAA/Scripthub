@@ -359,73 +359,83 @@
     </div>
 
     <script>
-        const sidebar = document.getElementById('sidebar');
-        const toggleBtn = document.getElementById('toggleSidebar');
+    const sidebar = document.getElementById('sidebar');
+    const toggleBtn = document.getElementById('toggleSidebar');
 
-        toggleBtn.addEventListener('click', () => {
+    // แก้ไขตรงปุ่มกดสลับเมนู ให้รองรับทั้งคอมและมือถือ
+    toggleBtn.addEventListener('click', () => {
+        if (window.innerWidth <= 768) {
+            sidebar.classList.toggle('mobile-show');
+        } else {
             sidebar.classList.toggle('collapsed');
-        });
+        }
+    });
 
-        const scriptGrid = document.getElementById('scriptGrid');
-        const sidebarMenu = document.getElementById('sidebarMenu');
-        const cards = scriptGrid.getElementsByClassName('card');
+    const scriptGrid = document.getElementById('scriptGrid');
+    const sidebarMenu = document.getElementById('sidebarMenu');
+    const cards = scriptGrid.getElementsByClassName('card');
 
-        function generateSidebarMenu() {
-            const label = sidebarMenu.querySelector('.menu-label');
-            sidebarMenu.innerHTML = '';
-            sidebarMenu.appendChild(label);
+    function generateSidebarMenu() {
+        const label = sidebarMenu.querySelector('.menu-label');
+        sidebarMenu.innerHTML = '';
+        sidebarMenu.appendChild(label);
 
-            for (let i = 0; i < cards.length; i++) {
-                const card = cards[i];
-                const title = card.querySelector('.file-title').innerText;
-                const cardId = card.id || `script-${i+1}`;
-                card.id = cardId;
+        for (let i = 0; i < cards.length; i++) {
+            const card = cards[i];
+            const title = card.querySelector('.file-title').innerText;
+            const cardId = card.id || `script-${i+1}`;
+            card.id = cardId;
 
-                const menuLink = document.createElement('a');
-                menuLink.href = `#${cardId}`;
-                menuLink.className = 'menu-item';
-                menuLink.innerText = `📄 ${title}`;
+            const menuLink = document.createElement('a');
+            menuLink.href = `#${cardId}`;
+            menuLink.className = 'menu-item';
+            menuLink.innerText = `📄 ${title}`;
 
-                menuLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+            menuLink.addEventListener('click', (e) => {
+                e.preventDefault();
+                card.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                    for (let c of cards) c.classList.remove('highlight');
-                    for (let m of sidebarMenu.getElementsByClassName('menu-item')) m.classList.remove('active');
+                for (let c of cards) c.classList.remove('highlight');
+                for (let m of sidebarMenu.getElementsByClassName('menu-item')) m.classList.remove('active');
 
-                    card.classList.add('highlight');
-                    menuLink.classList.add('active');
+                card.classList.add('highlight');
+                menuLink.classList.add('active');
 
-                    setTimeout(() => {
-                        card.classList.remove('highlight');
-                    }, 1500);
-                });
+                // ถ้ากดบนมือถือ พอลือกเสร็จให้ปิดเมนูด้านซ้ายอัตโนมัติด้วย จะได้ดูเว็บสะดวก
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.remove('mobile-show');
+                }
 
-                sidebarMenu.appendChild(menuLink);
+                setTimeout(() => {
+                    card.classList.remove('highlight');
+                }, 1500);
+            });
+
+            sidebarMenu.appendChild(menuLink);
+        }
+    }
+
+    generateSidebarMenu();
+
+    const searchInput = document.getElementById('searchInput');
+    const noResult = document.getElementById('noResult');
+
+    searchInput.addEventListener('input', (e) => {
+        const term = e.target.value.toLowerCase().trim();
+        let count = 0;
+
+        for (let card of cards) {
+            const keywords = card.getAttribute('data-name').toLowerCase();
+            if (keywords.includes(term)) {
+                card.style.display = "flex";
+                count++;
+            } else {
+                card.style.display = "none";
             }
         }
-
-        generateSidebarMenu();
-
-        const searchInput = document.getElementById('searchInput');
-        const noResult = document.getElementById('noResult');
-
-        searchInput.addEventListener('input', (e) => {
-            const term = e.target.value.toLowerCase().trim();
-            let count = 0;
-
-            for (let card of cards) {
-                const keywords = card.getAttribute('data-name').toLowerCase();
-                if (keywords.includes(term)) {
-                    card.style.display = "flex";
-                    count++;
-                } else {
-                    card.style.display = "none";
-                }
-            }
-            noResult.style.display = count === 0 ? "block" : "none";
-        });
-    </script>
+        noResult.style.display = count === 0 ? "block" : "none";
+    });
+</script>
 
 </body>
 </html>

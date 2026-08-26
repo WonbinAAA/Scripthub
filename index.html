@@ -18,6 +18,7 @@
             --accent-color: #2563eb;
             --accent-hover: #1d4ed8;
             --sidebar-width: 260px;
+            --topbar-height: 74px;
         }
 
         * {
@@ -54,7 +55,9 @@
         }
 
         .sidebar-header {
-            padding: 20px;
+            height: var(--topbar-height);
+            min-height: var(--topbar-height);
+            padding: 15px 20px;
             border-bottom: 1px solid var(--border-color);
             display: flex;
             align-items: center;
@@ -141,8 +144,8 @@
             background-color: #ffffff;
             border-bottom: 1px solid var(--border-color);
             width: 100%;
-            height: 74px;
-            min-height: 74px;
+            height: var(--topbar-height);
+            min-height: var(--topbar-height);
             padding: 15px 30px;
             display: flex;
             justify-content: space-between;
@@ -458,7 +461,7 @@
         </div>
         <div class="sidebar-menu" id="sidebarMenu">
             <div class="menu-label">Menu</div>
-            <a href="#upload" class="menu-item active" id="uploadMenuItem">⬆️ Upload Script</a>
+            <a href="#upload" class="menu-item" id="uploadMenuItem">⬆️ Upload Script</a>
             <div class="menu-label" style="margin-top: 18px;">Scripts List</div>
         </div>
     </aside>
@@ -478,7 +481,7 @@
 
         <div class="content">
             <!-- Upload Page -->
-            <section class="page-section active" id="uploadPage">
+            <section class="page-section" id="uploadPage">
                 <div class="upload-page">
                     <div class="page-header">
                         <h1 class="page-title">Upload Script</h1>
@@ -506,7 +509,7 @@
             </section>
 
             <!-- Scripts List Page -->
-            <section class="page-section" id="scriptsPage">
+            <section class="page-section active" id="scriptsPage">
                 <div class="page-header">
                     <h1 class="page-title">รายการสคริปต์ทั้งหมด</h1>
                 </div>
@@ -663,6 +666,11 @@
             const term = e.target.value.toLowerCase().trim();
             let count = 0;
 
+            // Search ทำงานจากทุกหน้า: ถ้ามีการค้นหา ให้แสดง Scripts List ทันที
+            if (term !== '') {
+                showPage('scripts');
+            }
+
             for (let card of cards) {
                 const keywords = card.getAttribute('data-name').toLowerCase();
                 if (keywords.includes(term)) {
@@ -672,6 +680,7 @@
                     card.style.display = "none";
                 }
             }
+
             noResult.style.display = count === 0 ? "block" : "none";
         });
     </script>

@@ -38,7 +38,7 @@
         .sidebar {
             width: var(--sidebar-width);
             background-color: #ffffff;
-            border-right: 1px solid var(--border-color);
+            border-right: none;
             display: flex;
             flex-direction: column;
             position: fixed;
@@ -124,6 +124,7 @@
         .main-container {
             margin-left: var(--sidebar-width);
             width: calc(100% - var(--sidebar-width));
+            border-left: 1px solid var(--border-color);
             transition: margin-left 0.3s ease, width 0.3s ease;
             display: flex;
             flex-direction: column;

@@ -187,7 +187,12 @@
             border-color: var(--accent-color);
         }
 
-        /* Upload Panel */
+        /* Upload Page */
+        .upload-page {
+            max-width: 850px;
+            margin: 0 auto;
+        }
+
         .upload-panel {
             background: #ffffff;
             border: 1px solid var(--border-color);
@@ -263,6 +268,18 @@
             margin-top: 12px;
             font-size: 12px;
             min-height: 18px;
+        }
+
+        .page-section {
+            display: none;
+        }
+
+        .page-section.active {
+            display: block;
+        }
+
+        .upload-page .upload-panel {
+            margin-top: 10px;
         }
 
         @media (max-width: 700px) {
@@ -434,7 +451,9 @@
             </button>
         </div>
         <div class="sidebar-menu" id="sidebarMenu">
-            <div class="menu-label">Scripts List</div>
+            <div class="menu-label">Menu</div>
+            <a href="#upload" class="menu-item active" id="uploadMenuItem">⬆️ Upload Script</a>
+            <div class="menu-label" style="margin-top: 18px;">Scripts List</div>
         </div>
     </aside>
 
@@ -452,33 +471,42 @@
         </header>
 
         <div class="content">
-            <div class="page-header">
-                <h1 class="page-title">รายการสคริปต์ทั้งหมด</h1>
-            </div>
+            <!-- Upload Page -->
+            <section class="page-section active" id="uploadPage">
+                <div class="upload-page">
+                    <div class="page-header">
+                        <h1 class="page-title">Upload Script</h1>
+                    </div>
 
-            <!-- Upload Script -->
-            <section class="upload-panel">
-                <div class="upload-title">⬆️ Upload Script</div>
-                <div class="upload-note">
-                    ไฟล์ที่อัปโหลดจะถูกกำหนดปลายทางเป็น <strong>Scripts/</strong> ใน Repository<br>
-                    การอัปโหลดจริงจะเชื่อม GitHub API ในขั้นตอนถัดไป โดยไม่ฝัง Token ไว้ในหน้าเว็บ
-                </div>
-                <div class="upload-row">
-                    <div class="upload-field">
-                        <label for="scriptFile">เลือกไฟล์ Script</label>
-                        <input type="file" id="scriptFile">
+                    <div class="upload-panel">
+                        <div class="upload-title">⬆️ อัปโหลด Script</div>
+                        <div class="upload-note">
+                            เลือกไฟล์ Script ที่ต้องการอัปโหลด ระบบจะกำหนดปลายทางเป็น <strong>Scripts/</strong> ใน Repository
+                        </div>
+                        <div class="upload-row">
+                            <div class="upload-field">
+                                <label for="scriptFile">เลือกไฟล์ Script</label>
+                                <input type="file" id="scriptFile">
+                            </div>
+                            <div class="upload-field">
+                                <label for="scriptDescription">คำอธิบาย</label>
+                                <input type="text" id="scriptDescription" placeholder="เช่น สคริปต์เปลี่ยนชื่อเครื่อง">
+                            </div>
+                            <button class="btn-upload" id="uploadBtn" type="button">Upload</button>
+                        </div>
+                        <div id="uploadStatus" class="upload-status"></div>
                     </div>
-                    <div class="upload-field">
-                        <label for="scriptDescription">คำอธิบาย</label>
-                        <input type="text" id="scriptDescription" placeholder="เช่น สคริปต์เปลี่ยนชื่อเครื่อง">
-                    </div>
-                    <button class="btn-upload" id="uploadBtn" type="button">Upload</button>
                 </div>
-                <div id="uploadStatus" class="upload-status"></div>
             </section>
 
-            <!-- Grid แสดงสคริปต์ (4 ช่องแนวนอน) -->
-            <div class="script-grid" id="scriptGrid">
+            <!-- Scripts List Page -->
+            <section class="page-section" id="scriptsPage">
+                <div class="page-header">
+                    <h1 class="page-title">รายการสคริปต์ทั้งหมด</h1>
+                </div>
+
+                <!-- Grid แสดงสคริปต์ (4 ช่องแนวนอน) -->
+                <div class="script-grid" id="scriptGrid">
 
                 <!-- การ์ดที่ 1 -->
                 <div class="card" id="script-1" data-name="show_sn_comname.hta serial number ชื่อคอมพิวเตอร์">
@@ -504,8 +532,9 @@
 
                 <!-- 💡 วิธีเพิ่มสคริปต์ใหม่: ก๊อปปี้บล็อก <div class="card">...</div> นี้ไปวางต่อข้างล่าง -->
 
-            </div>
-            <div id="noResult" class="no-result">ไม่พบสคริปต์ที่คุณค้นหา</div>
+                </div>
+                <div id="noResult" class="no-result">ไม่พบสคริปต์ที่คุณค้นหา</div>
+            </section>
         </div>
 
         <footer class="footer">
@@ -531,11 +560,38 @@
         const scriptGrid = document.getElementById('scriptGrid');
         const sidebarMenu = document.getElementById('sidebarMenu');
         const cards = scriptGrid.getElementsByClassName('card');
+        const uploadMenuItem = document.getElementById('uploadMenuItem');
+        const uploadPage = document.getElementById('uploadPage');
+        const scriptsPage = document.getElementById('scriptsPage');
+
+        function showPage(page) {
+            uploadPage.classList.toggle('active', page === 'upload');
+            scriptsPage.classList.toggle('active', page === 'scripts');
+            uploadMenuItem.classList.toggle('active', page === 'upload');
+
+            for (const item of sidebarMenu.querySelectorAll('.script-menu-item')) {
+                item.classList.toggle('active', page === 'scripts' && item.dataset.page === 'scripts');
+            }
+        }
+
+        uploadMenuItem.addEventListener('click', (e) => {
+            e.preventDefault();
+            showPage('upload');
+            window.scrollTo({ top: 0, behavior: 'smooth' });
+        });
 
         function generateSidebarMenu() {
-            const label = sidebarMenu.querySelector('.menu-label');
+            const menuLabel = sidebarMenu.querySelector('.menu-label');
+            const uploadItem = document.getElementById('uploadMenuItem');
             sidebarMenu.innerHTML = '';
-            sidebarMenu.appendChild(label);
+            sidebarMenu.appendChild(menuLabel);
+            sidebarMenu.appendChild(uploadItem);
+
+            const scriptsLabel = document.createElement('div');
+            scriptsLabel.className = 'menu-label';
+            scriptsLabel.style.marginTop = '18px';
+            scriptsLabel.textContent = 'Scripts List';
+            sidebarMenu.appendChild(scriptsLabel);
 
             for (let i = 0; i < cards.length; i++) {
                 const card = cards[i];
@@ -545,11 +601,13 @@
 
                 const menuLink = document.createElement('a');
                 menuLink.href = `#${cardId}`;
-                menuLink.className = 'menu-item';
+                menuLink.className = 'menu-item script-menu-item';
+                menuLink.dataset.page = 'scripts';
                 menuLink.innerText = `📄 ${title}`;
 
                 menuLink.addEventListener('click', (e) => {
                     e.preventDefault();
+                    showPage('scripts');
                     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
                     for (let c of cards) c.classList.remove('highlight');

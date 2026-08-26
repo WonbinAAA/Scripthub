@@ -187,6 +187,90 @@
             border-color: var(--accent-color);
         }
 
+        /* Upload Panel */
+        .upload-panel {
+            background: #ffffff;
+            border: 1px solid var(--border-color);
+            border-radius: 10px;
+            padding: 20px;
+            margin-bottom: 25px;
+        }
+
+        .upload-title {
+            font-size: 16px;
+            font-weight: 600;
+            margin-bottom: 5px;
+        }
+
+        .upload-note {
+            color: var(--text-secondary);
+            font-size: 12px;
+            margin-bottom: 15px;
+            line-height: 1.5;
+        }
+
+        .upload-row {
+            display: grid;
+            grid-template-columns: 1fr 1fr auto;
+            gap: 10px;
+            align-items: end;
+        }
+
+        .upload-field label {
+            display: block;
+            font-size: 12px;
+            margin-bottom: 5px;
+            color: var(--text-secondary);
+        }
+
+        .upload-field input {
+            width: 100%;
+            padding: 9px 11px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Prompt', sans-serif;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .upload-field input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .btn-upload {
+            border: 0;
+            cursor: pointer;
+            background: var(--accent-color);
+            color: #ffffff;
+            padding: 9px 18px;
+            border-radius: 6px;
+            font-family: 'Prompt', sans-serif;
+            font-size: 13px;
+            font-weight: 500;
+            min-width: 120px;
+        }
+
+        .btn-upload:hover {
+            background: var(--accent-hover);
+        }
+
+        .btn-upload:disabled {
+            opacity: .6;
+            cursor: not-allowed;
+        }
+
+        .upload-status {
+            margin-top: 12px;
+            font-size: 12px;
+            min-height: 18px;
+        }
+
+        @media (max-width: 700px) {
+            .upload-row {
+                grid-template-columns: 1fr;
+            }
+        }
+
         /* เนื้อหาและการ์ด Grid 4 ช่อง */
         .content {
             padding: 30px;
@@ -372,6 +456,27 @@
                 <h1 class="page-title">รายการสคริปต์ทั้งหมด</h1>
             </div>
 
+            <!-- Upload Script -->
+            <section class="upload-panel">
+                <div class="upload-title">⬆️ Upload Script</div>
+                <div class="upload-note">
+                    ไฟล์ที่อัปโหลดจะถูกกำหนดปลายทางเป็น <strong>Scripts/</strong> ใน Repository<br>
+                    การอัปโหลดจริงจะเชื่อม GitHub API ในขั้นตอนถัดไป โดยไม่ฝัง Token ไว้ในหน้าเว็บ
+                </div>
+                <div class="upload-row">
+                    <div class="upload-field">
+                        <label for="scriptFile">เลือกไฟล์ Script</label>
+                        <input type="file" id="scriptFile">
+                    </div>
+                    <div class="upload-field">
+                        <label for="scriptDescription">คำอธิบาย</label>
+                        <input type="text" id="scriptDescription" placeholder="เช่น สคริปต์เปลี่ยนชื่อเครื่อง">
+                    </div>
+                    <button class="btn-upload" id="uploadBtn" type="button">Upload</button>
+                </div>
+                <div id="uploadStatus" class="upload-status"></div>
+            </section>
+
             <!-- Grid แสดงสคริปต์ (4 ช่องแนวนอน) -->
             <div class="script-grid" id="scriptGrid">
 
@@ -471,6 +576,24 @@
 
         const searchInput = document.getElementById('searchInput');
         const noResult = document.getElementById('noResult');
+
+        // Upload UI - เตรียมข้อมูลสำหรับส่งเข้า Scripts/ โดยยังไม่เปิดเผย GitHub Token
+        const uploadBtn = document.getElementById('uploadBtn');
+        const scriptFile = document.getElementById('scriptFile');
+        const scriptDescription = document.getElementById('scriptDescription');
+        const uploadStatus = document.getElementById('uploadStatus');
+
+        uploadBtn.addEventListener('click', () => {
+            const file = scriptFile.files[0];
+            const description = scriptDescription.value.trim();
+
+            if (!file) {
+                uploadStatus.textContent = 'กรุณาเลือกไฟล์ Script ก่อน';
+                return;
+            }
+
+            uploadStatus.textContent = `เตรียมไฟล์ ${file.name} สำหรับอัปโหลดไปยัง Scripts/ เรียบร้อยแล้ว`;
+        });
 
         searchInput.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase().trim();

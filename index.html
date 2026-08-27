@@ -644,13 +644,18 @@
         const searchInput = document.getElementById('searchInput');
         const noResult = document.getElementById('noResult');
 
-        // Upload UI - เตรียมข้อมูลสำหรับส่งเข้า Scripts/ โดยยังไม่เปิดเผย GitHub Token
+        // ==============================
+        // GitHub Upload ผ่าน Google Apps Script
+        // ==============================
+        // นำ Web App URL จาก Apps Script มาใส่ตรงนี้ หลังจาก Deploy เป็น Web App
+        const APPS_SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbwMqiLiZJxBFXjmB3picJPfPQH1SDFfiL3MDIP44gidOO9pfASOM07B3XZWCrJ1HfOKmQ/exec';
+
         const uploadBtn = document.getElementById('uploadBtn');
         const scriptFile = document.getElementById('scriptFile');
         const scriptDescription = document.getElementById('scriptDescription');
         const uploadStatus = document.getElementById('uploadStatus');
 
-        uploadBtn.addEventListener('click', () => {
+        uploadBtn.addEventListener('click', async () => {
             const file = scriptFile.files[0];
             const description = scriptDescription.value.trim();
 
@@ -659,8 +664,73 @@
                 return;
             }
 
-            uploadStatus.textContent = `เตรียมไฟล์ ${file.name} สำหรับอัปโหลดไปยัง Scripts/ เรียบร้อยแล้ว`;
+            if (APPS_SCRIPT_URL.includes('ใส่_WEB_APP_URL')) {
+                uploadStatus.textContent = 'กรุณาตั้งค่า Apps Script Web App URL ก่อนใช้งาน';
+                return;
+            }
+
+            uploadBtn.disabled = true;
+            uploadBtn.textContent = 'กำลัง Upload...';
+            uploadStatus.textContent = 'กำลังส่งไฟล์ไปยัง GitHub...';
+
+            try {
+                const base64 = await fileToBase64(file);
+
+                // ส่งเป็น text/plain เพื่อหลีกเลี่ยง CORS preflight ของ Apps Script
+                // ข้อมูลภายในยังเป็น JSON และเข้ากับ doPost(e) ที่เราเขียนไว้แล้ว
+                const payload = JSON.stringify({
+                    action: 'uploadScript',
+                    fileName: file.name,
+                    description: description,
+                    fileBase64: base64
+                });
+
+                const response = await fetch(APPS_SCRIPT_URL, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'text/plain;charset=utf-8'
+                    },
+                    body: payload
+                });
+
+                const result = await response.json();
+
+                if (!result.success) {
+                    throw new Error(result.message || 'Upload ไม่สำเร็จ');
+                }
+
+                uploadStatus.textContent = `✅ Upload ${result.fileName} สำเร็จ กำลังรอ GitHub Pages อัปเดต...`;
+                scriptFile.value = '';
+                scriptDescription.value = '';
+
+                // GitHub Pages ต้องใช้เวลาสร้างหน้าใหม่ จึง reload หลังจากรอสักครู่
+                setTimeout(() => {
+                    window.location.reload();
+                }, 5000);
+
+            } catch (error) {
+                console.error(error);
+                uploadStatus.textContent = `❌ Upload ไม่สำเร็จ: ${error.message}`;
+            } finally {
+                uploadBtn.disabled = false;
+                uploadBtn.textContent = 'Upload';
+            }
         });
+
+        function fileToBase64(file) {
+            return new Promise((resolve, reject) => {
+                const reader = new FileReader();
+
+                reader.onload = () => {
+                    const result = reader.result;
+                    const commaIndex = result.indexOf(',');
+                    resolve(commaIndex >= 0 ? result.substring(commaIndex + 1) : result);
+                };
+
+                reader.onerror = () => reject(new Error('ไม่สามารถอ่านไฟล์ได้'));
+                reader.readAsDataURL(file);
+            });
+        }
 
         searchInput.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase().trim();

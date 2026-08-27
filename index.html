@@ -8,6 +8,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600&family=Prompt:wght@300;400;500&display=swap"
         rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
     <style>
         :root {
             --bg-color: #f4f5f7;
@@ -707,10 +708,10 @@
 </div>
 
 <!-- การ์ดที่ 5 -->
-<div class="card" id="script-5" data-uploaded-script="CleanBraveSafe.cmd" data-name="cleanbravesafe.cmd ลบประวัติเปิดเว็ป brave">
+<div class="card" id="script-5" data-uploaded-script="CleanBraveSafe.cmd" data-name="cleanbravesafe.cmd ลบประวัติ brave">
     <div>
         <div class="file-title">CleanBraveSafe.cmd</div>
-        <div class="file-desc">ลบประวัติเปิดเว็ป Brave</div>
+        <div class="file-desc">ลบประวัติ Brave</div>
         <span class="file-meta">.CMD • 1.04 KB</span>
     </div>
     <div class="card-actions">
@@ -872,6 +873,12 @@
             editFileName.focus();
         }
 
+        function escapeHtmlForAlert(value) {
+            const div = document.createElement('div');
+            div.textContent = String(value || '');
+            return div.innerHTML;
+        }
+
         function closeEditModal() {
             editingCard = null;
             editModal.classList.remove('show');
@@ -910,8 +917,17 @@
                 const fileName = card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent.trim();
                 if (!fileName) return;
 
-                const confirmed = confirm(`ต้องการลบ "${fileName}" ใช่หรือไม่?\\n\\nไฟล์ใน GitHub และ Card จะถูกลบออก`);
-                if (!confirmed) return;
+                const confirmResult = await Swal.fire({
+                    icon: 'warning',
+                    title: 'ยืนยันการลบ?',
+                    html: `คุณต้องการลบ <strong>${escapeHtmlForAlert(fileName)}</strong> ใช่หรือไม่?<br><small>ไฟล์ใน GitHub และ Card จะถูกลบออก</small>`,
+                    showCancelButton: true,
+                    confirmButtonText: 'ยืนยันการลบ',
+                    cancelButtonText: 'ยกเลิก',
+                    reverseButtons: true,
+                    focusCancel: true
+                });
+                if (!confirmResult.isConfirmed) return;
 
                 button.disabled = true;
                 try {
@@ -922,10 +938,23 @@
 
                     card.remove();
                     generateSidebarMenu();
-                    uploadStatus.textContent = `✅ ลบ ${fileName} สำเร็จ`;
+                    uploadStatus.textContent = '';
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'ลบสำเร็จ',
+                        html: `<strong>${escapeHtmlForAlert(fileName)}</strong><br>ถูกลบออกจากระบบเรียบร้อยแล้ว`,
+                        confirmButtonText: 'ตกลง',
+                        timer: 1800,
+                        timerProgressBar: true
+                    });
                 } catch (error) {
                     button.disabled = false;
-                    alert('ลบไม่สำเร็จ: ' + error.message);
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'ลบไม่สำเร็จ',
+                        text: error.message || 'เกิดข้อผิดพลาดในการลบไฟล์',
+                        confirmButtonText: 'ตกลง'
+                    });
                 }
             }
         });

@@ -665,12 +665,12 @@
                 <!-- การ์ดที่ 2 -->
                 <div class="card" id="script-2" data-name="renamedpc.rar เปลี่ยนชื่อเครื่อง">
                     <div>
-                        <div class="file-title">RenamedPC.rar</div>
+                        <div class="file-title">RenamePC.rar</div>
                         <div class="file-desc">ชุดแพ็กเกจสคริปต์เปลี่ยนชื่อเครื่องคอมพิวเตอร์พร้อมค่าตั้งค่า</div>
                         <span class="file-meta">.RAR • 3 ไฟล์ ~3.87 KB</span>
                     </div>
                     <div class="card-actions">
-                        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/RenamedPC.rar"
+                        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/RenamePC.rar"
                             class="btn-download">ดาวน์โหลด</a>
                         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
                         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
@@ -1159,6 +1159,54 @@
             } finally {
                 editSaveBtn.disabled = false;
                 editCancelBtn.disabled = false;
+            }
+        });
+
+        // ==============================
+        // บังคับดาวน์โหลดไฟล์ Script
+        // รองรับ .BAT / .CMD / .HTA / .PS1 / .VBS / .RAR / .ZIP และไฟล์อื่น ๆ
+        // ==============================
+        scriptGrid.addEventListener('click', async (event) => {
+            const downloadButton = event.target.closest('.btn-download');
+            if (!downloadButton) return;
+
+            event.preventDefault();
+
+            const url = downloadButton.href;
+            if (!url) return;
+
+            const originalText = downloadButton.textContent;
+            downloadButton.textContent = 'กำลังดาวน์โหลด...';
+            downloadButton.style.pointerEvents = 'none';
+
+            try {
+                const response = await fetch(url, { cache: 'no-store' });
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const blob = await response.blob();
+                const fileName = downloadButton.closest('.card')?.dataset.uploadedScript
+                    || new URL(url).pathname.split('/').pop()
+                    || 'download';
+
+                const blobUrl = URL.createObjectURL(blob);
+                const tempLink = document.createElement('a');
+                tempLink.href = blobUrl;
+                tempLink.download = decodeURIComponent(fileName);
+                document.body.appendChild(tempLink);
+                tempLink.click();
+                tempLink.remove();
+
+                setTimeout(() => URL.revokeObjectURL(blobUrl), 1000);
+            } catch (error) {
+                console.error('Download error:', error);
+
+                // ถ้า Browser/GitHub ไม่อนุญาตให้ Fetch ให้เปิด Raw URL เป็นทางสำรอง
+                window.open(url, '_blank', 'noopener,noreferrer');
+            } finally {
+                downloadButton.textContent = originalText;
+                downloadButton.style.pointerEvents = '';
             }
         });
 

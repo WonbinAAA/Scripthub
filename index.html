@@ -1099,6 +1099,10 @@
                 scriptFile.value = '';
                 scriptDescription.value = '';
 
+                // หลัง Upload สำเร็จ ให้ไปหน้า Scripts List ทันที
+                showPage('scripts');
+                window.scrollTo({ top: 0, behavior: 'smooth' });
+
                 // ไม่ reload หน้าเว็บทันที เพราะ Card ถูกเพิ่มใน DOM แล้ว
                 // GitHub Pages จะอัปเดตตามหลังโดยอัตโนมัติ
 

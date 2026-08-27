@@ -925,19 +925,28 @@
         }
 
         function restoreRecentlyUploadedCards() {
-            for (const script of getUploadedScripts()) {
+            const uploaded = getUploadedScripts();
+            const remaining = [];
+
+            for (const script of uploaded) {
                 if (!script?.fileName || !isRecentUploadedScript(script.fileName)) continue;
                 if (isDeletedScript(script.fileName)) continue;
 
+                const normalizedName = script.fileName.trim().toLowerCase();
                 const exists = Array.from(scriptGrid.querySelectorAll('.card')).some(card => {
                     const name = card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent.trim();
-                    return String(name || '').toLowerCase() === script.fileName.toLowerCase();
+                    return String(name || '').trim().toLowerCase() === normalizedName;
                 });
 
-                if (!exists) {
-                    addUploadedCardImmediately(script.fileName, script.description, script.fileSizeBytes, true);
-                }
+                // ถ้า index.html จาก GitHub Pages อัปเดตมาถึงแล้ว ไม่ต้องสร้าง Card ซ้ำ
+                if (exists) continue;
+
+                remaining.push(script);
+                addUploadedCardImmediately(script.fileName, script.description, script.fileSizeBytes, true);
             }
+
+            // เก็บเฉพาะรายการที่ยังต้องรอ GitHub Pages เท่านั้น
+            localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(remaining));
         }
 
         function isDeletedScript(fileName) {
@@ -1122,6 +1131,20 @@
                     newFileName: newFileName,
                     description: description
                 });
+
+                // อัปเดต localStorage ด้วย เพื่อไม่ให้ข้อมูลเก่าถูกนำกลับมาสร้าง Card หลัง Refresh
+                const oldUploaded = getUploadedScripts();
+                const hadPendingUpload = oldUploaded.some(item =>
+                    String(item?.fileName || '').trim().toLowerCase() === oldFileName.trim().toLowerCase()
+                );
+                forgetUploadedScript(oldFileName);
+                if (hadPendingUpload) {
+                    rememberUploadedScript({
+                        fileName: result.fileName,
+                        description: result.description,
+                        fileSizeBytes: Number(editingCard.dataset.fileSizeBytes || 0)
+                    });
+                }
 
                 const extension = newFileName.includes('.')
                     ? '.' + newFileName.split('.').pop().toUpperCase()
@@ -1363,6 +1386,7 @@
             card.id = `script-${cardNumber}`;
             card.dataset.name = `${fileName} ${description}`.toLowerCase();
             card.dataset.uploadedScript = fileName;
+            card.dataset.fileSizeBytes = String(fileSizeBytes || 0);
 
             card.innerHTML = `
                 <div>

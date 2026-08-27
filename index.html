@@ -982,8 +982,13 @@
 
         editCancelBtn.addEventListener('click', closeEditModal);
 
+        // หน้าต่างแก้ไขจะไม่ปิดเมื่อคลิกพื้นที่ด้านนอก
+        // ผู้ใช้ต้องกด "ยกเลิก" หรือ "บันทึก" เท่านั้นจึงจะปิดได้
         editModal.addEventListener('click', (event) => {
-            if (event.target === editModal) closeEditModal();
+            if (event.target === editModal) {
+                event.stopPropagation();
+                return;
+            }
         });
 
         editSaveBtn.addEventListener('click', async () => {
@@ -1204,22 +1209,28 @@
             const term = e.target.value.toLowerCase().trim();
             let count = 0;
 
-            // Search ทำงานจากทุกหน้า: ถ้ามีการค้นหา ให้แสดง Scripts List ทันที
+            // ค้นหาได้จากทุกหน้า และแสดง Scripts List เมื่อเริ่มค้นหา
             if (term !== '') {
                 showPage('scripts');
             }
 
-            for (let card of cards) {
-                const keywords = card.getAttribute('data-name').toLowerCase();
-                if (keywords.includes(term)) {
-                    card.style.display = "flex";
-                    count++;
-                } else {
-                    card.style.display = "none";
-                }
+            // อ่านข้อมูลของแต่ละ Card แยกกันโดยตรง
+            // ค้นทั้งชื่อไฟล์และคำอธิบาย และไม่รวม Card ที่ชื่อคล้ายกันเป็นรายการเดียว
+            for (const card of Array.from(scriptGrid.querySelectorAll('.card'))) {
+                const titleElement = card.querySelector('.file-title');
+                const descElement = card.querySelector('.file-desc');
+                const title = titleElement ? titleElement.textContent.toLowerCase().trim() : '';
+                const description = descElement ? descElement.textContent.toLowerCase().trim() : '';
+                const dataName = (card.getAttribute('data-name') || '').toLowerCase();
+                const keywords = `${title} ${description} ${dataName}`;
+
+                const matched = term === '' || keywords.includes(term);
+                card.style.display = matched ? 'flex' : 'none';
+
+                if (matched) count++;
             }
 
-            noResult.style.display = count === 0 ? "block" : "none";
+            noResult.style.display = count === 0 ? 'block' : 'none';
         });
     </script>
 

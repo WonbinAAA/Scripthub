@@ -419,8 +419,133 @@
             transition: background 0.2s;
         }
 
-        .btn-download:hover {
-            background-color: var(--accent-hover);
+        .card-actions {
+            display: flex;
+            gap: 8px;
+            align-items: center;
+        }
+
+        .btn-download {
+            flex: 1;
+        }
+
+        .card-icon-btn {
+            width: 36px;
+            height: 36px;
+            flex: 0 0 36px;
+            border: 1px solid var(--border-color);
+            background: #ffffff;
+            color: var(--text-secondary);
+            border-radius: 6px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            transition: background 0.2s, color 0.2s, border-color 0.2s;
+        }
+
+        .card-icon-btn:hover {
+            background: #f3f4f6;
+            color: var(--text-main);
+            border-color: #d1d5db;
+        }
+
+        .card-icon-btn.delete:hover {
+            color: #dc2626;
+            border-color: #fecaca;
+            background: #fef2f2;
+        }
+
+        .card-icon-btn svg {
+            width: 17px;
+            height: 17px;
+        }
+
+        .edit-modal {
+            position: fixed;
+            inset: 0;
+            background: rgba(0, 0, 0, 0.35);
+            display: none;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+            padding: 20px;
+        }
+
+        .edit-modal.show {
+            display: flex;
+        }
+
+        .edit-modal-panel {
+            width: min(520px, 100%);
+            background: #ffffff;
+            border-radius: 10px;
+            padding: 22px;
+            box-shadow: 0 15px 40px rgba(0, 0, 0, 0.15);
+        }
+
+        .edit-modal-title {
+            font-size: 17px;
+            font-weight: 600;
+            margin-bottom: 18px;
+        }
+
+        .edit-field {
+            margin-bottom: 14px;
+        }
+
+        .edit-field label {
+            display: block;
+            font-size: 12px;
+            color: var(--text-secondary);
+            margin-bottom: 6px;
+        }
+
+        .edit-field input {
+            width: 100%;
+            padding: 10px 11px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            font-family: 'Prompt', sans-serif;
+            font-size: 13px;
+            outline: none;
+        }
+
+        .edit-field input:focus {
+            border-color: var(--accent-color);
+        }
+
+        .edit-modal-actions {
+            display: flex;
+            justify-content: flex-end;
+            gap: 8px;
+            margin-top: 18px;
+        }
+
+        .modal-btn {
+            border: 0;
+            border-radius: 6px;
+            padding: 9px 16px;
+            font-family: 'Prompt', sans-serif;
+            cursor: pointer;
+            font-size: 13px;
+        }
+
+        .modal-btn.cancel {
+            background: #f3f4f6;
+            color: var(--text-main);
+        }
+
+        .modal-btn.save {
+            background: var(--accent-color);
+            color: #ffffff;
+        }
+
+        .edit-status {
+            font-size: 12px;
+            color: var(--text-secondary);
+            min-height: 18px;
+            margin-top: 8px;
         }
 
         .footer {
@@ -524,8 +649,16 @@
                         <div class="file-desc">สคริปต์สำหรับดึงข้อมูล Serial Number และชื่อคอมพิวเตอร์</div>
                         <span class="file-meta">.HTA • ~13.8 KB</span>
                     </div>
-                    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Show_SN_ComName.hta"
-                        class="btn-download">ดาวน์โหลด</a>
+                    <div class="card-actions">
+                        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Show_SN_ComName.hta"
+                            class="btn-download">ดาวน์โหลด</a>
+                        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">
+                            ✎
+                        </button>
+                        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">
+                            🗑
+                        </button>
+                    </div>
                 </div>
 
                 <!-- การ์ดที่ 2 -->
@@ -535,8 +668,12 @@
                         <div class="file-desc">ชุดแพ็กเกจสคริปต์เปลี่ยนชื่อเครื่องคอมพิวเตอร์พร้อมค่าตั้งค่า</div>
                         <span class="file-meta">.RAR • 3 ไฟล์ ~3.87 KB</span>
                     </div>
-                    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/RenamedPC.rar"
-                        class="btn-download">ดาวน์โหลด</a>
+                    <div class="card-actions">
+                        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/RenamedPC.rar"
+                            class="btn-download">ดาวน์โหลด</a>
+                        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+                        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+                    </div>
                 </div>
 
                 <!-- การ์ดที่ 3 -->
@@ -546,8 +683,12 @@
                     <div class="file-desc">บูท ไม่ต้องกดคีย์บอร์ด</div>
                     <span class="file-meta">.Bat ~4.74 KB</span>
                 </div>
-                <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/BootUSBNoF12.bat"
-                   class="btn-download">ดาวน์โหลด</a>
+                <div class="card-actions">
+                    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/BootUSBNoF12.bat"
+                       class="btn-download">ดาวน์โหลด</a>
+                    <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+                    <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+                </div>
                 </div>
 
 <!-- การ์ดที่ 4 -->
@@ -557,8 +698,12 @@
         <div class="file-desc">ลบประวัติ Chrome</div>
         <span class="file-meta">.CMD • 953 B</span>
     </div>
-    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanChromeSafe.cmd"
-        class="btn-download">ดาวน์โหลด</a>
+    <div class="card-actions">
+        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanChromeSafe.cmd"
+            class="btn-download">ดาวน์โหลด</a>
+        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+    </div>
 </div>
 
 <!-- การ์ดที่ 5 -->
@@ -568,8 +713,12 @@
         <div class="file-desc">ลบประวัติ Brave</div>
         <span class="file-meta">.CMD • 1.04 KB</span>
     </div>
-    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanBraveSafe.cmd"
-        class="btn-download">ดาวน์โหลด</a>
+    <div class="card-actions">
+        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanBraveSafe.cmd"
+            class="btn-download">ดาวน์โหลด</a>
+        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+    </div>
 </div>
 
 <!-- 💡 วิธีเพิ่มสคริปต์ใหม่: ก๊อปปี้บล็อก <div class="card">...</div> นี้ไปวางต่อข้างล่าง -->
@@ -578,6 +727,25 @@
                                
 <div id="noResult" class="no-result">ไม่พบสคริปต์ที่คุณค้นหา</div>
             </section>
+
+            <div class="edit-modal" id="editModal">
+                <div class="edit-modal-panel">
+                    <div class="edit-modal-title">แก้ไข Script</div>
+                    <div class="edit-field">
+                        <label for="editFileName">ชื่อไฟล์</label>
+                        <input type="text" id="editFileName">
+                    </div>
+                    <div class="edit-field">
+                        <label for="editDescription">คำอธิบาย</label>
+                        <input type="text" id="editDescription">
+                    </div>
+                    <div id="editStatus" class="edit-status"></div>
+                    <div class="edit-modal-actions">
+                        <button class="modal-btn cancel" type="button" id="editCancelBtn">ยกเลิก</button>
+                        <button class="modal-btn save" type="button" id="editSaveBtn">บันทึก</button>
+                    </div>
+                </div>
+            </div>
         </div>
 
         <footer class="footer">
@@ -674,6 +842,148 @@
         }
 
         generateSidebarMenu();
+
+        // ==============================
+        // แก้ไข / ลบ Script
+        // ==============================
+        const editModal = document.getElementById('editModal');
+        const editFileName = document.getElementById('editFileName');
+        const editDescription = document.getElementById('editDescription');
+        const editStatus = document.getElementById('editStatus');
+        const editCancelBtn = document.getElementById('editCancelBtn');
+        const editSaveBtn = document.getElementById('editSaveBtn');
+        let editingCard = null;
+
+        function openEditModal(card) {
+            const title = card.querySelector('.file-title');
+            const desc = card.querySelector('.file-desc');
+            const uploadedName = card.dataset.uploadedScript || (title ? title.textContent.trim() : '');
+
+            if (!uploadedName) {
+                alert('Card นี้ยังไม่ได้ผูกกับไฟล์ที่อยู่ใน /Scripts/');
+                return;
+            }
+
+            editingCard = card;
+            editFileName.value = uploadedName;
+            editDescription.value = desc ? desc.textContent.trim() : '';
+            editStatus.textContent = '';
+            editModal.classList.add('show');
+            editFileName.focus();
+        }
+
+        function closeEditModal() {
+            editingCard = null;
+            editModal.classList.remove('show');
+            editStatus.textContent = '';
+        }
+
+        async function sendAppsScript(payload) {
+            const response = await fetch(APPS_SCRIPT_URL, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'text/plain;charset=utf-8'
+                },
+                body: JSON.stringify(payload)
+            });
+
+            const result = await response.json();
+            if (!result.success) {
+                throw new Error(result.message || 'ดำเนินการไม่สำเร็จ');
+            }
+            return result;
+        }
+
+        scriptGrid.addEventListener('click', async (event) => {
+            const button = event.target.closest('.card-icon-btn');
+            if (!button) return;
+
+            const card = button.closest('.card');
+            if (!card) return;
+
+            if (button.dataset.action === 'edit') {
+                openEditModal(card);
+                return;
+            }
+
+            if (button.dataset.action === 'delete') {
+                const fileName = card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent.trim();
+                if (!fileName) return;
+
+                const confirmed = confirm(`ต้องการลบ "${fileName}" ใช่หรือไม่?\\n\\nไฟล์ใน GitHub และ Card จะถูกลบออก`);
+                if (!confirmed) return;
+
+                button.disabled = true;
+                try {
+                    await sendAppsScript({
+                        action: 'deleteScript',
+                        fileName: fileName
+                    });
+
+                    card.remove();
+                    generateSidebarMenu();
+                    uploadStatus.textContent = `✅ ลบ ${fileName} สำเร็จ`;
+                } catch (error) {
+                    button.disabled = false;
+                    alert('ลบไม่สำเร็จ: ' + error.message);
+                }
+            }
+        });
+
+        editCancelBtn.addEventListener('click', closeEditModal);
+
+        editModal.addEventListener('click', (event) => {
+            if (event.target === editModal) closeEditModal();
+        });
+
+        editSaveBtn.addEventListener('click', async () => {
+            if (!editingCard) return;
+
+            const oldFileName = editingCard.dataset.uploadedScript;
+            const newFileName = editFileName.value.trim();
+            const description = editDescription.value.trim();
+
+            if (!newFileName) {
+                editStatus.textContent = 'กรุณาระบุชื่อไฟล์';
+                editFileName.focus();
+                return;
+            }
+
+            editSaveBtn.disabled = true;
+            editCancelBtn.disabled = true;
+            editStatus.textContent = 'กำลังบันทึก...';
+
+            try {
+                const result = await sendAppsScript({
+                    action: 'editScript',
+                    oldFileName: oldFileName,
+                    newFileName: newFileName,
+                    description: description
+                });
+
+                const extension = newFileName.includes('.')
+                    ? '.' + newFileName.split('.').pop().toUpperCase()
+                    : 'FILE';
+
+                editingCard.dataset.uploadedScript = result.fileName;
+                editingCard.dataset.name = `${result.fileName} ${result.description || ''}`.toLowerCase();
+                editingCard.querySelector('.file-title').textContent = result.fileName;
+                editingCard.querySelector('.file-desc').textContent = result.description || 'ไม่มีคำอธิบาย';
+                editingCard.querySelector('.file-meta').textContent = `${extension} • ${editingCard.querySelector('.file-meta').textContent.split('•').slice(1).join('•').trim() || 'ขนาดไม่ระบุ'}`;
+
+                const download = editingCard.querySelector('.btn-download');
+                download.href = `https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/${result.fileName.split('/').map(encodeURIComponent).join('/')}`;
+
+                generateSidebarMenu();
+                closeEditModal();
+                uploadStatus.textContent = `✅ แก้ไข ${result.fileName} สำเร็จ`;
+            } catch (error) {
+                editStatus.textContent = '❌ ' + error.message;
+            } finally {
+                editSaveBtn.disabled = false;
+                editCancelBtn.disabled = false;
+            }
+        });
 
         const searchInput = document.getElementById('searchInput');
         const noResult = document.getElementById('noResult');
@@ -796,7 +1106,11 @@
                     <div class="file-desc"></div>
                     <span class="file-meta"></span>
                 </div>
-                <a class="btn-download" target="_blank" rel="noopener">ดาวน์โหลด</a>
+                <div class="card-actions">
+                    <a class="btn-download" target="_blank" rel="noopener">ดาวน์โหลด</a>
+                    <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+                    <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+                </div>
             `;
 
             card.querySelector('.file-title').textContent = fileName;

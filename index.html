@@ -917,6 +917,11 @@
                 const fileName = card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent.trim();
                 if (!fileName) return;
 
+                if (typeof Swal === 'undefined') {
+                    console.error('SweetAlert2 ยังไม่พร้อมใช้งาน');
+                    return;
+                }
+
                 const confirmResult = await Swal.fire({
                     icon: 'warning',
                     title: 'ยืนยันการลบ?',
@@ -925,7 +930,8 @@
                     confirmButtonText: 'ยืนยันการลบ',
                     cancelButtonText: 'ยกเลิก',
                     reverseButtons: true,
-                    focusCancel: true
+                    focusCancel: true,
+                    allowOutsideClick: false
                 });
                 if (!confirmResult.isConfirmed) return;
 

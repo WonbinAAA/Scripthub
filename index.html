@@ -865,6 +865,81 @@
             localStorage.setItem(DELETED_SCRIPTS_STORAGE_KEY, JSON.stringify(deleted));
         }
 
+        // ==============================
+        // จำ Script ที่เพิ่ง Upload สำเร็จไว้ใน Browser ชั่วคราว
+        // เพื่อไม่ให้ Card หายเมื่อ Refresh ก่อน GitHub Pages อัปเดต
+        // ==============================
+        const UPLOADED_SCRIPTS_STORAGE_KEY = 'aun_script_vault_uploaded_scripts';
+
+        function getUploadedScripts() {
+            try {
+                const value = JSON.parse(localStorage.getItem(UPLOADED_SCRIPTS_STORAGE_KEY) || '[]');
+                return Array.isArray(value) ? value : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function rememberUploadedScript(script) {
+            const fileName = String(script?.fileName || '').trim();
+            if (!fileName) return;
+
+            const uploaded = getUploadedScripts().filter(item =>
+                String(item?.fileName || '').trim().toLowerCase() !== fileName.toLowerCase()
+            );
+
+            uploaded.push({
+                fileName,
+                description: String(script?.description || ''),
+                fileSizeBytes: Number(script?.fileSizeBytes || 0),
+                savedAt: Date.now()
+            });
+
+            localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(uploaded));
+        }
+
+        function forgetUploadedScript(fileName) {
+            const normalized = String(fileName || '').trim().toLowerCase();
+            if (!normalized) return;
+
+            const uploaded = getUploadedScripts().filter(item =>
+                String(item?.fileName || '').trim().toLowerCase() !== normalized
+            );
+            localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(uploaded));
+        }
+
+        function isUploadedScript(fileName) {
+            const normalized = String(fileName || '').trim().toLowerCase();
+            return normalized !== '' && getUploadedScripts().some(item =>
+                String(item?.fileName || '').trim().toLowerCase() === normalized
+            );
+        }
+
+        function isRecentUploadedScript(fileName) {
+            const normalized = String(fileName || '').trim().toLowerCase();
+            const maxAge = 24 * 60 * 60 * 1000;
+            return getUploadedScripts().some(item =>
+                String(item?.fileName || '').trim().toLowerCase() === normalized &&
+                Number(item?.savedAt || 0) > Date.now() - maxAge
+            );
+        }
+
+        function restoreRecentlyUploadedCards() {
+            for (const script of getUploadedScripts()) {
+                if (!script?.fileName || !isRecentUploadedScript(script.fileName)) continue;
+                if (isDeletedScript(script.fileName)) continue;
+
+                const exists = Array.from(scriptGrid.querySelectorAll('.card')).some(card => {
+                    const name = card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent.trim();
+                    return String(name || '').toLowerCase() === script.fileName.toLowerCase();
+                });
+
+                if (!exists) {
+                    addUploadedCardImmediately(script.fileName, script.description, script.fileSizeBytes, true);
+                }
+            }
+        }
+
         function isDeletedScript(fileName) {
             const normalized = String(fileName || '').trim().toLowerCase();
             return normalized !== '' && getDeletedScripts().includes(normalized);
@@ -878,6 +953,7 @@
         }
 
         hideRememberedDeletedCards();
+        restoreRecentlyUploadedCards();
         generateSidebarMenu();
 
         // ==============================
@@ -980,6 +1056,7 @@
 
                     // จำสถานะการลบไว้ก่อน เพื่อป้องกัน Card เก่าจาก GitHub Pages/cache กลับมาเมื่อ Refresh
                     rememberDeletedScript(fileName);
+                    forgetUploadedScript(fileName);
 
                     // ลบ Card ออกจากหน้าเว็บ
                     card.remove();
@@ -1129,8 +1206,18 @@
                 }
 
                 // แสดง Card ใหม่ทันทีในหน้าเว็บปัจจุบัน ไม่ต้องรอ GitHub Pages
+                const uploadedFileName = result.fileName || file.name;
+
+                // จำข้อมูล Upload สำเร็จไว้ก่อน เพื่อให้ Refresh ได้ทันที
+                // แม้ GitHub Pages ยังประมวลผล index.html เวอร์ชันใหม่ไม่เสร็จ
+                rememberUploadedScript({
+                    fileName: uploadedFileName,
+                    description: description,
+                    fileSizeBytes: file.size
+                });
+
                 addUploadedCardImmediately(
-                    result.fileName || file.name,
+                    uploadedFileName,
                     description,
                     file.size
                 );
@@ -1155,7 +1242,7 @@
             }
         });
 
-        function addUploadedCardImmediately(fileName, description, fileSizeBytes) {
+        function addUploadedCardImmediately(fileName, description, fileSizeBytes, restoring = false) {
             // ถ้าไฟล์นี้เคยถูกลบไว้ ให้ยกเลิกสถานะ deleted เพราะกำลัง Upload กลับมาใหม่
             const normalizedFileName = String(fileName || '').trim().toLowerCase();
             const deletedScripts = getDeletedScripts().filter(name => name !== normalizedFileName);
@@ -1219,6 +1306,9 @@
 
             // สร้างเมนู Sidebar ใหม่เพื่อให้ Card ใหม่ค้นหา/เลือกจากเมนูได้ทันที
             generateSidebarMenu();
+
+            // ตอน Restore หลัง Refresh ไม่ต้องทำอะไรเพิ่ม
+            if (restoring) return;
         }
 
         function formatFileSize(bytes) {

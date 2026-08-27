@@ -841,6 +841,43 @@
             }
         }
 
+        // ==============================
+        // จำ Script ที่เพิ่งลบไว้ใน Browser ชั่วคราว
+        // เพื่อป้องกัน Card เก่าจาก GitHub Pages/cache กลับมาเมื่อ Refresh ทันที
+        // ==============================
+        const DELETED_SCRIPTS_STORAGE_KEY = 'aun_script_vault_deleted_scripts';
+
+        function getDeletedScripts() {
+            try {
+                const value = JSON.parse(localStorage.getItem(DELETED_SCRIPTS_STORAGE_KEY) || '[]');
+                return Array.isArray(value) ? value.map(v => String(v).toLowerCase()) : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function rememberDeletedScript(fileName) {
+            const normalized = String(fileName || '').trim().toLowerCase();
+            if (!normalized) return;
+
+            const deleted = getDeletedScripts();
+            if (!deleted.includes(normalized)) deleted.push(normalized);
+            localStorage.setItem(DELETED_SCRIPTS_STORAGE_KEY, JSON.stringify(deleted));
+        }
+
+        function isDeletedScript(fileName) {
+            const normalized = String(fileName || '').trim().toLowerCase();
+            return normalized !== '' && getDeletedScripts().includes(normalized);
+        }
+
+        function hideRememberedDeletedCards() {
+            for (const card of Array.from(scriptGrid.querySelectorAll('.card'))) {
+                const fileName = card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent.trim();
+                if (isDeletedScript(fileName)) card.remove();
+            }
+        }
+
+        hideRememberedDeletedCards();
         generateSidebarMenu();
 
         // ==============================
@@ -940,6 +977,9 @@
                         action: 'deleteScript',
                         fileName: fileName
                     });
+
+                    // จำสถานะการลบไว้ก่อน เพื่อป้องกัน Card เก่าจาก GitHub Pages/cache กลับมาเมื่อ Refresh
+                    rememberDeletedScript(fileName);
 
                     // ลบ Card ออกจากหน้าเว็บ
                     card.remove();
@@ -1116,6 +1156,11 @@
         });
 
         function addUploadedCardImmediately(fileName, description, fileSizeBytes) {
+            // ถ้าไฟล์นี้เคยถูกลบไว้ ให้ยกเลิกสถานะ deleted เพราะกำลัง Upload กลับมาใหม่
+            const normalizedFileName = String(fileName || '').trim().toLowerCase();
+            const deletedScripts = getDeletedScripts().filter(name => name !== normalizedFileName);
+            localStorage.setItem(DELETED_SCRIPTS_STORAGE_KEY, JSON.stringify(deletedScripts));
+
             // ป้องกัน Card ซ้ำในหน้าเว็บปัจจุบัน
             const existingCards = scriptGrid.getElementsByClassName('card');
             for (const card of existingCards) {

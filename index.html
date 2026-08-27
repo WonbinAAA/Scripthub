@@ -845,7 +845,23 @@
         // จำ Script ที่เพิ่งลบไว้ใน Browser ชั่วคราว
         // เพื่อป้องกัน Card เก่าจาก GitHub Pages/cache กลับมาเมื่อ Refresh ทันที
         // ==============================
-        const DELETED_SCRIPTS_STORAGE_KEY = 'aun_script_vault_deleted_scripts';
+        // เปลี่ยน Storage เป็นรุ่นใหม่ เพื่อไม่ให้ข้อมูล localStorage รุ่นเก่าของ Chrome
+        // มาปะปนกับข้อมูลปัจจุบันของ Script Hub
+        const STORAGE_VERSION = 'v3';
+        const DELETED_SCRIPTS_STORAGE_KEY = `aun_script_vault_deleted_scripts_${STORAGE_VERSION}`;
+        const UPLOADED_SCRIPTS_STORAGE_KEY = `aun_script_vault_uploaded_scripts_${STORAGE_VERSION}`;
+
+        // ล้าง Storage รุ่นเก่าที่เราเคยใช้ก่อนหน้านี้ครั้งเดียว
+        // ไม่แตะ localStorage ของเว็บไซต์อื่น
+        const OLD_STORAGE_KEYS = [
+            'aun_script_vault_deleted_scripts',
+            'aun_script_vault_uploaded_scripts',
+            'aun_script_vault_deleted_scripts_v2',
+            'aun_script_vault_uploaded_scripts_v2'
+        ];
+        OLD_STORAGE_KEYS.forEach(key => {
+            try { localStorage.removeItem(key); } catch (error) { /* ignore */ }
+        });
 
         function getDeletedScripts() {
             try {
@@ -869,8 +885,6 @@
         // จำ Script ที่เพิ่ง Upload สำเร็จไว้ใน Browser ชั่วคราว
         // เพื่อไม่ให้ Card หายเมื่อ Refresh ก่อน GitHub Pages อัปเดต
         // ==============================
-        const UPLOADED_SCRIPTS_STORAGE_KEY = 'aun_script_vault_uploaded_scripts';
-
         function getUploadedScripts() {
             try {
                 const value = JSON.parse(localStorage.getItem(UPLOADED_SCRIPTS_STORAGE_KEY) || '[]');

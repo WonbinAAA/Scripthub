@@ -705,16 +705,6 @@
         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
     </div>
-</div>\n<div class="file-desc">ลบประวัติเข้าเว็ป Brave</div>
-        <span class="file-meta">.CMD • 1.04 KB</span>
-    </div>
-    <div class="card-actions">
-        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanBraveSafe.cmd"
-            class="btn-download">ดาวน์โหลด</a>
-        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
-        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
-    </div>
-</div>
 
 <!-- 💡 วิธีเพิ่มสคริปต์ใหม่: ก๊อปปี้บล็อก <div class="card">...</div> นี้ไปวางต่อข้างล่าง -->
 
@@ -785,6 +775,21 @@
             showPage('upload');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
+
+        function removeSidebarMenuItem(fileName) {
+            const targetName = String(fileName || '').trim().toLowerCase();
+
+            for (const item of Array.from(sidebarMenu.querySelectorAll('.script-menu-item'))) {
+                const cardId = item.getAttribute('href');
+                const card = cardId ? document.querySelector(cardId) : null;
+                const title = card ? card.querySelector('.file-title') : null;
+                const itemName = title ? title.textContent.trim().toLowerCase() : '';
+
+                if (itemName === targetName || item.textContent.replace(/^📄\s*/, '').trim().toLowerCase() === targetName) {
+                    item.remove();
+                }
+            }
+        }
 
         function generateSidebarMenu() {
             const menuLabel = sidebarMenu.querySelector('.menu-label');
@@ -936,7 +941,13 @@
                         fileName: fileName
                     });
 
+                    // ลบ Card ออกจากหน้าเว็บ
                     card.remove();
+
+                    // ลบรายการ Script เดิมออกจาก Sidebar ทันที
+                    removeSidebarMenuItem(fileName);
+
+                    // สร้าง Sidebar ใหม่จาก Card ที่เหลือ เพื่อให้เมนูตรงกับข้อมูลจริง
                     generateSidebarMenu();
                     uploadStatus.textContent = '';
                     await Swal.fire({

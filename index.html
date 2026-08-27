@@ -1180,20 +1180,48 @@
             downloadButton.style.pointerEvents = 'none';
 
             try {
-                const response = await fetch(url, { cache: 'no-store' });
-                if (!response.ok) {
-                    throw new Error(`HTTP ${response.status}`);
+                // ดาวน์โหลดผ่าน Apps Script เพื่อให้ Browser ได้ไฟล์เป็น Blob
+                // ไม่เปิด GitHub Raw เป็นหน้าเว็บสำหรับ .BAT / .CMD / .HTA
+                if (typeof APPS_SCRIPT_URL === 'undefined' || !APPS_SCRIPT_URL) {
+                    throw new Error('ยังไม่ได้ตั้งค่า Apps Script URL');
                 }
 
-                const blob = await response.blob();
                 const fileName = downloadButton.closest('.card')?.dataset.uploadedScript
                     || new URL(url).pathname.split('/').pop()
                     || 'download';
 
+                const apiUrl = APPS_SCRIPT_URL +
+                    (APPS_SCRIPT_URL.includes('?') ? '&' : '?') +
+                    'action=downloadScript&fileName=' + encodeURIComponent(fileName) +
+                    '&t=' + Date.now();
+
+                const response = await fetch(apiUrl, {
+                    method: 'GET',
+                    cache: 'no-store',
+                    credentials: 'omit'
+                });
+
+                if (!response.ok) {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+
+                const result = await response.json();
+                if (!result.success || !result.contentBase64) {
+                    throw new Error(result.message || 'ไม่สามารถดาวน์โหลดไฟล์ได้');
+                }
+
+                const binaryString = atob(result.contentBase64);
+                const bytes = new Uint8Array(binaryString.length);
+                for (let i = 0; i < binaryString.length; i++) {
+                    bytes[i] = binaryString.charCodeAt(i);
+                }
+
+                const blob = new Blob([bytes], { type: 'application/octet-stream' });
+
                 const blobUrl = URL.createObjectURL(blob);
                 const tempLink = document.createElement('a');
                 tempLink.href = blobUrl;
-                tempLink.download = decodeURIComponent(fileName);
+                tempLink.download = fileName;
                 document.body.appendChild(tempLink);
                 tempLink.click();
                 tempLink.remove();
@@ -1202,8 +1230,15 @@
             } catch (error) {
                 console.error('Download error:', error);
 
-                // ถ้า Browser/GitHub ไม่อนุญาตให้ Fetch ให้เปิด Raw URL เป็นทางสำรอง
-                window.open(url, '_blank', 'noopener,noreferrer');
+                // ไม่เปิด GitHub Raw เป็น fallback เพราะจะทำให้ .BAT/.CMD/.HTA เด้งเป็นหน้าเว็บ
+                if (typeof Swal !== 'undefined') {
+                    await Swal.fire({
+                        icon: 'error',
+                        title: 'ดาวน์โหลดไม่สำเร็จ',
+                        text: error.message || 'ไม่สามารถดาวน์โหลดไฟล์ได้',
+                        confirmButtonText: 'ตกลง'
+                    });
+                }
             } finally {
                 downloadButton.textContent = originalText;
                 downloadButton.style.pointerEvents = '';

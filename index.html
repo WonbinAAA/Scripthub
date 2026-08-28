@@ -1468,6 +1468,15 @@
             websiteGrid.appendChild(card);
         }
 
+        function isValidWebsiteUrl(value) {
+            try {
+                const parsed = new URL(String(value || '').trim());
+                return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+            } catch (error) {
+                return false;
+            }
+        }
+
         websiteUploadBtn.addEventListener('click', async () => {
             const name = websiteName.value.trim();
             const url = websiteUrl.value.trim();
@@ -1477,8 +1486,8 @@
                 uploadStatus.textContent = 'กรุณาระบุชื่อเว็บไซต์';
                 return;
             }
-            if (!/^https?:\/\//i.test(url)) {
-                uploadStatus.textContent = 'กรุณาระบุลิงก์ที่ขึ้นต้นด้วย http:// หรือ https://';
+            if (!isValidWebsiteUrl(url)) {
+                uploadStatus.textContent = 'ลิงก์เว็บไซต์ไม่ถูกต้อง กรุณาใส่ URL เช่น https://www.google.com';
                 return;
             }
 

@@ -811,36 +811,7 @@
                 </div>
                 <div class="script-grid" id="websiteGrid">
                     <!-- WEBSITE_CARDS_START -->
-
-<!-- การ์ดเว็บไซต์ที่ 2 -->
-<div class="card" id="website-2" data-web-url="https://wonbinaaa.github.io/Printer/" data-name="ลง driver printer p1100 ไม่ได้ วิธีแก้ปัญหาการติดตั้ง printer บน windows 11">
-    <div>
-        <div class="file-title">ลง Driver Printer P1100 ไม่ได้</div>
-        <div class="file-desc">วิธีแก้ปัญหาการติดตั้ง Printer บน Windows 11</div>
-        <span class="file-meta">WEB</span>
-    </div>
-    <div class="card-actions">
-        <a href="https://wonbinaaa.github.io/Printer/" target="_blank" rel="noopener" class="btn-download">เปิดเว็บไซต์</a>
-        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
-        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
-    </div>
-</div>
-
-<!-- การ์ดเว็บไซต์ที่ 3 -->
-<div class="card" id="website-3" data-web-url="https://www.google.com/" data-name="google ทดสอบระบบ">
-    <div>
-        <div class="file-title">Google</div>
-        <div class="file-desc">ทดสอบระบบ</div>
-        <span class="file-meta">WEB</span>
-    </div>
-    <div class="card-actions">
-        <a href="https://www.google.com/" target="_blank" rel="noopener" class="btn-download">เปิดเว็บไซต์</a>
-        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
-        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
-    </div>
-</div>
-
-<!-- WEBSITE_CARDS_END -->
+                    <!-- WEBSITE_CARDS_END -->
                 </div>
                 <div id="websiteNoResult" class="no-result">ยังไม่มีเว็บไซต์</div>
             </section>
@@ -1318,6 +1289,18 @@
             websiteNoResult.style.display = cards.length ? 'none' : 'block';
         }
 
+        function removeWebsiteLocalState(url) {
+            const state = getWebsiteLocalState();
+            const normalized = String(url || '').trim().toLowerCase();
+            state.added = state.added.filter(item => String(item.url || '').trim().toLowerCase() !== normalized);
+            state.edited = state.edited.filter(item =>
+                String(item.oldUrl || '').trim().toLowerCase() !== normalized &&
+                String(item.url || '').trim().toLowerCase() !== normalized
+            );
+            state.deleted = state.deleted.filter(item => String(item).toLowerCase() !== normalized);
+            saveWebsiteLocalState(state);
+        }
+
         document.addEventListener('click', async (event) => {
             const button = event.target.closest('.card-icon-btn');
             if (!button) return;
@@ -1381,14 +1364,17 @@
                     // สร้าง Sidebar ใหม่จาก Card ที่เหลือ เพื่อให้เมนูตรงกับข้อมูลจริง
                     generateSidebarMenu();
                     uploadStatus.textContent = '';
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'ลบสำเร็จ',
-                        html: `<strong>${escapeHtmlForAlert(displayName)}</strong><br>ถูกลบออกจากระบบเรียบร้อยแล้ว`,
-                        confirmButtonText: 'ตกลง',
-                        timer: 1800,
-                        timerProgressBar: true
-                    });
+                    if (typeof Swal !== 'undefined') {
+                        await Swal.fire({
+                            icon: 'success',
+                            title: isWebsite ? 'ลบเว็บไซต์สำเร็จ' : 'ลบสำเร็จ',
+                            html: `<strong>${escapeHtmlForAlert(displayName)}</strong><br>ถูกลบออกจากระบบเรียบร้อยแล้ว`,
+                            confirmButtonText: 'ตกลง',
+                            timer: 1800,
+                            timerProgressBar: true,
+                            allowOutsideClick: false
+                        });
+                    }
                 } catch (error) {
                     button.disabled = false;
                     await Swal.fire({
@@ -1673,6 +1659,11 @@
             websiteUploadBtn.textContent = 'กำลังเพิ่ม...';
             uploadStatus.textContent = 'กำลังบันทึกเว็บไซต์...';
 
+            // แสดง Card + บันทึก Local ก่อนทันที ไม่ต้องรอ GitHub Pages
+            addWebsiteCardImmediately(name, url, description, true);
+            showPage('websites');
+            refreshWebsiteCards();
+
             try {
                 const result = await sendAppsScript({
                     action: 'addWebsiteCard',
@@ -1680,15 +1671,45 @@
                     url: url,
                     description: description
                 });
-                addWebsiteCardImmediately(result.name, result.url, result.description, true);
+
+                // ใช้ข้อมูลที่ GitHub ยืนยันแล้วอัปเดต Card เดิม
+                const localCard = Array.from(websiteGrid.querySelectorAll('.card')).find(card =>
+                    String(card.dataset.webUrl || '').trim().toLowerCase() === url.toLowerCase()
+                );
+                if (localCard) {
+                    localCard.dataset.webUrl = result.url;
+                    localCard.dataset.name = `${result.name} ${result.description || ''}`.toLowerCase();
+                    localCard.querySelector('.file-title').textContent = result.name;
+                    localCard.querySelector('.file-desc').textContent = result.description || 'เว็บไซต์';
+                    localCard.querySelector('.btn-download').href = result.url;
+                }
+
+                rememberAddedWebsite(result);
                 uploadStatus.textContent = '✅ เพิ่มเว็บไซต์สำเร็จ';
                 websiteName.value = '';
                 websiteUrl.value = '';
                 websiteDescription.value = '';
-                showPage('websites');
+                generateSidebarMenu();
+
+                if (typeof Swal !== 'undefined') {
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'เพิ่มเว็บไซต์สำเร็จ',
+                        text: 'เว็บไซต์ถูกเพิ่มและแสดงบนหน้าเว็บทันที',
+                        confirmButtonText: 'ตกลง',
+                        timer: 1600,
+                        timerProgressBar: true
+                    });
+                }
+            } catch (error) {
+                // ถ้า GitHub ไม่สำเร็จ ให้คืน Local state และลบ Card ที่สร้างไว้แบบ Optimistic
+                removeWebsiteLocalState(url);
+                const failedCard = Array.from(websiteGrid.querySelectorAll('.card')).find(card =>
+                    String(card.dataset.webUrl || '').trim().toLowerCase() === url.toLowerCase()
+                );
+                if (failedCard) failedCard.remove();
                 refreshWebsiteCards();
                 generateSidebarMenu();
-            } catch (error) {
                 uploadStatus.textContent = '❌ เพิ่มเว็บไซต์ไม่สำเร็จ: ' + error.message;
             } finally {
                 websiteUploadBtn.disabled = false;

@@ -784,10 +784,10 @@
 </div>
 
 <!-- การ์ดที่ 6 -->
-<div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-name="ลงprinter_hp_p1100.rar แก้ปัญหา printer ไม่ได้">
+<div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-name="ลงprinter_hp_p1100.rar แก้ปัญหาลง printer ไม่ได้">
     <div>
         <div class="file-title">ลงPrinter_HP_P1100.rar</div>
-        <div class="file-desc">แก้ปัญหา printer ไม่ได้</div>
+        <div class="file-desc">แก้ปัญหาลง printer ไม่ได้</div>
         <span class="file-meta">.RAR • 905.33 KB</span>
     </div>
     <div class="card-actions">
@@ -811,22 +811,7 @@
                 </div>
                 <div class="script-grid" id="websiteGrid">
                     <!-- WEBSITE_CARDS_START -->
-
-<!-- การ์ดเว็บไซต์ที่ 1 -->
-<div class="card" id="website-1" data-web-url="https://wonbinaaa.github.io/Printer/" data-name="google ทดสอบระบบ">
-    <div>
-        <div class="file-title">Google</div>
-        <div class="file-desc">ทดสอบระบบ</div>
-        <span class="file-meta">WEB</span>
-    </div>
-    <div class="card-actions">
-        <a href="https://wonbinaaa.github.io/Printer/" target="_blank" rel="noopener" class="btn-download">เปิดเว็บไซต์</a>
-        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
-        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
-    </div>
-</div>
-
-<!-- WEBSITE_CARDS_END -->
+                    <!-- WEBSITE_CARDS_END -->
                 </div>
                 <div id="websiteNoResult" class="no-result">ยังไม่มีเว็บไซต์</div>
             </section>
@@ -1438,23 +1423,78 @@
                         editStatus.textContent = '❌ ลิงก์เว็บไซต์ไม่ถูกต้อง';
                         return;
                     }
-                    const oldWebsiteUrl = editingCard.dataset.webUrl;
-                    const result = await sendAppsScript({
-                        action: 'editWebsiteCard',
-                        oldUrl: oldWebsiteUrl,
-                        url: newWebsiteUrl,
+                    const card = editingCard;
+                    const oldWebsiteUrl = card.dataset.webUrl;
+                    const previousName = card.querySelector('.file-title')?.textContent || '';
+                    const previousDescription = card.querySelector('.file-desc')?.textContent || '';
+                    const previousUrl = card.dataset.webUrl || '';
+                    const previousLocalState = getWebsiteLocalState();
+
+                    // อัปเดตหน้าเว็บและ Local ทันที ไม่ต้องรอ GitHub Pages
+                    card.dataset.webUrl = newWebsiteUrl;
+                    card.dataset.name = `${newFileName} ${description}`.toLowerCase();
+                    card.querySelector('.file-title').textContent = newFileName;
+                    card.querySelector('.file-desc').textContent = description || 'เว็บไซต์';
+                    card.querySelector('.btn-download').href = newWebsiteUrl;
+                    rememberEditedWebsite(oldWebsiteUrl, {
                         name: newFileName,
+                        url: newWebsiteUrl,
                         description: description
                     });
-                    editingCard.dataset.webUrl = result.url;
-                    rememberEditedWebsite(oldWebsiteUrl, result);
-                    editingCard.dataset.name = `${result.name} ${result.description || ''}`.toLowerCase();
-                    editingCard.querySelector('.file-title').textContent = result.name;
-                    editingCard.querySelector('.file-desc').textContent = result.description || 'เว็บไซต์';
-                    editingCard.querySelector('.btn-download').href = result.url;
                     refreshWebsiteCards();
                     generateSidebarMenu();
                     closeEditModal();
+
+                    // ส่งไป GitHub ต่อแบบเบื้องหลัง เพื่อไม่ให้หน้าต่างแก้ไขค้าง
+                    try {
+                        const result = await sendAppsScript({
+                            action: 'editWebsiteCard',
+                            oldUrl: oldWebsiteUrl,
+                            url: newWebsiteUrl,
+                            name: newFileName,
+                            description: description
+                        });
+
+                        card.dataset.webUrl = result.url;
+                        card.dataset.name = `${result.name} ${result.description || ''}`.toLowerCase();
+                        card.querySelector('.file-title').textContent = result.name;
+                        card.querySelector('.file-desc').textContent = result.description || 'เว็บไซต์';
+                        card.querySelector('.btn-download').href = result.url;
+                        rememberEditedWebsite(oldWebsiteUrl, result);
+                        refreshWebsiteCards();
+                        generateSidebarMenu();
+                        uploadStatus.textContent = `✅ แก้ไข ${result.name} สำเร็จ`;
+
+                        if (typeof Swal !== 'undefined') {
+                            await Swal.fire({
+                                icon: 'success',
+                                title: 'แก้ไขเว็บไซต์สำเร็จ',
+                                text: 'ข้อมูลถูกบันทึกเรียบร้อยแล้ว',
+                                confirmButtonText: 'ตกลง',
+                                timer: 1500,
+                                timerProgressBar: true
+                            });
+                        }
+                    } catch (error) {
+                        // GitHub ล้มเหลว: คืน Card และ Local state เดิม
+                        card.dataset.webUrl = previousUrl;
+                        card.dataset.name = `${previousName} ${previousDescription}`.toLowerCase();
+                        card.querySelector('.file-title').textContent = previousName;
+                        card.querySelector('.file-desc').textContent = previousDescription;
+                        card.querySelector('.btn-download').href = previousUrl;
+                        saveWebsiteLocalState(previousLocalState);
+                        refreshWebsiteCards();
+                        generateSidebarMenu();
+
+                        if (typeof Swal !== 'undefined') {
+                            await Swal.fire({
+                                icon: 'error',
+                                title: 'แก้ไขเว็บไซต์ไม่สำเร็จ',
+                                text: error.message || 'ไม่สามารถบันทึกข้อมูลได้',
+                                confirmButtonText: 'ตกลง'
+                            });
+                        }
+                    }
                     return;
                 }
 

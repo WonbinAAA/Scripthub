@@ -93,43 +93,6 @@
             flex: 1;
         }
 
-        .menu-section-toggle {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            width: 100%;
-            border: 0;
-            background: transparent;
-            padding: 9px 12px;
-            margin: 4px 0;
-            color: var(--text-secondary);
-            font-family: 'Prompt', sans-serif;
-            font-size: 11px;
-            font-weight: 600;
-            letter-spacing: 0.5px;
-            text-transform: uppercase;
-            cursor: pointer;
-            border-radius: 6px;
-        }
-
-        .menu-section-toggle:hover {
-            background: #f3f4f6;
-            color: var(--text-main);
-        }
-
-        .menu-section-toggle .arrow {
-            font-size: 12px;
-            transition: transform 0.2s ease;
-        }
-
-        .menu-section-toggle.collapsed .arrow {
-            transform: rotate(-90deg);
-        }
-
-        .menu-section-items.collapsed {
-            display: none;
-        }
-
         .menu-label {
             font-size: 11px;
             color: var(--text-secondary);
@@ -158,6 +121,45 @@
             background-color: #eff6ff;
             color: var(--accent-color);
             font-weight: 500;
+        }
+
+        .menu-section-toggle {
+            width: 100%;
+            border: 0;
+            background: transparent;
+            color: var(--text-main);
+            text-align: left;
+            cursor: pointer;
+            font-family: 'Prompt', sans-serif;
+        }
+
+        .menu-section-toggle .menu-arrow {
+            float: right;
+            transition: transform 0.2s ease;
+        }
+
+        .menu-section-toggle.collapsed .menu-arrow {
+            transform: rotate(-90deg);
+        }
+
+        .menu-section-items {
+            overflow: hidden;
+            transition: max-height 0.25s ease;
+        }
+
+        .menu-section-items.collapsed {
+            max-height: 0 !important;
+        }
+
+        .website-menu-list {
+            padding-left: 8px;
+        }
+
+        .website-menu-empty {
+            display: block;
+            padding: 6px 12px 8px 20px;
+            color: var(--text-secondary);
+            font-size: 12px;
         }
 
         /* Main Content พื้นที่แสดงผลหลัก */
@@ -624,14 +626,8 @@
         <div class="sidebar-menu" id="sidebarMenu">
             <div class="menu-label">Menu</div>
             <a href="#upload" class="menu-item" id="uploadMenuItem">⬆️ Upload Script</a>
-            <button type="button" class="menu-section-toggle" id="scriptsSectionToggle" aria-expanded="true">
-                <span>Scripts List</span><span class="arrow">⌄</span>
-            </button>
-            <div class="menu-section-items" id="scriptsSectionItems"></div>
-            <button type="button" class="menu-section-toggle" id="websitesSectionToggle" aria-expanded="true">
-                <span>🌐 เว็บไซต์</span><span class="arrow">⌄</span>
-            </button>
-            <div class="menu-section-items" id="websitesSectionItems"></div>
+            <div class="menu-label" style="margin-top: 18px;">Scripts List</div>
+            <a href="websites.html" class="menu-item" id="websitesMenuItem">🌐 เว็บไซต์</a>
         </div>
     </aside>
 
@@ -671,24 +667,6 @@
                                 <input type="text" id="scriptDescription" placeholder="เช่น สคริปต์เปลี่ยนชื่อเครื่อง">
                             </div>
                             <button class="btn-upload" id="uploadBtn" type="button">Upload</button>
-                        </div>
-                        <div style="margin-top:18px;padding-top:18px;border-top:1px solid var(--border-color);">
-                            <div class="upload-title" style="font-size:14px;">🌐 เพิ่มเว็บไซต์</div>
-                            <div class="upload-row">
-                                <div class="upload-field">
-                                    <label for="websiteName">ชื่อเว็บไซต์</label>
-                                    <input type="text" id="websiteName" placeholder="เช่น Google">
-                                </div>
-                                <div class="upload-field">
-                                    <label for="websiteUrl">ลิงก์เว็บไซต์</label>
-                                    <input type="url" id="websiteUrl" placeholder="https://example.com">
-                                </div>
-                                <button class="btn-upload" id="websiteUploadBtn" type="button">เพิ่มเว็บไซต์</button>
-                            </div>
-                            <div class="upload-field" style="margin-top:10px;">
-                                <label for="websiteDescription">คำอธิบาย</label>
-                                <input type="text" id="websiteDescription" placeholder="คำอธิบายเว็บไซต์">
-                            </div>
                         </div>
                         <div id="uploadStatus" class="upload-status"></div>
                     </div>
@@ -804,43 +782,12 @@
 <div id="noResult" class="no-result">ไม่พบสคริปต์ที่คุณค้นหา</div>
             </section>
 
-            <!-- Website Page -->
-            <section class="page-section" id="websitesPage">
-                <div class="page-header">
-                    <h1 class="page-title">เว็บไซต์</h1>
-                </div>
-                <div class="script-grid" id="websiteGrid">
-                    <!-- WEBSITE_CARDS_START -->
-
-<!-- การ์ดเว็บไซต์ที่ 1 -->
-<div class="card" id="website-1" data-web-url="https://wonbinaaa.github.io/Printer/" data-name="google ทดสอบระบบ">
-    <div>
-        <div class="file-title">Google</div>
-        <div class="file-desc">ทดสอบระบบ</div>
-        <span class="file-meta">WEB</span>
-    </div>
-    <div class="card-actions">
-        <a href="https://wonbinaaa.github.io/Printer/" target="_blank" rel="noopener" class="btn-download">เปิดเว็บไซต์</a>
-        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
-        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
-    </div>
-</div>
-
-<!-- WEBSITE_CARDS_END -->
-                </div>
-                <div id="websiteNoResult" class="no-result">ยังไม่มีเว็บไซต์</div>
-            </section>
-
             <div class="edit-modal" id="editModal">
                 <div class="edit-modal-panel">
-                    <div class="edit-modal-title" id="editModalTitle">แก้ไข Script</div>
+                    <div class="edit-modal-title">แก้ไข Script</div>
                     <div class="edit-field">
-                        <label for="editFileName" id="editFileNameLabel">ชื่อไฟล์</label>
+                        <label for="editFileName">ชื่อไฟล์</label>
                         <input type="text" id="editFileName">
-                    </div>
-                    <div class="edit-field" id="editWebsiteUrlField" style="display:none;">
-                        <label for="editWebsiteUrl">ลิงก์เว็บไซต์</label>
-                        <input type="url" id="editWebsiteUrl" placeholder="https://example.com">
                     </div>
                     <div class="edit-field">
                         <label for="editDescription">คำอธิบาย</label>
@@ -879,41 +826,18 @@
         const sidebarMenu = document.getElementById('sidebarMenu');
         const cards = scriptGrid.getElementsByClassName('card');
         const uploadMenuItem = document.getElementById('uploadMenuItem');
-        const scriptsSectionItems = document.getElementById('scriptsSectionItems');
-        const scriptsSectionToggle = document.getElementById('scriptsSectionToggle');
-        const websitesSectionItems = document.getElementById('websitesSectionItems');
-        const websitesSectionToggle = document.getElementById('websitesSectionToggle');
         const uploadPage = document.getElementById('uploadPage');
         const scriptsPage = document.getElementById('scriptsPage');
-        const websitesPage = document.getElementById('websitesPage');
-        const websiteGrid = document.getElementById('websiteGrid');
-        const websiteNoResult = document.getElementById('websiteNoResult');
-
-        scriptsSectionToggle.addEventListener('click', () => {
-            const collapsed = scriptsSectionItems.classList.toggle('collapsed');
-            scriptsSectionToggle.classList.toggle('collapsed', collapsed);
-            scriptsSectionToggle.setAttribute('aria-expanded', String(!collapsed));
-        });
-
-        websitesSectionToggle.addEventListener('click', () => {
-            const collapsed = websitesSectionItems.classList.toggle('collapsed');
-            websitesSectionToggle.classList.toggle('collapsed', collapsed);
-            websitesSectionToggle.setAttribute('aria-expanded', String(!collapsed));
-        });
+        const WEBSITE_PAGE_URL = 'websites.html';
+        const WEBSITE_SIDEBAR_STORAGE_KEY = 'aun_script_vault_websites_v1';
 
         function showPage(page) {
             uploadPage.classList.toggle('active', page === 'upload');
             scriptsPage.classList.toggle('active', page === 'scripts');
-            websitesPage.classList.toggle('active', page === 'websites');
             uploadMenuItem.classList.toggle('active', page === 'upload');
-            scriptsSectionToggle.classList.toggle('active', page === 'scripts');
-            websitesSectionToggle.classList.toggle('active', page === 'websites');
 
             for (const item of sidebarMenu.querySelectorAll('.script-menu-item')) {
                 item.classList.toggle('active', page === 'scripts' && item.dataset.page === 'scripts');
-            }
-            for (const item of sidebarMenu.querySelectorAll('.website-menu-item')) {
-                item.classList.toggle('active', page === 'websites' && item.dataset.page === 'websites');
             }
         }
 
@@ -922,12 +846,6 @@
             showPage('upload');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
-
-        function openWebsitesPage() {
-            showPage('websites');
-            refreshWebsiteCards();
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        }
 
         function removeSidebarMenuItem(fileName) {
             const targetName = String(fileName || '').trim().toLowerCase();
@@ -944,18 +862,100 @@
             }
         }
 
+        function getSidebarWebsites() {
+            try {
+                const data = JSON.parse(localStorage.getItem(WEBSITE_SIDEBAR_STORAGE_KEY) || '[]');
+                return Array.isArray(data) ? data : [];
+            } catch (error) {
+                return [];
+            }
+        }
+
+        function saveSidebarWebsites(websites) {
+            try {
+                localStorage.setItem(WEBSITE_SIDEBAR_STORAGE_KEY, JSON.stringify(websites));
+            } catch (error) { /* ignore */ }
+        }
+
+        async function loadWebsiteSidebarFromPage() {
+            try {
+                const response = await fetch(`${WEBSITE_PAGE_URL}?sidebar=${Date.now()}`, {
+                    cache: 'no-store'
+                });
+                if (!response.ok) return;
+
+                const html = await response.text();
+                const doc = new DOMParser().parseFromString(html, 'text/html');
+                const websiteCards = Array.from(doc.querySelectorAll('#websiteGrid .card'));
+                const websites = websiteCards.map(card => ({
+                    id: card.id,
+                    name: card.querySelector('.file-title')?.textContent.trim() || 'เว็บไซต์',
+                    url: card.dataset.websiteUrl || card.querySelector('.btn-website')?.href || ''
+                })).filter(item => item.id && item.name);
+
+                if (websites.length) saveSidebarWebsites(websites);
+                renderWebsiteSidebar(websites.length ? websites : getSidebarWebsites());
+            } catch (error) {
+                renderWebsiteSidebar(getSidebarWebsites());
+            }
+        }
+
+        function renderWebsiteSidebar(websites) {
+            const old = document.getElementById('websiteMenuSection');
+            if (old) old.remove();
+
+            const section = document.createElement('div');
+            section.id = 'websiteMenuSection';
+            section.className = 'menu-section';
+            section.style.marginTop = '18px';
+
+            const toggle = document.createElement('button');
+            toggle.type = 'button';
+            toggle.className = 'menu-item menu-section-toggle';
+            toggle.innerHTML = '<span>🌐 เว็บไซต์</span><span class="menu-arrow">▼</span>';
+
+            const items = document.createElement('div');
+            items.className = 'menu-section-items website-menu-list';
+            items.style.maxHeight = `${Math.max(50, websites.length * 42 + 20)}px`;
+
+            toggle.addEventListener('click', () => {
+                const collapsed = items.classList.toggle('collapsed');
+                toggle.classList.toggle('collapsed', collapsed);
+            });
+
+            if (!websites.length) {
+                const empty = document.createElement('span');
+                empty.className = 'website-menu-empty';
+                empty.textContent = 'ยังไม่มีเว็บไซต์';
+                items.appendChild(empty);
+            } else {
+                websites.forEach(website => {
+                    const link = document.createElement('a');
+                    link.className = 'menu-item website-menu-item';
+                    link.href = `${WEBSITE_PAGE_URL}#${encodeURIComponent(website.id)}`;
+                    link.textContent = `🌐 ${website.name}`;
+                    link.title = website.url || website.name;
+                    items.appendChild(link);
+                });
+            }
+
+            section.appendChild(toggle);
+            section.appendChild(items);
+            sidebarMenu.appendChild(section);
+        }
+
         function generateSidebarMenu() {
             const menuLabel = sidebarMenu.querySelector('.menu-label');
             const uploadItem = document.getElementById('uploadMenuItem');
             sidebarMenu.innerHTML = '';
             sidebarMenu.appendChild(menuLabel);
             sidebarMenu.appendChild(uploadItem);
-            sidebarMenu.appendChild(scriptsSectionToggle);
-            scriptsSectionItems.innerHTML = '';
-            sidebarMenu.appendChild(scriptsSectionItems);
-            sidebarMenu.appendChild(websitesSectionToggle);
-            websitesSectionItems.innerHTML = '';
-            sidebarMenu.appendChild(websitesSectionItems);
+
+            const scriptsLabel = document.createElement('div');
+            scriptsLabel.className = 'menu-label';
+            scriptsLabel.style.marginTop = '18px';
+            scriptsLabel.textContent = 'Scripts List';
+            sidebarMenu.appendChild(scriptsLabel);
 
             for (let i = 0; i < cards.length; i++) {
                 const card = cards[i];
@@ -990,28 +990,10 @@
                     }, 1500);
                 });
 
-                scriptsSectionItems.appendChild(menuLink);
+                sidebarMenu.appendChild(menuLink);
             }
 
-            // สร้างเมนูเว็บไซต์จาก Website Card ที่มีอยู่จริงในหน้าเว็บ
-            for (const card of Array.from(websiteGrid.querySelectorAll('.card'))) {
-                const title = card.querySelector('.file-title')?.textContent.trim() || 'เว็บไซต์';
-                const menuLink = document.createElement('a');
-                menuLink.href = '#';
-                menuLink.className = 'menu-item website-menu-item';
-                menuLink.dataset.page = 'websites';
-                menuLink.innerText = `🌐 ${title}`;
-                menuLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    openWebsitesPage();
-                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-                    for (const c of websiteGrid.querySelectorAll('.card')) c.classList.remove('highlight');
-                    card.classList.add('highlight');
-                    setTimeout(() => card.classList.remove('highlight'), 1500);
-                    if (window.innerWidth <= 768) sidebar.classList.remove('mobile-show');
-                });
-                websitesSectionItems.appendChild(menuLink);
-            }
+            renderWebsiteSidebar(getSidebarWebsites());
         }
 
         // ==============================
@@ -1150,18 +1132,14 @@
 
         hideRememberedDeletedCards();
         restoreRecentlyUploadedCards();
-        applyWebsiteLocalState();
         generateSidebarMenu();
-        refreshWebsiteCards();
+        loadWebsiteSidebarFromPage();
 
         // ==============================
         // แก้ไข / ลบ Script
         // ==============================
         const editModal = document.getElementById('editModal');
         const editFileName = document.getElementById('editFileName');
-        const editFileNameLabel = document.getElementById('editFileNameLabel');
-        const editWebsiteUrlField = document.getElementById('editWebsiteUrlField');
-        const editWebsiteUrl = document.getElementById('editWebsiteUrl');
         const editDescription = document.getElementById('editDescription');
         const editStatus = document.getElementById('editStatus');
         const editCancelBtn = document.getElementById('editCancelBtn');
@@ -1173,18 +1151,13 @@
             const desc = card.querySelector('.file-desc');
             const uploadedName = card.dataset.uploadedScript || (title ? title.textContent.trim() : '');
 
-            const websiteUrl = card.dataset.webUrl || '';
-            if (!uploadedName && !websiteUrl) {
-                alert('Card นี้ไม่สามารถแก้ไขได้');
+            if (!uploadedName) {
+                alert('Card นี้ยังไม่ได้ผูกกับไฟล์ที่อยู่ใน /Scripts/');
                 return;
             }
 
             editingCard = card;
-            document.getElementById('editModalTitle').textContent = websiteUrl ? 'แก้ไขเว็บไซต์' : 'แก้ไข Script';
-            editFileNameLabel.textContent = websiteUrl ? 'ชื่อเว็บไซต์' : 'ชื่อไฟล์';
-            editFileName.value = websiteUrl ? (title ? title.textContent.trim() : '') : uploadedName;
-            editWebsiteUrlField.style.display = websiteUrl ? 'block' : 'none';
-            editWebsiteUrl.value = websiteUrl;
+            editFileName.value = uploadedName;
             editDescription.value = desc ? desc.textContent.trim() : '';
             editStatus.textContent = '';
             editModal.classList.add('show');
@@ -1219,104 +1192,7 @@
             return result;
         }
 
-        const WEBSITE_LOCAL_STORAGE_KEY = 'aun_script_vault_websites_v1';
-
-        function getWebsiteLocalState() {
-            try {
-                const value = JSON.parse(localStorage.getItem(WEBSITE_LOCAL_STORAGE_KEY) || '{}');
-                return {
-                    added: Array.isArray(value.added) ? value.added : [],
-                    edited: Array.isArray(value.edited) ? value.edited : [],
-                    deleted: Array.isArray(value.deleted) ? value.deleted : []
-                };
-            } catch (error) {
-                return { added: [], edited: [], deleted: [] };
-            }
-        }
-
-        function saveWebsiteLocalState(state) {
-            localStorage.setItem(WEBSITE_LOCAL_STORAGE_KEY, JSON.stringify(state));
-        }
-
-        function rememberAddedWebsite(website) {
-            const state = getWebsiteLocalState();
-            const normalized = String(website.url || '').trim().toLowerCase();
-            state.added = state.added.filter(item => String(item.url || '').trim().toLowerCase() !== normalized);
-            state.added.push({ name: website.name, url: website.url, description: website.description || '', savedAt: Date.now() });
-            state.deleted = state.deleted.filter(url => String(url).toLowerCase() !== normalized);
-            saveWebsiteLocalState(state);
-        }
-
-        function rememberEditedWebsite(oldUrl, website) {
-            const state = getWebsiteLocalState();
-            const oldNormalized = String(oldUrl || '').trim().toLowerCase();
-            state.edited = state.edited.filter(item => String(item.oldUrl || '').trim().toLowerCase() !== oldNormalized);
-            state.edited.push({ oldUrl: oldUrl, name: website.name, url: website.url, description: website.description || '', savedAt: Date.now() });
-            state.added = state.added.filter(item => String(item.url || '').trim().toLowerCase() !== oldNormalized);
-            state.deleted = state.deleted.filter(url => String(url).toLowerCase() !== oldNormalized && String(url).toLowerCase() !== String(website.url).toLowerCase());
-            saveWebsiteLocalState(state);
-        }
-
-        function rememberDeletedWebsite(url) {
-            const state = getWebsiteLocalState();
-            const normalized = String(url || '').trim().toLowerCase();
-            state.deleted.push(normalized);
-            state.deleted = [...new Set(state.deleted)];
-            state.added = state.added.filter(item => String(item.url || '').trim().toLowerCase() !== normalized);
-            state.edited = state.edited.filter(item => String(item.oldUrl || '').trim().toLowerCase() !== normalized && String(item.url || '').trim().toLowerCase() !== normalized);
-            saveWebsiteLocalState(state);
-        }
-
-        function applyWebsiteLocalState() {
-            const state = getWebsiteLocalState();
-            const deleted = new Set(state.deleted.map(url => String(url).toLowerCase()));
-
-            for (const card of Array.from(websiteGrid.querySelectorAll('.card'))) {
-                const cardUrl = String(card.dataset.webUrl || '').trim().toLowerCase();
-                if (deleted.has(cardUrl)) {
-                    card.remove();
-                    continue;
-                }
-
-                const edit = state.edited.find(item => String(item.oldUrl || '').trim().toLowerCase() === cardUrl);
-                if (edit) {
-                    const editedUrl = String(edit.url || '').trim().toLowerCase();
-                    if (deleted.has(editedUrl)) {
-                        card.remove();
-                        continue;
-                    }
-                    card.dataset.webUrl = edit.url;
-                    card.dataset.name = `${edit.name} ${edit.description || ''}`.toLowerCase();
-                    card.querySelector('.file-title').textContent = edit.name;
-                    card.querySelector('.file-desc').textContent = edit.description || 'เว็บไซต์';
-                    card.querySelector('.btn-download').href = edit.url;
-                }
-            }
-
-            for (const website of state.added) {
-                if (!website.url || deleted.has(String(website.url).toLowerCase())) continue;
-                addWebsiteCardImmediately(website.name, website.url, website.description, false);
-            }
-        }
-
-        function refreshWebsiteCards() {
-            const cards = Array.from(document.querySelectorAll('#websiteGrid .card'));
-            websiteNoResult.style.display = cards.length ? 'none' : 'block';
-        }
-
-        function removeWebsiteLocalState(url) {
-            const state = getWebsiteLocalState();
-            const normalized = String(url || '').trim().toLowerCase();
-            state.added = state.added.filter(item => String(item.url || '').trim().toLowerCase() !== normalized);
-            state.edited = state.edited.filter(item =>
-                String(item.oldUrl || '').trim().toLowerCase() !== normalized &&
-                String(item.url || '').trim().toLowerCase() !== normalized
-            );
-            state.deleted = state.deleted.filter(item => String(item).toLowerCase() !== normalized);
-            saveWebsiteLocalState(state);
-        }
-
-        document.addEventListener('click', async (event) => {
+        scriptGrid.addEventListener('click', async (event) => {
             const button = event.target.closest('.card-icon-btn');
             if (!button) return;
 
@@ -1329,10 +1205,8 @@
             }
 
             if (button.dataset.action === 'delete') {
-                const isWebsite = !!card.dataset.webUrl;
                 const fileName = card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent.trim();
-                const displayName = fileName || card.querySelector('.file-title')?.textContent.trim() || 'เว็บไซต์';
-                if (!fileName && !isWebsite) return;
+                if (!fileName) return;
 
                 if (typeof Swal === 'undefined') {
                     console.error('SweetAlert2 ยังไม่พร้อมใช้งาน');
@@ -1342,7 +1216,7 @@
                 const confirmResult = await Swal.fire({
                     icon: 'warning',
                     title: 'ยืนยันการลบ?',
-                    html: `คุณต้องการลบ <strong>${escapeHtmlForAlert(displayName)}</strong> ใช่หรือไม่?`,
+                    html: `คุณต้องการลบ <strong>${escapeHtmlForAlert(fileName)}</strong> ใช่หรือไม่?`,
                     showCancelButton: true,
                     confirmButtonText: 'ยืนยันการลบ',
                     cancelButtonText: 'ยกเลิก',
@@ -1354,42 +1228,32 @@
 
                 button.disabled = true;
                 try {
-                    await sendAppsScript(isWebsite
-                        ? { action: 'deleteWebsiteCard', url: card.dataset.webUrl }
-                        : { action: 'deleteScript', fileName: fileName }
-                    );
+                    await sendAppsScript({
+                        action: 'deleteScript',
+                        fileName: fileName
+                    });
 
                     // จำสถานะการลบไว้ก่อน เพื่อป้องกัน Card เก่าจาก GitHub Pages/cache กลับมาเมื่อ Refresh
-                    if (!isWebsite) {
-                        rememberDeletedScript(fileName);
-                        forgetUploadedScript(fileName);
-                    }
+                    rememberDeletedScript(fileName);
+                    forgetUploadedScript(fileName);
 
                     // ลบ Card ออกจากหน้าเว็บ
                     card.remove();
 
-                    if (isWebsite) {
-                        rememberDeletedWebsite(card.dataset.webUrl);
-                        refreshWebsiteCards();
-                    } else {
-                        // ลบรายการ Script เดิมออกจาก Sidebar ทันที
-                        removeSidebarMenuItem(fileName);
-                    }
+                    // ลบรายการ Script เดิมออกจาก Sidebar ทันที
+                    removeSidebarMenuItem(fileName);
 
                     // สร้าง Sidebar ใหม่จาก Card ที่เหลือ เพื่อให้เมนูตรงกับข้อมูลจริง
                     generateSidebarMenu();
                     uploadStatus.textContent = '';
-                    if (typeof Swal !== 'undefined') {
-                        await Swal.fire({
-                            icon: 'success',
-                            title: isWebsite ? 'ลบเว็บไซต์สำเร็จ' : 'ลบสำเร็จ',
-                            html: `<strong>${escapeHtmlForAlert(displayName)}</strong><br>ถูกลบออกจากระบบเรียบร้อยแล้ว`,
-                            confirmButtonText: 'ตกลง',
-                            timer: 1800,
-                            timerProgressBar: true,
-                            allowOutsideClick: false
-                        });
-                    }
+                    await Swal.fire({
+                        icon: 'success',
+                        title: 'ลบสำเร็จ',
+                        html: `<strong>${escapeHtmlForAlert(fileName)}</strong><br>ถูกลบออกจากระบบเรียบร้อยแล้ว`,
+                        confirmButtonText: 'ตกลง',
+                        timer: 1800,
+                        timerProgressBar: true
+                    });
                 } catch (error) {
                     button.disabled = false;
                     await Swal.fire({
@@ -1416,13 +1280,12 @@
         editSaveBtn.addEventListener('click', async () => {
             if (!editingCard) return;
 
-            const isWebsite = !!editingCard.dataset.webUrl;
-            const oldFileName = editingCard.dataset.uploadedScript || '';
+            const oldFileName = editingCard.dataset.uploadedScript;
             const newFileName = editFileName.value.trim();
             const description = editDescription.value.trim();
 
             if (!newFileName) {
-                editStatus.textContent = isWebsite ? 'กรุณาระบุชื่อเว็บไซต์' : 'กรุณาระบุชื่อไฟล์';
+                editStatus.textContent = 'กรุณาระบุชื่อไฟล์';
                 editFileName.focus();
                 return;
             }
@@ -1432,87 +1295,6 @@
             editStatus.textContent = 'กำลังบันทึก...';
 
             try {
-                    if (isWebsite) {
-                    const newWebsiteUrl = normalizeWebsiteUrl(editWebsiteUrl.value);
-                    if (!isValidWebsiteUrl(newWebsiteUrl)) {
-                        editStatus.textContent = '❌ ลิงก์เว็บไซต์ไม่ถูกต้อง';
-                        return;
-                    }
-                    const card = editingCard;
-                    const oldWebsiteUrl = card.dataset.webUrl;
-                    const previousName = card.querySelector('.file-title')?.textContent || '';
-                    const previousDescription = card.querySelector('.file-desc')?.textContent || '';
-                    const previousUrl = card.dataset.webUrl || '';
-                    const previousLocalState = getWebsiteLocalState();
-
-                    // อัปเดตหน้าเว็บและ Local ทันที ไม่ต้องรอ GitHub Pages
-                    card.dataset.webUrl = newWebsiteUrl;
-                    card.dataset.name = `${newFileName} ${description}`.toLowerCase();
-                    card.querySelector('.file-title').textContent = newFileName;
-                    card.querySelector('.file-desc').textContent = description || 'เว็บไซต์';
-                    card.querySelector('.btn-download').href = newWebsiteUrl;
-                    rememberEditedWebsite(oldWebsiteUrl, {
-                        name: newFileName,
-                        url: newWebsiteUrl,
-                        description: description
-                    });
-                    refreshWebsiteCards();
-                    generateSidebarMenu();
-                    closeEditModal();
-
-                    // ส่งไป GitHub ต่อแบบเบื้องหลัง เพื่อไม่ให้หน้าต่างแก้ไขค้าง
-                    try {
-                        const result = await sendAppsScript({
-                            action: 'editWebsiteCard',
-                            oldUrl: oldWebsiteUrl,
-                            url: newWebsiteUrl,
-                            name: newFileName,
-                            description: description
-                        });
-
-                        card.dataset.webUrl = result.url;
-                        card.dataset.name = `${result.name} ${result.description || ''}`.toLowerCase();
-                        card.querySelector('.file-title').textContent = result.name;
-                        card.querySelector('.file-desc').textContent = result.description || 'เว็บไซต์';
-                        card.querySelector('.btn-download').href = result.url;
-                        rememberEditedWebsite(oldWebsiteUrl, result);
-                        refreshWebsiteCards();
-                        generateSidebarMenu();
-                        uploadStatus.textContent = `✅ แก้ไข ${result.name} สำเร็จ`;
-
-                        if (typeof Swal !== 'undefined') {
-                            await Swal.fire({
-                                icon: 'success',
-                                title: 'แก้ไขเว็บไซต์สำเร็จ',
-                                text: 'ข้อมูลถูกบันทึกเรียบร้อยแล้ว',
-                                confirmButtonText: 'ตกลง',
-                                timer: 1500,
-                                timerProgressBar: true
-                            });
-                        }
-                    } catch (error) {
-                        // GitHub ล้มเหลว: คืน Card และ Local state เดิม
-                        card.dataset.webUrl = previousUrl;
-                        card.dataset.name = `${previousName} ${previousDescription}`.toLowerCase();
-                        card.querySelector('.file-title').textContent = previousName;
-                        card.querySelector('.file-desc').textContent = previousDescription;
-                        card.querySelector('.btn-download').href = previousUrl;
-                        saveWebsiteLocalState(previousLocalState);
-                        refreshWebsiteCards();
-                        generateSidebarMenu();
-
-                        if (typeof Swal !== 'undefined') {
-                            await Swal.fire({
-                                icon: 'error',
-                                title: 'แก้ไขเว็บไซต์ไม่สำเร็จ',
-                                text: error.message || 'ไม่สามารถบันทึกข้อมูลได้',
-                                confirmButtonText: 'ตกลง'
-                            });
-                        }
-                    }
-                    return;
-                }
-
                 const result = await sendAppsScript({
                     action: 'editScript',
                     oldFileName: oldFileName,
@@ -1654,138 +1436,6 @@
         const scriptFile = document.getElementById('scriptFile');
         const scriptDescription = document.getElementById('scriptDescription');
         const uploadStatus = document.getElementById('uploadStatus');
-        const websiteName = document.getElementById('websiteName');
-        const websiteUrl = document.getElementById('websiteUrl');
-        const websiteDescription = document.getElementById('websiteDescription');
-        const websiteUploadBtn = document.getElementById('websiteUploadBtn');
-
-        function addWebsiteCardImmediately(name, url, description, saveLocal = false) {
-            const existing = Array.from(websiteGrid.querySelectorAll('.card')).some(card =>
-                String(card.dataset.webUrl || '').trim().toLowerCase() === String(url || '').trim().toLowerCase()
-            );
-            if (existing) return;
-
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.id = `website-${Date.now()}`;
-            card.dataset.webUrl = url;
-            card.dataset.name = `${name} ${description || ''}`.toLowerCase();
-            card.innerHTML = `
-                <div>
-                    <div class="file-title"></div>
-                    <div class="file-desc"></div>
-                    <span class="file-meta">WEB</span>
-                </div>
-                <div class="card-actions">
-                    <a href="" target="_blank" rel="noopener" class="btn-download">เปิดเว็บไซต์</a>
-                    <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
-                    <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
-                </div>`;
-            card.querySelector('.file-title').textContent = name;
-            card.querySelector('.file-desc').textContent = description || 'เว็บไซต์';
-            card.querySelector('.btn-download').href = url;
-            websiteGrid.appendChild(card);
-            if (saveLocal) {
-                rememberAddedWebsite({ name, url, description });
-            }
-            refreshWebsiteCards();
-            generateSidebarMenu();
-        }
-
-        function normalizeWebsiteUrl(value) {
-            let url = String(value || '').trim();
-            if (!url) return '';
-            if (!/^https?:\/\//i.test(url)) {
-                url = 'https://' + url;
-            }
-            return url;
-        }
-
-        function isValidWebsiteUrl(value) {
-            const url = normalizeWebsiteUrl(value);
-            try {
-                const parsed = new URL(url);
-                return (parsed.protocol === 'http:' || parsed.protocol === 'https:') && !!parsed.hostname;
-            } catch (error) {
-                return false;
-            }
-        }
-
-        websiteUploadBtn.addEventListener('click', async () => {
-            const name = websiteName.value.trim();
-            const url = normalizeWebsiteUrl(websiteUrl.value);
-            const description = websiteDescription.value.trim();
-
-            if (!name) {
-                uploadStatus.textContent = 'กรุณาระบุชื่อเว็บไซต์';
-                return;
-            }
-            if (!isValidWebsiteUrl(url)) {
-                uploadStatus.textContent = 'ลิงก์เว็บไซต์ไม่ถูกต้อง กรุณาใส่ URL เช่น https://www.google.com';
-                return;
-            }
-
-            websiteUploadBtn.disabled = true;
-            websiteUploadBtn.textContent = 'กำลังเพิ่ม...';
-            uploadStatus.textContent = 'กำลังบันทึกเว็บไซต์...';
-
-            // แสดง Card + บันทึก Local ก่อนทันที ไม่ต้องรอ GitHub Pages
-            addWebsiteCardImmediately(name, url, description, true);
-            showPage('websites');
-            refreshWebsiteCards();
-
-            try {
-                const result = await sendAppsScript({
-                    action: 'addWebsiteCard',
-                    name: name,
-                    url: url,
-                    description: description
-                });
-
-                // ใช้ข้อมูลที่ GitHub ยืนยันแล้วอัปเดต Card เดิม
-                const localCard = Array.from(websiteGrid.querySelectorAll('.card')).find(card =>
-                    String(card.dataset.webUrl || '').trim().toLowerCase() === url.toLowerCase()
-                );
-                if (localCard) {
-                    localCard.dataset.webUrl = result.url;
-                    localCard.dataset.name = `${result.name} ${result.description || ''}`.toLowerCase();
-                    localCard.querySelector('.file-title').textContent = result.name;
-                    localCard.querySelector('.file-desc').textContent = result.description || 'เว็บไซต์';
-                    localCard.querySelector('.btn-download').href = result.url;
-                }
-
-                rememberAddedWebsite(result);
-                uploadStatus.textContent = '✅ เพิ่มเว็บไซต์สำเร็จ';
-                websiteName.value = '';
-                websiteUrl.value = '';
-                websiteDescription.value = '';
-                generateSidebarMenu();
-
-                if (typeof Swal !== 'undefined') {
-                    await Swal.fire({
-                        icon: 'success',
-                        title: 'เพิ่มเว็บไซต์สำเร็จ',
-                        text: 'เว็บไซต์ถูกเพิ่มและแสดงบนหน้าเว็บทันที',
-                        confirmButtonText: 'ตกลง',
-                        timer: 1600,
-                        timerProgressBar: true
-                    });
-                }
-            } catch (error) {
-                // ถ้า GitHub ไม่สำเร็จ ให้คืน Local state และลบ Card ที่สร้างไว้แบบ Optimistic
-                removeWebsiteLocalState(url);
-                const failedCard = Array.from(websiteGrid.querySelectorAll('.card')).find(card =>
-                    String(card.dataset.webUrl || '').trim().toLowerCase() === url.toLowerCase()
-                );
-                if (failedCard) failedCard.remove();
-                refreshWebsiteCards();
-                generateSidebarMenu();
-                uploadStatus.textContent = '❌ เพิ่มเว็บไซต์ไม่สำเร็จ: ' + error.message;
-            } finally {
-                websiteUploadBtn.disabled = false;
-                websiteUploadBtn.textContent = 'เพิ่มเว็บไซต์';
-            }
-        });
 
         uploadBtn.addEventListener('click', async () => {
             const file = scriptFile.files[0];
@@ -1965,12 +1615,13 @@
             const term = e.target.value.toLowerCase().trim();
             let count = 0;
 
-            // ค้นหาแยกกันระหว่าง Script และ Website เพื่อไม่ให้ Card คนละประเภทปะปนกัน
-            if (term === '') {
+            // ค้นหาได้จากทุกหน้า และแสดง Scripts List เมื่อเริ่มค้นหา
+            if (term !== '') {
                 showPage('scripts');
             }
 
-            // ค้นหา Script
+            // อ่านข้อมูลของแต่ละ Card แยกกันโดยตรง
+            // ค้นทั้งชื่อไฟล์และคำอธิบาย และไม่รวม Card ที่ชื่อคล้ายกันเป็นรายการเดียว
             for (const card of Array.from(scriptGrid.querySelectorAll('.card'))) {
                 const titleElement = card.querySelector('.file-title');
                 const descElement = card.querySelector('.file-desc');
@@ -1985,28 +1636,7 @@
                 if (matched) count++;
             }
 
-            // ค้นหา Website
-            let websiteCount = 0;
-            for (const card of Array.from(websiteGrid.querySelectorAll('.card'))) {
-                const title = card.querySelector('.file-title')?.textContent.toLowerCase().trim() || '';
-                const description = card.querySelector('.file-desc')?.textContent.toLowerCase().trim() || '';
-                const dataName = (card.getAttribute('data-name') || '').toLowerCase();
-                const keywords = `${title} ${description} ${dataName}`;
-                const matched = term === '' || keywords.includes(term);
-                card.style.display = matched ? 'flex' : 'none';
-                if (matched) websiteCount++;
-            }
-
-            if (term !== '') {
-                if (websiteCount > 0 && count === 0) {
-                    showPage('websites');
-                } else {
-                    showPage('scripts');
-                }
-            }
-
             noResult.style.display = count === 0 ? 'block' : 'none';
-            websiteNoResult.style.display = websiteCount === 0 ? 'block' : 'none';
         });
     </script>
 

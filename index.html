@@ -627,7 +627,18 @@
             <div class="menu-label">Menu</div>
             <a href="#upload" class="menu-item" id="uploadMenuItem">⬆️ Upload Script</a>
             <div class="menu-label" style="margin-top: 18px;">Scripts List</div>
-            <a href="websites.html" class="menu-item" id="websitesMenuItem">🌐 เว็บไซต์</a>
+            <div class="menu-section" id="scriptMenuSection">
+                <button class="menu-item menu-section-toggle" id="scriptListToggle" type="button">
+                    <span>📜 Script List</span><span class="menu-arrow">▼</span>
+                </button>
+                <div class="menu-section-items" id="scriptMenuItems"></div>
+            </div>
+            <div class="menu-section" id="websiteMenuSection" style="margin-top: 18px;">
+                <button class="menu-item menu-section-toggle" id="websiteToggle" type="button">
+                    <span>🌐 เว็บไซต์</span><span class="menu-arrow">▼</span>
+                </button>
+                <div class="menu-section-items website-menu-list" id="websiteMenuItems"></div>
+            </div>
         </div>
     </aside>
 
@@ -825,6 +836,10 @@
         const scriptGrid = document.getElementById('scriptGrid');
         const sidebarMenu = document.getElementById('sidebarMenu');
         const cards = scriptGrid.getElementsByClassName('card');
+        const scriptMenuItems = document.getElementById('scriptMenuItems');
+        const websiteMenuItems = document.getElementById('websiteMenuItems');
+        const scriptListToggle = document.getElementById('scriptListToggle');
+        const websiteToggle = document.getElementById('websiteToggle');
         const uploadMenuItem = document.getElementById('uploadMenuItem');
         const uploadPage = document.getElementById('uploadPage');
         const scriptsPage = document.getElementById('scriptsPage');
@@ -901,61 +916,29 @@
         }
 
         function renderWebsiteSidebar(websites) {
-            const old = document.getElementById('websiteMenuSection');
-            if (old) old.remove();
-
-            const section = document.createElement('div');
-            section.id = 'websiteMenuSection';
-            section.className = 'menu-section';
-            section.style.marginTop = '18px';
-
-            const toggle = document.createElement('button');
-            toggle.type = 'button';
-            toggle.className = 'menu-item menu-section-toggle';
-            toggle.innerHTML = '<span>🌐 เว็บไซต์</span><span class="menu-arrow">▼</span>';
-
-            const items = document.createElement('div');
-            items.className = 'menu-section-items website-menu-list';
-            items.style.maxHeight = `${Math.max(50, websites.length * 42 + 20)}px`;
-
-            toggle.addEventListener('click', () => {
-                const collapsed = items.classList.toggle('collapsed');
-                toggle.classList.toggle('collapsed', collapsed);
-            });
+            websiteMenuItems.innerHTML = '';
+            websiteMenuItems.style.maxHeight = `${Math.max(50, websites.length * 42 + 20)}px`;
 
             if (!websites.length) {
                 const empty = document.createElement('span');
                 empty.className = 'website-menu-empty';
                 empty.textContent = 'ยังไม่มีเว็บไซต์';
-                items.appendChild(empty);
-            } else {
-                websites.forEach(website => {
-                    const link = document.createElement('a');
-                    link.className = 'menu-item website-menu-item';
-                    link.href = `${WEBSITE_PAGE_URL}#${encodeURIComponent(website.id)}`;
-                    link.textContent = `🌐 ${website.name}`;
-                    link.title = website.url || website.name;
-                    items.appendChild(link);
-                });
+                websiteMenuItems.appendChild(empty);
+                return;
             }
 
-            section.appendChild(toggle);
-            section.appendChild(items);
-            sidebarMenu.appendChild(section);
+            websites.forEach(website => {
+                const link = document.createElement('a');
+                link.className = 'menu-item website-menu-item';
+                link.href = `${WEBSITE_PAGE_URL}#${encodeURIComponent(website.id)}`;
+                link.textContent = `🌐 ${website.name}`;
+                link.title = website.url || website.name;
+                websiteMenuItems.appendChild(link);
+            });
         }
 
         function generateSidebarMenu() {
-            const menuLabel = sidebarMenu.querySelector('.menu-label');
-            const uploadItem = document.getElementById('uploadMenuItem');
-            sidebarMenu.innerHTML = '';
-            sidebarMenu.appendChild(menuLabel);
-            sidebarMenu.appendChild(uploadItem);
-
-            const scriptsLabel = document.createElement('div');
-            scriptsLabel.className = 'menu-label';
-            scriptsLabel.style.marginTop = '18px';
-            scriptsLabel.textContent = 'Scripts List';
-            sidebarMenu.appendChild(scriptsLabel);
+            scriptMenuItems.innerHTML = '';
 
             for (let i = 0; i < cards.length; i++) {
                 const card = cards[i];
@@ -974,27 +957,30 @@
                     showPage('scripts');
                     card.scrollIntoView({ behavior: 'smooth', block: 'center' });
 
-                    for (let c of cards) c.classList.remove('highlight');
-                    for (let m of sidebarMenu.getElementsByClassName('menu-item')) m.classList.remove('active');
-
+                    for (const c of cards) c.classList.remove('highlight');
+                    for (const m of sidebarMenu.getElementsByClassName('menu-item')) m.classList.remove('active');
                     card.classList.add('highlight');
                     menuLink.classList.add('active');
 
-                    // ถ้ากดบนมือถือ พอลือกเสร็จให้ปิดเมนูด้านซ้ายอัตโนมัติด้วย จะได้ดูเว็บสะดวก
-                    if (window.innerWidth <= 768) {
-                        sidebar.classList.remove('mobile-show');
-                    }
-
-                    setTimeout(() => {
-                        card.classList.remove('highlight');
-                    }, 1500);
+                    if (window.innerWidth <= 768) sidebar.classList.remove('mobile-show');
+                    setTimeout(() => card.classList.remove('highlight'), 1500);
                 });
 
-                sidebarMenu.appendChild(menuLink);
+                scriptMenuItems.appendChild(menuLink);
             }
 
             renderWebsiteSidebar(getSidebarWebsites());
         }
+
+        scriptListToggle.addEventListener('click', () => {
+            const collapsed = scriptMenuItems.classList.toggle('collapsed');
+            scriptListToggle.classList.toggle('collapsed', collapsed);
+        });
+
+        websiteToggle.addEventListener('click', () => {
+            const collapsed = websiteMenuItems.classList.toggle('collapsed');
+            websiteToggle.classList.toggle('collapsed', collapsed);
+        });
 
         // ==============================
         // จำ Script ที่เพิ่งลบไว้ใน Browser ชั่วคราว

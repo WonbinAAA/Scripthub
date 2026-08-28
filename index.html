@@ -74,13 +74,12 @@
         .sidebar-avatar {
             width: 40px;
             height: 40px;
+            min-width: 40px;
+            min-height: 40px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: 600;
+            object-fit: cover;
+            display: block;
+            flex-shrink: 0;
         }
 
         .sidebar-title {
@@ -574,7 +573,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="header-left">
-                <div class="sidebar-avatar">A</div>
+                <img src="Images/AAA.jpg" alt="Aun's Scripts" class="sidebar-avatar">
                 <div class="sidebar-title">Aun's Scripts</div>
             </div>
             <button class="toggle-btn sidebar-toggle-btn" title="ยุบ/ขยายเมนู">

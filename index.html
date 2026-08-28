@@ -608,8 +608,8 @@
 
 <body>
 
-    <!-- Sidebar เมนูด้านซ้าย -->
-    <aside class="sidebar" id="sidebar">
+    <!-- Sidebar ถูกสร้างโดย sidebar.js -->
+    <!--
         <div class="sidebar-header">
             <div class="header-left">
                 <img src="Images/AAA.jpg" alt="Aun's Scripts" class="sidebar-avatar">
@@ -643,6 +643,7 @@
         </div>
     </aside>
 
+    -->
     <!-- Main Content -->
     <div class="main-container">
         <header class="topbar">
@@ -819,33 +820,20 @@
         </footer>
     </div>
 
+    <script src="sidebar.js"></script>
     <script>
+        // Sidebar ถูกควบคุมโดย sidebar.js
         const sidebar = document.getElementById('sidebar');
-        const toggleBtns = document.querySelectorAll('.toggle-btn');
-
-        // แก้ไขตรงปุ่มกดสลับเมนู ให้รองรับทั้งคอมและมือถือ
-        toggleBtns.forEach(btn => {
-            btn.addEventListener('click', () => {
-                if (window.innerWidth <= 768) {
-                    sidebar.classList.toggle('mobile-show');
-                } else {
-                    sidebar.classList.toggle('collapsed');
-                }
-            });
-        });
 
         const scriptGrid = document.getElementById('scriptGrid');
         const sidebarMenu = document.getElementById('sidebarMenu');
         const cards = scriptGrid.getElementsByClassName('card');
         const scriptMenuItems = document.getElementById('scriptMenuItems');
         const websiteMenuItems = document.getElementById('websiteMenuItems');
-        const scriptListToggle = document.getElementById('scriptListToggle');
-        const websiteToggle = document.getElementById('websiteToggle');
         const uploadMenuItem = document.getElementById('uploadMenuItem');
         const uploadPage = document.getElementById('uploadPage');
         const scriptsPage = document.getElementById('scriptsPage');
         const WEBSITE_PAGE_URL = 'websites.html';
-        const WEBSITE_SIDEBAR_STORAGE_KEY = 'aun_script_vault_websites_v1';
 
         function showPage(page) {
             uploadPage.classList.toggle('active', page === 'upload');
@@ -878,110 +866,11 @@
             }
         }
 
-        function getSidebarWebsites() {
-            try {
-                const data = JSON.parse(localStorage.getItem(WEBSITE_SIDEBAR_STORAGE_KEY) || '[]');
-                return Array.isArray(data) ? data : [];
-            } catch (error) {
-                return [];
-            }
-        }
-
-        function saveSidebarWebsites(websites) {
-            try {
-                localStorage.setItem(WEBSITE_SIDEBAR_STORAGE_KEY, JSON.stringify(websites));
-            } catch (error) { /* ignore */ }
-        }
-
-        async function loadWebsiteSidebarFromPage() {
-            try {
-                const response = await fetch(`${WEBSITE_PAGE_URL}?sidebar=${Date.now()}`, {
-                    cache: 'no-store'
-                });
-                if (!response.ok) return;
-
-                const html = await response.text();
-                const doc = new DOMParser().parseFromString(html, 'text/html');
-                const websiteCards = Array.from(doc.querySelectorAll('#websiteGrid .card'));
-                const websites = websiteCards.map(card => ({
-                    id: card.id,
-                    name: card.querySelector('.file-title')?.textContent.trim() || 'เว็บไซต์',
-                    url: card.dataset.websiteUrl || card.querySelector('.btn-website')?.href || ''
-                })).filter(item => item.id && item.name);
-
-                if (websites.length) saveSidebarWebsites(websites);
-                renderWebsiteSidebar(websites.length ? websites : getSidebarWebsites());
-            } catch (error) {
-                renderWebsiteSidebar(getSidebarWebsites());
-            }
-        }
-
-        function renderWebsiteSidebar(websites) {
-            websiteMenuItems.innerHTML = '';
-            websiteMenuItems.style.maxHeight = `${Math.max(50, websites.length * 42 + 20)}px`;
-
-            if (!websites.length) {
-                const empty = document.createElement('span');
-                empty.className = 'website-menu-empty';
-                empty.textContent = 'ยังไม่มีเว็บไซต์';
-                websiteMenuItems.appendChild(empty);
-                return;
-            }
-
-            websites.forEach(website => {
-                const link = document.createElement('a');
-                link.className = 'menu-item website-menu-item';
-                link.href = `${WEBSITE_PAGE_URL}#${encodeURIComponent(website.id)}`;
-                link.textContent = `🌐 ${website.name}`;
-                link.title = website.url || website.name;
-                websiteMenuItems.appendChild(link);
-            });
-        }
-
         function generateSidebarMenu() {
-            scriptMenuItems.innerHTML = '';
-
-            for (let i = 0; i < cards.length; i++) {
-                const card = cards[i];
-                const title = card.querySelector('.file-title').innerText;
-                const cardId = card.id || `script-${i + 1}`;
-                card.id = cardId;
-
-                const menuLink = document.createElement('a');
-                menuLink.href = `#${cardId}`;
-                menuLink.className = 'menu-item script-menu-item';
-                menuLink.dataset.page = 'scripts';
-                menuLink.innerText = `📄 ${title}`;
-
-                menuLink.addEventListener('click', (e) => {
-                    e.preventDefault();
-                    showPage('scripts');
-                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
-
-                    for (const c of cards) c.classList.remove('highlight');
-                    for (const m of sidebarMenu.getElementsByClassName('menu-item')) m.classList.remove('active');
-                    card.classList.add('highlight');
-                    menuLink.classList.add('active');
-
-                    if (window.innerWidth <= 768) sidebar.classList.remove('mobile-show');
-                    setTimeout(() => card.classList.remove('highlight'), 1500);
-                });
-
-                scriptMenuItems.appendChild(menuLink);
-            }
-
-            renderWebsiteSidebar(getSidebarWebsites());
+            // Sidebar ถูกสร้างและควบคุมโดย sidebar.js เพียงไฟล์เดียว
+            if (window.AunSharedSidebar) window.AunSharedSidebar.refreshScripts();
         }
 
-        scriptListToggle.addEventListener('click', () => {
-            const collapsed = scriptMenuItems.classList.toggle('collapsed');
-            scriptListToggle.classList.toggle('collapsed', collapsed);
-        });
-
-        websiteToggle.addEventListener('click', () => {
-            const collapsed = websiteMenuItems.classList.toggle('collapsed');
-            websiteToggle.classList.toggle('collapsed', collapsed);
-        });
 
         // ==============================
         // จำ Script ที่เพิ่งลบไว้ใน Browser ชั่วคราว
@@ -1120,7 +1009,6 @@
         hideRememberedDeletedCards();
         restoreRecentlyUploadedCards();
         generateSidebarMenu();
-        loadWebsiteSidebarFromPage();
 
         // ==============================
         // แก้ไข / ลบ Script
@@ -1598,6 +1486,11 @@
             });
         }
 
+        // เมื่อเข้าหน้า index.html#upload จาก Sidebar ให้เปิดหน้า Upload Script ทันที
+        if (window.location.hash === '#upload') {
+            showPage('upload');
+        }
+
         searchInput.addEventListener('input', (e) => {
             const term = e.target.value.toLowerCase().trim();
             let count = 0;
@@ -1626,7 +1519,6 @@
             noResult.style.display = count === 0 ? 'block' : 'none';
         });
     </script>
-    <script src="sidebar.js"></script>
 
 </body>
 

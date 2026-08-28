@@ -1468,10 +1468,20 @@
             websiteGrid.appendChild(card);
         }
 
+        function normalizeWebsiteUrl(value) {
+            let url = String(value || '').trim();
+            if (!url) return '';
+            if (!/^https?:\/\//i.test(url)) {
+                url = 'https://' + url;
+            }
+            return url;
+        }
+
         function isValidWebsiteUrl(value) {
+            const url = normalizeWebsiteUrl(value);
             try {
-                const parsed = new URL(String(value || '').trim());
-                return parsed.protocol === 'http:' || parsed.protocol === 'https:';
+                const parsed = new URL(url);
+                return (parsed.protocol === 'http:' || parsed.protocol === 'https:') && !!parsed.hostname;
             } catch (error) {
                 return false;
             }
@@ -1479,7 +1489,7 @@
 
         websiteUploadBtn.addEventListener('click', async () => {
             const name = websiteName.value.trim();
-            const url = websiteUrl.value.trim();
+            const url = normalizeWebsiteUrl(websiteUrl.value);
             const description = websiteDescription.value.trim();
 
             if (!name) {

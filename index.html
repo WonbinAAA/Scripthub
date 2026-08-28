@@ -74,12 +74,13 @@
         .sidebar-avatar {
             width: 40px;
             height: 40px;
-            min-width: 40px;
-            min-height: 40px;
             border-radius: 50%;
-            object-fit: cover;
-            display: block;
-            flex-shrink: 0;
+            background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            color: white;
+            font-weight: 600;
         }
 
         .sidebar-title {
@@ -573,7 +574,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="header-left">
-                <img src="Images/AAA.jpg" alt="Aun's Scripts" class="sidebar-avatar">
+                <div class="sidebar-avatar">A</div>
                 <div class="sidebar-title">Aun's Scripts</div>
             </div>
             <button class="toggle-btn sidebar-toggle-btn" title="ยุบ/ขยายเมนู">
@@ -587,8 +588,7 @@
         <div class="sidebar-menu" id="sidebarMenu">
             <div class="menu-label">Menu</div>
             <a href="#upload" class="menu-item" id="uploadMenuItem">⬆️ Upload Script</a>
-            <a href="#scripts" class="menu-item" id="scriptsListMenuItem">📜 Script List</a>
-            <a href="#websites" class="menu-item" id="websitesMenuItem">🌐 เปิดเว็บ</a>
+            <div class="menu-label" style="margin-top: 18px;">Scripts List</div>
         </div>
     </aside>
 
@@ -616,20 +616,9 @@
                     <div class="upload-panel">
                         <div class="upload-title">⬆️ อัปโหลด Script</div>
                         <div class="upload-note">
-                            เลือก <strong>ไฟล์ Script</strong> เพื่ออัปโหลดเข้า <strong>Scripts/</strong> หรือเลือก <strong>Website URL</strong> เพื่อเพิ่มลิงก์เว็บไซต์เป็น Card โดยไม่อัปโหลดไฟล์
+                            เลือกไฟล์ Script ที่ต้องการอัปโหลด ระบบจะกำหนดปลายทางเป็น <strong>Scripts/</strong> ใน Repository
                         </div>
-                        <div class="upload-field" style="margin-bottom: 12px;">
-                            <label>ประเภท</label>
-                            <div style="display:flex;gap:18px;align-items:center;font-size:13px;">
-                                <label style="margin:0;display:flex;align-items:center;gap:6px;cursor:pointer;">
-                                    <input type="radio" name="uploadType" value="file" checked> File
-                                </label>
-                                <label style="margin:0;display:flex;align-items:center;gap:6px;cursor:pointer;">
-                                    <input type="radio" name="uploadType" value="website"> Website URL
-                                </label>
-                            </div>
-                        </div>
-                        <div class="upload-row" id="fileUploadRow">
+                        <div class="upload-row">
                             <div class="upload-field">
                                 <label for="scriptFile">เลือกไฟล์ Script</label>
                                 <input type="file" id="scriptFile">
@@ -639,21 +628,6 @@
                                 <input type="text" id="scriptDescription" placeholder="เช่น สคริปต์เปลี่ยนชื่อเครื่อง">
                             </div>
                             <button class="btn-upload" id="uploadBtn" type="button">Upload</button>
-                        </div>
-                        <div class="upload-row" id="websiteUploadRow" style="display:none;">
-                            <div class="upload-field">
-                                <label for="websiteName">ชื่อเว็บไซต์</label>
-                                <input type="text" id="websiteName" placeholder="เช่น เครื่องมือจัดการออนไลน์">
-                            </div>
-                            <div class="upload-field">
-                                <label for="websiteUrl">ลิงก์เว็บไซต์</label>
-                                <input type="url" id="websiteUrl" placeholder="https://example.com">
-                            </div>
-                            <div class="upload-field">
-                                <label for="websiteDescription">คำอธิบาย</label>
-                                <input type="text" id="websiteDescription" placeholder="คำอธิบายเว็บไซต์">
-                            </div>
-                            <button class="btn-upload" id="websiteUploadBtn" type="button">เพิ่มลิงก์</button>
                         </div>
                         <div id="uploadStatus" class="upload-status"></div>
                     </div>
@@ -733,36 +707,6 @@
     </div>
 </div>
 
-<!-- การ์ดที่ 5 -->
-<div class="card" id="script-5" data-uploaded-script="CleanBraveSafe.cmd" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
-    <div>
-        <div class="file-title">CleanBraveSafe.cmd</div>
-        <div class="file-desc">ลบประวัติท่องเว็ป Brave</div>
-        <span class="file-meta">.CMD • 1.04 KB</span>
-    </div>
-    <div class="card-actions">
-        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanBraveSafe.cmd"
-            class="btn-download">ดาวน์โหลด</a>
-        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
-        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
-    </div>
-</div>
-
-<!-- การ์ดที่ 6 -->
-<div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-name="ลงprinter_hp_p1100.rar แก้ปัญหาลง printer ไม่ได้">
-    <div>
-        <div class="file-title">ลงPrinter_HP_P1100.rar</div>
-        <div class="file-desc">แก้ปัญหาลง printer ไม่ได้</div>
-        <span class="file-meta">.RAR • 905.33 KB</span>
-    </div>
-    <div class="card-actions">
-        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/%E0%B8%A5%E0%B8%87Printer_HP_P1100.rar"
-            class="btn-download">ดาวน์โหลด</a>
-        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
-        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
-    </div>
-</div>
-
 <!-- 💡 วิธีเพิ่มสคริปต์ใหม่: ก๊อปปี้บล็อก <div class="card">...</div> นี้ไปวางต่อข้างล่าง -->
                 </div>
                                
@@ -813,19 +757,13 @@
         const sidebarMenu = document.getElementById('sidebarMenu');
         const cards = scriptGrid.getElementsByClassName('card');
         const uploadMenuItem = document.getElementById('uploadMenuItem');
-        const scriptsListMenuItem = document.getElementById('scriptsListMenuItem');
-        const websitesMenuItem = document.getElementById('websitesMenuItem');
         const uploadPage = document.getElementById('uploadPage');
         const scriptsPage = document.getElementById('scriptsPage');
-        let websitesPage = null;
 
         function showPage(page) {
             uploadPage.classList.toggle('active', page === 'upload');
             scriptsPage.classList.toggle('active', page === 'scripts');
-            if (websitesPage) websitesPage.classList.toggle('active', page === 'websites');
             uploadMenuItem.classList.toggle('active', page === 'upload');
-            scriptsListMenuItem.classList.toggle('active', page === 'scripts');
-            websitesMenuItem.classList.toggle('active', page === 'websites');
 
             for (const item of sidebarMenu.querySelectorAll('.script-menu-item')) {
                 item.classList.toggle('active', page === 'scripts' && item.dataset.page === 'scripts');
@@ -835,18 +773,6 @@
         uploadMenuItem.addEventListener('click', (e) => {
             e.preventDefault();
             showPage('upload');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        scriptsListMenuItem.addEventListener('click', (e) => {
-            e.preventDefault();
-            showPage('scripts');
-            window.scrollTo({ top: 0, behavior: 'smooth' });
-        });
-
-        websitesMenuItem.addEventListener('click', (e) => {
-            e.preventDefault();
-            showPage('websites');
             window.scrollTo({ top: 0, behavior: 'smooth' });
         });
 
@@ -868,13 +794,9 @@
         function generateSidebarMenu() {
             const menuLabel = sidebarMenu.querySelector('.menu-label');
             const uploadItem = document.getElementById('uploadMenuItem');
-            const scriptsListItem = document.getElementById('scriptsListMenuItem');
-            const websitesItem = document.getElementById('websitesMenuItem');
             sidebarMenu.innerHTML = '';
             sidebarMenu.appendChild(menuLabel);
             sidebarMenu.appendChild(uploadItem);
-            sidebarMenu.appendChild(scriptsListItem);
-            sidebarMenu.appendChild(websitesItem);
 
             const scriptsLabel = document.createElement('div');
             scriptsLabel.className = 'menu-label';
@@ -1058,31 +980,6 @@
         generateSidebarMenu();
 
         // ==============================
-        // หน้าเปิดเว็บ แยกจาก Script List
-        // ==============================
-        websitesPage = document.createElement('section');
-        websitesPage.className = 'page-section';
-        websitesPage.id = 'websitesPage';
-        websitesPage.innerHTML = `
-            <div class="page-header">
-                <h1 class="page-title">เว็บไซต์</h1>
-            </div>
-            <div class="script-grid" id="websiteGrid"></div>
-            <div class="no-result" id="websiteNoResult">ไม่พบเว็บไซต์ที่คุณค้นหา</div>`;
-        document.querySelector('.content').insertBefore(websitesPage, document.getElementById('editModal'));
-        const websiteGrid = document.getElementById('websiteGrid');
-        const websiteNoResult = document.getElementById('websiteNoResult');
-
-        function refreshWebsiteCards() {
-            websiteGrid.innerHTML = '';
-            const websiteCards = Array.from(scriptGrid.querySelectorAll('.card[data-web-url]'));
-            websiteCards.forEach(card => websiteGrid.appendChild(card));
-            websiteNoResult.style.display = websiteCards.length ? 'none' : 'block';
-        }
-
-        refreshWebsiteCards();
-
-        // ==============================
         // แก้ไข / ลบ Script
         // ==============================
         const editModal = document.getElementById('editModal');
@@ -1097,15 +994,14 @@
             const title = card.querySelector('.file-title');
             const desc = card.querySelector('.file-desc');
             const uploadedName = card.dataset.uploadedScript || (title ? title.textContent.trim() : '');
-            const webUrl = card.dataset.webUrl || '';
 
-            if (!uploadedName && !webUrl) {
-                alert('Card นี้ยังไม่ได้ผูกกับไฟล์หรือเว็บไซต์');
+            if (!uploadedName) {
+                alert('Card นี้ยังไม่ได้ผูกกับไฟล์ที่อยู่ใน /Scripts/');
                 return;
             }
 
             editingCard = card;
-            editFileName.value = uploadedName || (title ? title.textContent.trim() : '');
+            editFileName.value = uploadedName;
             editDescription.value = desc ? desc.textContent.trim() : '';
             editStatus.textContent = '';
             editModal.classList.add('show');
@@ -1140,7 +1036,7 @@
             return result;
         }
 
-        async function handleCardAction(event) {
+        scriptGrid.addEventListener('click', async (event) => {
             const button = event.target.closest('.card-icon-btn');
             if (!button) return;
 
@@ -1154,8 +1050,7 @@
 
             if (button.dataset.action === 'delete') {
                 const fileName = card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent.trim();
-                const webUrl = card.dataset.webUrl || '';
-                if (!fileName && !webUrl) return;
+                if (!fileName) return;
 
                 if (typeof Swal === 'undefined') {
                     console.error('SweetAlert2 ยังไม่พร้อมใช้งาน');
@@ -1177,16 +1072,14 @@
 
                 button.disabled = true;
                 try {
-                    await sendAppsScript(webUrl
-                        ? { action: 'deleteWebsiteCard', url: webUrl }
-                        : { action: 'deleteScript', fileName: fileName }
-                    );
+                    await sendAppsScript({
+                        action: 'deleteScript',
+                        fileName: fileName
+                    });
 
                     // จำสถานะการลบไว้ก่อน เพื่อป้องกัน Card เก่าจาก GitHub Pages/cache กลับมาเมื่อ Refresh
-                    if (fileName) {
-                        rememberDeletedScript(fileName);
-                        forgetUploadedScript(fileName);
-                    }
+                    rememberDeletedScript(fileName);
+                    forgetUploadedScript(fileName);
 
                     // ลบ Card ออกจากหน้าเว็บ
                     card.remove();
@@ -1200,7 +1093,7 @@
                     await Swal.fire({
                         icon: 'success',
                         title: 'ลบสำเร็จ',
-                        html: `<strong>${escapeHtmlForAlert(fileName || card.querySelector('.file-title')?.textContent.trim() || 'เว็บไซต์')}</strong><br>ถูกลบออกจากระบบเรียบร้อยแล้ว`,
+                        html: `<strong>${escapeHtmlForAlert(fileName)}</strong><br>ถูกลบออกจากระบบเรียบร้อยแล้ว`,
                         confirmButtonText: 'ตกลง',
                         timer: 1800,
                         timerProgressBar: true
@@ -1215,10 +1108,7 @@
                     });
                 }
             }
-        }
-
-        scriptGrid.addEventListener('click', handleCardAction);
-        websiteGrid.addEventListener('click', handleCardAction);
+        });
 
         editCancelBtn.addEventListener('click', closeEditModal);
 
@@ -1234,39 +1124,9 @@
         editSaveBtn.addEventListener('click', async () => {
             if (!editingCard) return;
 
-            const isWebsiteCard = !!editingCard.dataset.webUrl;
-            const oldFileName = editingCard.dataset.uploadedScript || '';
+            const oldFileName = editingCard.dataset.uploadedScript;
             const newFileName = editFileName.value.trim();
             const description = editDescription.value.trim();
-
-            if (isWebsiteCard) {
-                editSaveBtn.disabled = true;
-                editCancelBtn.disabled = true;
-                editStatus.textContent = 'กำลังบันทึก...';
-                try {
-                    const result = await sendAppsScript({
-                        action: 'editWebsiteCard',
-                        oldUrl: editingCard.dataset.webUrl,
-                        name: newFileName,
-                        url: editingCard.dataset.webUrl,
-                        description: description
-                    });
-                    editingCard.dataset.name = `${result.name} ${result.description || ''}`.toLowerCase();
-                    editingCard.querySelector('.file-title').textContent = result.name;
-                    editingCard.querySelector('.file-desc').textContent = result.description || 'เว็บไซต์';
-                    editingCard.querySelector('.file-meta').textContent = 'WEB';
-                    editingCard.querySelector('.btn-download').href = result.url;
-                    editingCard.querySelector('.btn-download').textContent = 'เปิดเว็บไซต์';
-                    generateSidebarMenu();
-                    closeEditModal();
-                } catch (error) {
-                    editStatus.textContent = '❌ ' + error.message;
-                } finally {
-                    editSaveBtn.disabled = false;
-                    editCancelBtn.disabled = false;
-                }
-                return;
-            }
 
             if (!newFileName) {
                 editStatus.textContent = 'กรุณาระบุชื่อไฟล์';
@@ -1331,10 +1191,6 @@
         scriptGrid.addEventListener('click', async (event) => {
             const downloadButton = event.target.closest('.btn-download');
             if (!downloadButton) return;
-
-            // Website Card ใช้ลิงก์ปกติ ห้ามส่งผ่านระบบดาวน์โหลดไฟล์
-            const websiteCard = downloadButton.closest('.card[data-web-url]');
-            if (websiteCard) return;
 
             event.preventDefault();
 
@@ -1424,55 +1280,6 @@
         const scriptFile = document.getElementById('scriptFile');
         const scriptDescription = document.getElementById('scriptDescription');
         const uploadStatus = document.getElementById('uploadStatus');
-        const fileUploadRow = document.getElementById('fileUploadRow');
-        const websiteUploadRow = document.getElementById('websiteUploadRow');
-        const websiteName = document.getElementById('websiteName');
-        const websiteUrl = document.getElementById('websiteUrl');
-        const websiteDescription = document.getElementById('websiteDescription');
-        const websiteUploadBtn = document.getElementById('websiteUploadBtn');
-
-        document.querySelectorAll('input[name="uploadType"]').forEach(radio => {
-            radio.addEventListener('change', () => {
-                const isWebsite = document.querySelector('input[name="uploadType"]:checked').value === 'website';
-                fileUploadRow.style.display = isWebsite ? 'none' : 'grid';
-                websiteUploadRow.style.display = isWebsite ? 'grid' : 'none';
-                uploadStatus.textContent = '';
-            });
-        });
-
-        websiteUploadBtn.addEventListener('click', async () => {
-            const name = websiteName.value.trim();
-            const url = websiteUrl.value.trim();
-            const description = websiteDescription.value.trim();
-
-            if (!name) { uploadStatus.textContent = 'กรุณาระบุชื่อเว็บไซต์'; return; }
-            if (!/^https?:\\/\\//i.test(url)) { uploadStatus.textContent = 'กรุณาระบุลิงก์ที่ขึ้นต้นด้วย http:// หรือ https://'; return; }
-
-            websiteUploadBtn.disabled = true;
-            websiteUploadBtn.textContent = 'กำลังเพิ่ม...';
-            uploadStatus.textContent = 'กำลังสร้าง Card เว็บไซต์...';
-
-            try {
-                const result = await sendAppsScript({
-                    action: 'addWebsiteCard',
-                    name: name,
-                    url: url,
-                    description: description
-                });
-                addWebsiteCardImmediately(result.name, result.url, result.description);
-                uploadStatus.textContent = `✅ เพิ่ม ${result.name} สำเร็จ`;
-                websiteName.value = '';
-                websiteUrl.value = '';
-                websiteDescription.value = '';
-                showPage('websites');
-                window.scrollTo({ top: 0, behavior: 'smooth' });
-            } catch (error) {
-                uploadStatus.textContent = `❌ เพิ่มลิงก์ไม่สำเร็จ: ${error.message}`;
-            } finally {
-                websiteUploadBtn.disabled = false;
-                websiteUploadBtn.textContent = 'เพิ่มลิงก์';
-            }
-        });
 
         uploadBtn.addEventListener('click', async () => {
             const file = scriptFile.files[0];
@@ -1554,36 +1361,6 @@
                 uploadBtn.textContent = 'Upload';
             }
         });
-
-        function addWebsiteCardImmediately(name, url, description, restoring = false) {
-            const existing = Array.from(scriptGrid.querySelectorAll('.card')).some(card =>
-                (card.dataset.webUrl || '').trim() === url.trim()
-            );
-            if (existing) return;
-
-            const card = document.createElement('div');
-            card.className = 'card';
-            card.id = `website-${Date.now()}`;
-            card.dataset.name = `${name} ${description || ''}`.toLowerCase();
-            card.dataset.webUrl = url;
-            card.innerHTML = `
-                <div>
-                    <div class="file-title"></div>
-                    <div class="file-desc"></div>
-                    <span class="file-meta">WEB</span>
-                </div>
-                <div class="card-actions">
-                    <a class="btn-download" target="_blank" rel="noopener">เปิดเว็บไซต์</a>
-                    <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
-                    <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
-                </div>`;
-            card.querySelector('.file-title').textContent = name;
-            card.querySelector('.file-desc').textContent = description || 'เว็บไซต์';
-            card.querySelector('.btn-download').href = url;
-            websiteGrid.appendChild(card);
-            websiteNoResult.style.display = 'none';
-            generateSidebarMenu();
-        }
 
         function addUploadedCardImmediately(fileName, description, fileSizeBytes, restoring = false) {
             // ถ้าไฟล์นี้เคยถูกลบไว้ ให้ยกเลิกสถานะ deleted เพราะกำลัง Upload กลับมาใหม่
@@ -1682,12 +1459,9 @@
             const term = e.target.value.toLowerCase().trim();
             let count = 0;
 
-            // ค้นหาได้จากทุกหน้า และแสดงหน้าที่เกี่ยวข้องเมื่อเริ่มค้นหา
+            // ค้นหาได้จากทุกหน้า และแสดง Scripts List เมื่อเริ่มค้นหา
             if (term !== '') {
-                const hasWebsiteMatch = Array.from(document.querySelectorAll('#websiteGrid .card')).some(card =>
-                    `${card.querySelector('.file-title')?.textContent || ''} ${card.querySelector('.file-desc')?.textContent || ''}`.toLowerCase().includes(term)
-                );
-                showPage(hasWebsiteMatch ? 'websites' : 'scripts');
+                showPage('scripts');
             }
 
             // อ่านข้อมูลของแต่ละ Card แยกกันโดยตรง
@@ -1706,17 +1480,7 @@
                 if (matched) count++;
             }
 
-            let websiteCount = 0;
-            for (const card of Array.from(websiteGrid.querySelectorAll('.card'))) {
-                const title = card.querySelector('.file-title')?.textContent.toLowerCase().trim() || '';
-                const description = card.querySelector('.file-desc')?.textContent.toLowerCase().trim() || '';
-                const matched = term === '' || `${title} ${description}`.includes(term);
-                card.style.display = matched ? 'flex' : 'none';
-                if (matched) websiteCount++;
-            }
-
-            noResult.style.display = (count === 0 && (showPage === undefined || !document.getElementById('websitesPage')?.classList.contains('active'))) ? 'block' : 'none';
-            websiteNoResult.style.display = websiteCount === 0 ? 'block' : 'none';
+            noResult.style.display = count === 0 ? 'block' : 'none';
         });
     </script>
 

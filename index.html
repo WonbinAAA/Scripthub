@@ -74,13 +74,12 @@
         .sidebar-avatar {
             width: 40px;
             height: 40px;
+            min-width: 40px;
+            min-height: 40px;
             border-radius: 50%;
-            background: linear-gradient(45deg, #f09433, #dc2743, #bc1888);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            color: white;
-            font-weight: 600;
+            object-fit: cover;
+            display: block;
+            flex-shrink: 0;
         }
 
         .sidebar-title {
@@ -574,7 +573,7 @@
     <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="header-left">
-                <div class="sidebar-avatar">A</div>
+                <img src="Images/AAA.jpg" alt="Aun's Scripts" class="sidebar-avatar">
                 <div class="sidebar-title">Aun's Scripts</div>
             </div>
             <button class="toggle-btn sidebar-toggle-btn" title="ยุบ/ขยายเมนู">
@@ -701,6 +700,36 @@
     </div>
     <div class="card-actions">
         <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanChromeSafe.cmd"
+            class="btn-download">ดาวน์โหลด</a>
+        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+    </div>
+</div>
+
+<!-- การ์ดที่ 5 -->
+<div class="card" id="script-5" data-uploaded-script="CleanBraveSafe.cmd" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
+    <div>
+        <div class="file-title">CleanBraveSafe.cmd</div>
+        <div class="file-desc">ลบประวัติท่องเว็ป Brave</div>
+        <span class="file-meta">.CMD • 1.04 KB</span>
+    </div>
+    <div class="card-actions">
+        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanBraveSafe.cmd"
+            class="btn-download">ดาวน์โหลด</a>
+        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+    </div>
+</div>
+
+<!-- การ์ดที่ 6 -->
+<div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-name="ลงprinter_hp_p1100.rar แก้ปัญหาลง printer ไม่ได้">
+    <div>
+        <div class="file-title">ลงPrinter_HP_P1100.rar</div>
+        <div class="file-desc">แก้ปัญหาลง printer ไม่ได้</div>
+        <span class="file-meta">.RAR • 905.33 KB</span>
+    </div>
+    <div class="card-actions">
+        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/%E0%B8%A5%E0%B8%87Printer_HP_P1100.rar"
             class="btn-download">ดาวน์โหลด</a>
         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>

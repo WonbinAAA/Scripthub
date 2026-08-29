@@ -781,13 +781,13 @@
 
 
 <!-- การ์ดที่ 7 -->
-<div class="card website-only-card" id="card-7" data-website-only="true" data-website-url="https://www.youtube.com/watch?v=Xy4ODZZxVXc" data-website-name="ทดสอบระบบเพิ่มเติม V1" data-name="ทดสอบระบบเพิ่มเติม v1 เว็บไซต์">
+<div class="card website-only-card" id="card-7" data-website-only="true" data-website-url="https://anime-your.com/ep/179879/" data-website-name="ทดสอบระบบเพิ่มเติม" data-name="ทดสอบระบบเพิ่มเติม เว็บไซต์">
     <div>
-        <div class="file-title">ทดสอบระบบเพิ่มเติม V1</div>
+        <div class="file-title">ทดสอบระบบเพิ่มเติม</div>
         <div class="file-desc">เว็บไซต์</div>
     </div>
     <div class="card-actions">
-        <a href="https://www.youtube.com/watch?v=Xy4ODZZxVXc" class="btn-website" target="_blank" rel="noopener">🌐 ทดสอบระบบเพิ่มเติม V1</a>
+        <a href="https://anime-your.com/ep/179879/" class="btn-website" target="_blank" rel="noopener">🌐 เว็บไซต์</a>
         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
     </div>
@@ -1044,6 +1044,8 @@
                 websiteUrl: String(script?.websiteUrl || ''),
                 websiteName: String(script?.websiteName || ''),
                 fileSizeBytes: Number(script?.fileSizeBytes || 0),
+                // ใช้ card-N เป็นตัวระบุถาวรของ Card
+                cardId: String(script?.cardId || '').trim(),
                 savedAt: Date.now()
             });
 
@@ -1060,13 +1062,20 @@
             localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(uploaded));
         }
 
-        function forgetUploadedWebsite(websiteUrl) {
+        function forgetUploadedWebsite(websiteUrl, cardId = '') {
             const normalized = String(websiteUrl || '').trim().toLowerCase();
-            if (!normalized) return;
+            const normalizedCardId = String(cardId || '').trim();
+            if (!normalized && !normalizedCardId) return;
 
-            const uploaded = getUploadedScripts().filter(item =>
-                String(item?.websiteUrl || '').trim().toLowerCase() !== normalized
-            );
+            // ลบทั้งรายการที่อ้าง URL เดิมและรายการที่เป็น Card เดียวกัน
+            // เพื่อไม่ให้ LocalStorage เก่าหลายรายการถูก Restore เป็นหลาย Card
+            const uploaded = getUploadedScripts().filter(item => {
+                const itemUrl = String(item?.websiteUrl || '').trim().toLowerCase();
+                const itemCardId = String(item?.cardId || '').trim();
+                if (normalizedCardId && itemCardId === normalizedCardId) return false;
+                if (normalized && itemUrl === normalized) return false;
+                return true;
+            });
             localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(uploaded));
         }
 
@@ -1089,6 +1098,7 @@
         function restoreRecentlyUploadedCards() {
             const uploaded = getUploadedScripts();
             const remaining = [];
+            const restoredCardIds = new Set();
 
             for (const script of uploaded) {
                 if ((!script?.fileName && !script?.websiteUrl) || !Number(script?.savedAt || 0)) continue;
@@ -1098,6 +1108,10 @@
                 const normalizedName = String(script.fileName || '').trim().toLowerCase();
                 const normalizedUrl = String(script.websiteUrl || '').trim().toLowerCase();
                 const savedCardId = String(script.cardId || '').trim();
+
+                // ถ้า LocalStorage มีรายการซ้ำของ Card เดียวกัน ให้ประมวลผลเพียงครั้งเดียว
+                if (savedCardId && restoredCardIds.has(savedCardId)) continue;
+                if (savedCardId) restoredCardIds.add(savedCardId);
 
                 // card-N เป็นตัวระบุหลักเสมอ โดยเฉพาะ Website-only ที่ URL สามารถเปลี่ยนได้
                 // ห้ามใช้ URL ใหม่เป็นตัวตัดสินว่าจะสร้าง Card ใหม่หรือไม่
@@ -1110,7 +1124,11 @@
                     existingCard = Array.from(scriptGrid.querySelectorAll('.card')).find(card => {
                         const name = String(card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent || '').trim().toLowerCase();
                         const url = String(card.dataset.websiteUrl || '').trim().toLowerCase();
+                        const websiteName = String(card.dataset.websiteName || card.querySelector('.file-title')?.textContent || '').trim().toLowerCase();
+                        const savedWebsiteName = String(script.websiteName || '').trim().toLowerCase();
                         if (normalizedName) return name === normalizedName;
+                        // Website-only เปลี่ยน URL ได้ จึงใช้ชื่อ Website เป็น fallback ก่อน URL
+                        if (savedWebsiteName && card.dataset.websiteOnly === 'true') return websiteName === savedWebsiteName;
                         return normalizedUrl && url === normalizedUrl;
                     });
                 }
@@ -1392,16 +1410,26 @@
                     editingCard.querySelector('.file-desc').textContent = description || 'เว็บไซต์';
                     const webButton = editingCard.querySelector('.btn-website');
                     if (webButton) { webButton.href = websiteUrl; webButton.textContent = '🌐 เว็บไซต์'; }
-                    forgetUploadedWebsite(oldWebsiteUrl);
-                    forgetUploadedWebsite(websiteUrl);
-                    rememberUploadedScript({
+                    // Website-only ใช้ cardId เป็น Primary Key
+                    // ล้างรายการเก่าของ Card นี้ทั้งหมดก่อน แล้วบันทึกรายการใหม่เพียงรายการเดียว
+                    const currentCardId = editingCard.id;
+                    const currentUploaded = getUploadedScripts().filter(item => {
+                        const itemCardId = String(item?.cardId || '').trim();
+                        const itemUrl = String(item?.websiteUrl || '').trim().toLowerCase();
+                        return itemCardId !== currentCardId &&
+                            itemUrl !== oldWebsiteUrl.trim().toLowerCase() &&
+                            itemUrl !== websiteUrl.trim().toLowerCase();
+                    });
+                    currentUploaded.push({
                         fileName: '',
                         description: description,
                         websiteUrl: websiteUrl,
                         websiteName: websiteName,
                         fileSizeBytes: 0,
-                        cardId: editingCard.id
+                        cardId: currentCardId,
+                        savedAt: Date.now()
                     });
+                    localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(currentUploaded));
                     generateSidebarMenu();
                     closeEditModal();
                     uploadStatus.textContent = `✅ แก้ไขเว็บไซต์ ${websiteName} สำเร็จ`;

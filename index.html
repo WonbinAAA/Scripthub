@@ -781,13 +781,13 @@
 
 
 <!-- การ์ดที่ 7 -->
-<div class="card website-only-card" id="card-7" data-website-only="true" data-website-url="https://anime-your.com/genres/isekai/" data-website-name="ทดสอบการ์ดเพิ่มเติม V2" data-name="ทดสอบการ์ดเพิ่มเติม v2 เว็บไซต์">
+<div class="card website-only-card" id="card-7" data-website-only="true" data-website-url="https://anime-your.com/ep/179879/" data-website-name="ทดสอบระบบเพิ่มเติม" data-name="ทดสอบระบบเพิ่มเติม เว็บไซต์">
     <div>
-        <div class="file-title">ทดสอบการ์ดเพิ่มเติม V2</div>
+        <div class="file-title">ทดสอบระบบเพิ่มเติม</div>
         <div class="file-desc">เว็บไซต์</div>
     </div>
     <div class="card-actions">
-        <a href="https://anime-your.com/genres/isekai/" class="btn-website" target="_blank" rel="noopener">🌐 ทดสอบการ์ดเพิ่มเติม V2</a>
+        <a href="https://anime-your.com/ep/179879/" class="btn-website" target="_blank" rel="noopener">🌐 เว็บไซต์</a>
         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
     </div>
@@ -1353,14 +1353,17 @@
                 const oldPending = oldUploaded.find(item =>
                     String(item?.fileName || '').trim().toLowerCase() === oldFileName.trim().toLowerCase()
                 );
-                forgetUploadedScript(oldFileName);
-                if (oldFileName || websiteUrl) {
+                // Website-only จะจัดการ LocalStorage ใน branch ของตัวเอง
+                // เพื่อไม่ให้รายการเดียวกันถูกบันทึกซ้ำ 2 ครั้ง
+                if (editingCard.dataset.websiteOnly !== 'true') {
+                    forgetUploadedScript(oldFileName);
                     rememberUploadedScript({
                         fileName: result.fileName || oldFileName,
                         description: result.description || description,
                         websiteUrl: websiteUrl,
                         websiteName: websiteName,
-                        fileSizeBytes: Number(editingCard.dataset.fileSizeBytes || oldPending?.fileSizeBytes || 0)
+                        fileSizeBytes: Number(editingCard.dataset.fileSizeBytes || oldPending?.fileSizeBytes || 0),
+                        cardId: editingCard.id
                     });
                 }
 
@@ -1374,12 +1377,14 @@
                     const webButton = editingCard.querySelector('.btn-website');
                     if (webButton) { webButton.href = websiteUrl; webButton.textContent = '🌐 เว็บไซต์'; }
                     forgetUploadedWebsite(oldWebsiteUrl);
+                    forgetUploadedWebsite(websiteUrl);
                     rememberUploadedScript({
                         fileName: '',
                         description: description,
                         websiteUrl: websiteUrl,
                         websiteName: websiteName,
-                        fileSizeBytes: 0
+                        fileSizeBytes: 0,
+                        cardId: editingCard.id
                     });
                     generateSidebarMenu();
                     closeEditModal();
@@ -1712,6 +1717,21 @@
             // Card ใหม่จึงถูกเพิ่มท้าย Script Grid ซึ่งเป็นตำแหน่งก่อน Marker เสมอ
             scriptGrid.appendChild(card);
 
+            // บันทึก Card ID ที่ถูกสร้างจริงไว้ใน LocalStorage
+            // เพื่อให้ Refresh แล้วจับคู่กับ card-N เดิมได้ แม้ URL/ชื่อจะถูกแก้ไข
+            try {
+                const pending = getUploadedScripts();
+                const normalized = fileName.trim().toLowerCase();
+                let changed = false;
+                pending.forEach(item => {
+                    if (String(item?.fileName || '').trim().toLowerCase() === normalized) {
+                        item.cardId = card.id;
+                        changed = true;
+                    }
+                });
+                if (changed) localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(pending));
+            } catch (error) { /* ignore */ }
+
             // สร้างเมนู Sidebar ใหม่เพื่อให้ Card ใหม่ค้นหา/เลือกจากเมนูได้ทันที
             generateSidebarMenu();
 
@@ -1784,6 +1804,21 @@
             card.querySelector('.file-desc').textContent = description || 'เว็บไซต์';
             card.querySelector('.btn-website').href = websiteUrl;
             scriptGrid.appendChild(card);
+
+            // เก็บ ID ถาวรของ Website ไว้ใน LocalStorage
+            try {
+                const pending = getUploadedScripts();
+                const normalized = websiteUrl.trim().toLowerCase();
+                let changed = false;
+                pending.forEach(item => {
+                    if (String(item?.websiteUrl || '').trim().toLowerCase() === normalized) {
+                        item.cardId = card.id;
+                        changed = true;
+                    }
+                });
+                if (changed) localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(pending));
+            } catch (error) { /* ignore */ }
+
             generateSidebarMenu();
             if (!restoring) return;
         }

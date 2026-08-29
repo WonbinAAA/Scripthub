@@ -759,6 +759,21 @@
     </div>
 </div>
 
+<!-- การ์ดที่ 5 -->
+<div class="card" id="script-5" data-uploaded-script="CleanBraveSafe.cmd" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
+    <div>
+        <div class="file-title">CleanBraveSafe.cmd</div>
+        <div class="file-desc">ลบประวัติท่องเว็ป Brave</div>
+        <span class="file-meta">.CMD • 1.04 KB</span>
+    </div>
+    <div class="card-actions">
+        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanBraveSafe.cmd"
+            class="btn-download">ดาวน์โหลด</a>
+        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+    </div>
+</div>
+
 <!-- การ์ดที่ 6 -->
 <div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-name="ลงprinter_hp_p1100.rar แก้ปัญหาลง printer ไม่ได้">
     <div>
@@ -768,21 +783,6 @@
     </div>
     <div class="card-actions">
         <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/%E0%B8%A5%E0%B8%87Printer_HP_P1100.rar"
-            class="btn-download">ดาวน์โหลด</a>
-        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
-        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
-    </div>
-</div>
-
-<!-- การ์ดที่ 7 -->
-<div class="card" id="script-7" data-uploaded-script="CleanBraveSafe.cmd" data-name="cleanbravesafe.cmd ลบข้อมูลท่องเว็ป brave">
-    <div>
-        <div class="file-title">CleanBraveSafe.cmd</div>
-        <div class="file-desc">ลบข้อมูลท่องเว็ป Brave</div>
-        <span class="file-meta">.CMD • 1.04 KB</span>
-    </div>
-    <div class="card-actions">
-        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanBraveSafe.cmd"
             class="btn-download">ดาวน์โหลด</a>
         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
@@ -881,6 +881,7 @@
         const STORAGE_VERSION = 'v3';
         const DELETED_SCRIPTS_STORAGE_KEY = `aun_script_vault_deleted_scripts_${STORAGE_VERSION}`;
         const UPLOADED_SCRIPTS_STORAGE_KEY = `aun_script_vault_uploaded_scripts_${STORAGE_VERSION}`;
+        const EDITED_SCRIPTS_STORAGE_KEY = `aun_script_vault_edited_scripts_${STORAGE_VERSION}`;
 
         // ล้าง Storage รุ่นเก่าที่เราเคยใช้ก่อนหน้านี้ครั้งเดียว
         // ไม่แตะ localStorage ของเว็บไซต์อื่น
@@ -953,6 +954,54 @@
             localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(uploaded));
         }
 
+        function getEditedScripts() {
+            try {
+                const value = JSON.parse(localStorage.getItem(EDITED_SCRIPTS_STORAGE_KEY) || '[]');
+                return Array.isArray(value) ? value : [];
+            } catch (error) { return []; }
+        }
+
+        function rememberEditedScript(script) {
+            const fileName = String(script?.fileName || '').trim();
+            if (!fileName) return;
+            const edited = getEditedScripts().filter(item =>
+                String(item?.fileName || '').trim().toLowerCase() !== fileName.toLowerCase()
+            );
+            edited.push({
+                fileName,
+                description: String(script?.description || ''),
+                savedAt: Date.now()
+            });
+            localStorage.setItem(EDITED_SCRIPTS_STORAGE_KEY, JSON.stringify(edited));
+        }
+
+        function forgetEditedScript(fileName) {
+            const normalized = String(fileName || '').trim().toLowerCase();
+            const edited = getEditedScripts().filter(item =>
+                String(item?.fileName || '').trim().toLowerCase() !== normalized
+            );
+            localStorage.setItem(EDITED_SCRIPTS_STORAGE_KEY, JSON.stringify(edited));
+        }
+
+        function restoreRecentlyEditedCards() {
+            const edited = getEditedScripts();
+            const maxAge = 24 * 60 * 60 * 1000;
+            const remaining = [];
+            edited.forEach(item => {
+                if (!item?.fileName || Number(item.savedAt || 0) <= Date.now() - maxAge) return;
+                const card = Array.from(scriptGrid.querySelectorAll('.card')).find(c =>
+                    String(c.dataset.uploadedScript || c.querySelector('.file-title')?.textContent || '').trim().toLowerCase() === item.fileName.toLowerCase()
+                );
+                if (card) {
+                    card.querySelector('.file-title').textContent = item.fileName;
+                    card.querySelector('.file-desc').textContent = item.description || 'ไม่มีคำอธิบาย';
+                    card.dataset.name = `${item.fileName} ${item.description || ''}`.toLowerCase();
+                    remaining.push(item);
+                }
+            });
+            localStorage.setItem(EDITED_SCRIPTS_STORAGE_KEY, JSON.stringify(remaining));
+        }
+
         function isUploadedScript(fileName) {
             const normalized = String(fileName || '').trim().toLowerCase();
             return normalized !== '' && getUploadedScripts().some(item =>
@@ -1008,6 +1057,7 @@
 
         hideRememberedDeletedCards();
         restoreRecentlyUploadedCards();
+        restoreRecentlyEditedCards();
         generateSidebarMenu();
 
         // ==============================
@@ -1183,6 +1233,11 @@
                     String(item?.fileName || '').trim().toLowerCase() === oldFileName.trim().toLowerCase()
                 );
                 forgetUploadedScript(oldFileName);
+                forgetEditedScript(oldFileName);
+                rememberEditedScript({
+                    fileName: result.fileName,
+                    description: result.description
+                });
                 if (hadPendingUpload) {
                     rememberUploadedScript({
                         fileName: result.fileName,

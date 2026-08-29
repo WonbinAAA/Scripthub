@@ -2059,17 +2059,25 @@
         // เพิ่ม page mode สำหรับ Websites โดยกรอง Card เดิม ไม่สร้าง Card ใหม่
         const originalShowPage = showPage;
         showPage = function (page) {
-            originalShowPage(page);
+            // Websites ใช้หน้า Scripts เดิมเป็นพื้นที่แสดงผล
+            // แล้วกรอง Card เดิมที่มี Website URL เท่านั้น
+            originalShowPage(page === 'websites' ? 'scripts' : page);
 
-            if (page === 'websites') {
-                document.querySelectorAll('#scriptGrid .card').forEach(card => {
+            document.querySelectorAll('#scriptGrid .card').forEach(card => {
+                if (page === 'websites') {
                     const hasWebsite = !!String(card.dataset.websiteUrl || '').trim();
                     card.style.display = hasWebsite ? '' : 'none';
-                });
-            } else {
-                document.querySelectorAll('#scriptGrid .card').forEach(card => {
+                } else {
                     card.style.display = '';
-                });
+                }
+            });
+
+            if (page === 'websites') {
+                const title = scriptsPage.querySelector('.page-title');
+                if (title) title.textContent = 'รายการเว็บไซต์';
+            } else if (page === 'scripts') {
+                const title = scriptsPage.querySelector('.page-title');
+                if (title) title.textContent = 'รายการสคริปต์ทั้งหมด';
             }
         };
     </script>

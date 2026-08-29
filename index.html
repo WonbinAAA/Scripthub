@@ -684,15 +684,34 @@
                 <!-- Grid แสดงสคริปต์ (4 ช่องแนวนอน) -->
                 <div class="script-grid" id="scriptGrid">
 
-<!-- การ์ดที่ 2 -->
-                <div class="card" id="card-2" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
+                <!-- การ์ดที่ 1 -->
+                <div class="card" id="card-1" data-name="show_sn_comname.hta serial number ชื่อคอมพิวเตอร์">
                     <div>
-                        <div class="file-title">CleanBraveSafe.cmd</div>
-                        <div class="file-desc">ลบประวัติท่องเว็ป Brave</div>
-                        <span class="file-meta">.CMD • 1.04 KB</span>
+                        <div class="file-title">Show_SN_ComName.hta</div>
+                        <div class="file-desc">สคริปต์สำหรับดึงข้อมูล Serial Number และชื่อคอมพิวเตอร์</div>
+                        <span class="file-meta">.HTA • ~13.8 KB</span>
                     </div>
                     <div class="card-actions">
-                        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanBraveSafe.cmd"
+                        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/Show_SN_ComName.hta"
+                            class="btn-download">ดาวน์โหลด</a>
+                        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">
+                            ✎
+                        </button>
+                        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">
+                            🗑
+                        </button>
+                    </div>
+                </div>
+
+                <!-- การ์ดที่ 2 -->
+                <div class="card" id="card-2" data-name="renamedpc.rar เปลี่ยนชื่อเครื่อง">
+                    <div>
+                        <div class="file-title">RenamePC.rar</div>
+                        <div class="file-desc">ชุดแพ็กเกจสคริปต์เปลี่ยนชื่อเครื่องคอมพิวเตอร์พร้อมค่าตั้งค่า</div>
+                        <span class="file-meta">.RAR • 3 ไฟล์ ~3.87 KB</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/RenamePC.rar"
                             class="btn-download">ดาวน์โหลด</a>
                         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
                         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
@@ -700,7 +719,7 @@
                 </div>
 
                 <!-- การ์ดที่ 3 -->
-                <div class="card" id="card-3" data-uploaded-script="CleanBraveSafe.cmd" data-name="bootusbnof12.bat บูท ไม่ต้องกดคีย์บอร์ด">
+                <div class="card" id="card-3" data-uploaded-script="BootUSBNoF12.bat" data-name="bootusbnof12.bat บูท ไม่ต้องกดคีย์บอร์ด">
                 <div>
                     <div class="file-title">BootUSBNoF12.bat</div>
                     <div class="file-desc">บูท ไม่ต้องกดคีย์บอร์ด</div>
@@ -730,7 +749,7 @@
 </div>
 
 <!-- การ์ดที่ 5 -->
-<div class="card" id="card-5" data-uploaded-script="CleanBraveSafe.cmd" data-website-name="" data-website-url="" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
+<div class="card" id="card-5" data-uploaded-script="CleanBraveSafe.cmd" data-website-name="HP_LaserJet_P1102 ลง Driver ไม่ผ่าน" data-website-url="https://wonbinaaa.github.io/Printer/" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
     <div>
         <div class="file-title">CleanBraveSafe.cmd</div>
         <div class="file-desc">ลบประวัติท่องเว็ป Brave</div>
@@ -1313,18 +1332,22 @@
                 });
 
                 // อัปเดต localStorage ด้วย เพื่อไม่ให้ข้อมูลเก่าถูกนำกลับมาสร้าง Card หลัง Refresh
+                // เก็บผลการแก้ไขไว้ใน LocalStorage ชั่วคราวเสมอ
+                // แม้ Script เดิมจะไม่ได้เป็นรายการที่เพิ่ง Upload ก็ตาม
+                // เพื่อให้ Refresh ระหว่างที่ GitHub Pages ยังไม่อัปเดต
+                // ยังคงแสดง Website/ข้อมูลใหม่ของ Card เดิมได้
                 const oldUploaded = getUploadedScripts();
-                const hadPendingUpload = oldUploaded.some(item =>
+                const oldPending = oldUploaded.find(item =>
                     String(item?.fileName || '').trim().toLowerCase() === oldFileName.trim().toLowerCase()
                 );
                 forgetUploadedScript(oldFileName);
-                if (hadPendingUpload) {
+                if (oldFileName || websiteUrl) {
                     rememberUploadedScript({
-                        fileName: result.fileName,
-                        description: result.description,
+                        fileName: result.fileName || oldFileName,
+                        description: result.description || description,
                         websiteUrl: websiteUrl,
                         websiteName: websiteName,
-                        fileSizeBytes: Number(editingCard.dataset.fileSizeBytes || 0)
+                        fileSizeBytes: Number(editingCard.dataset.fileSizeBytes || oldPending?.fileSizeBytes || 0)
                     });
                 }
 

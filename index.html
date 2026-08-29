@@ -598,13 +598,51 @@
             padding: 40px;
             display: none;
         }
+
+        /* Accordion สำหรับ Scripts List และ เว็บไซต์ แบบ GitHub */
+        .accordion-group {
+            margin-top: 18px;
+        }
+
+        .accordion-label {
+            display: flex;
+            align-items: center;
+            gap: 7px;
+            cursor: pointer;
+            user-select: none;
+            margin: 0 0 8px 0 !important;
+            padding: 4px 6px;
+            border-radius: 5px;
+            transition: background 0.2s, color 0.2s;
+        }
+
+        .accordion-label:hover {
+            background: #f3f4f6;
+            color: var(--text-main);
+        }
+
+        .accordion-label::before {
+            content: '▶';
+            font-size: 9px;
+            width: 10px;
+            flex: 0 0 10px;
+            transition: transform 0.15s ease;
+        }
+
+        .accordion-group.expanded .accordion-label::before {
+            content: '▼';
+        }
+
+        .accordion-group.collapsed > .menu-item {
+            display: none;
+        }
     </style>
 </head>
 
 <body>
 
     <!-- Sidebar เมนูด้านซ้าย -->
-    <aside class="sidebar collapsed" id="sidebar">
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="header-left">
                 <img src="Images/AAA.jpg" alt="Aun's Scripts" class="sidebar-avatar">
@@ -1939,6 +1977,67 @@
 
             noResult.style.display = count === 0 ? 'block' : 'none';
         });
+    </script>
+
+    <script>
+        // ==============================
+        // Accordion Sidebar: Scripts List / เว็บไซต์
+        // ไม่แตะ Card, Website data หรือ LocalStorage
+        // ==============================
+        const accordionState = {
+            scripts: false,
+            websites: false
+        };
+
+        function decorateSidebarAccordion() {
+            const labels = Array.from(sidebarMenu.querySelectorAll('.menu-label')).filter(label => {
+                const text = label.textContent.trim();
+                return text === 'Scripts List' || text === 'เว็บไซต์';
+            });
+
+            for (const label of labels) {
+                if (label.parentElement.classList.contains('accordion-group')) continue;
+
+                const key = label.textContent.trim() === 'Scripts List' ? 'scripts' : 'websites';
+                const group = document.createElement('div');
+                group.className = 'accordion-group collapsed';
+                group.dataset.accordion = key;
+
+                label.parentNode.insertBefore(group, label);
+                group.appendChild(label);
+                label.classList.add('accordion-label');
+
+                let next = group.nextSibling;
+                while (next) {
+                    const current = next;
+                    next = next.nextSibling;
+                    if (current.nodeType === Node.ELEMENT_NODE && current.classList.contains('menu-label')) break;
+                    if (current.nodeType === Node.ELEMENT_NODE) group.appendChild(current);
+                }
+
+                if (accordionState[key]) {
+                    group.classList.remove('collapsed');
+                    group.classList.add('expanded');
+                }
+
+                label.addEventListener('click', () => {
+                    accordionState[key] = !accordionState[key];
+                    group.classList.toggle('collapsed', !accordionState[key]);
+                    group.classList.toggle('expanded', accordionState[key]);
+                });
+            }
+        }
+
+        // generateSidebarMenu() ถูกเรียกหลายครั้งหลัง Upload/Edit/Delete
+        // จึงห่อฟังก์ชันเดิมไว้ เพื่อให้ Accordion ถูกสร้างใหม่โดยอัตโนมัติ
+        const originalGenerateSidebarMenu = generateSidebarMenu;
+        generateSidebarMenu = function () {
+            originalGenerateSidebarMenu();
+            decorateSidebarAccordion();
+        };
+
+        // จัดรูปแบบเมนูที่สร้างไปแล้วครั้งแรก
+        decorateSidebarAccordion();
     </script>
 
 </body>

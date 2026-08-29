@@ -2020,7 +2020,15 @@
                     group.classList.add('expanded');
                 }
 
-                label.addEventListener('click', () => {
+                label.addEventListener('click', (event) => {
+                    // คลิกหัวข้อ Scripts List ให้ไปหน้า Scripts ทันที
+                    // แต่ยังคงเปิด/ปิด Accordion ตามปกติ
+                    if (key === 'scripts') {
+                        event.preventDefault();
+                        showPage('scripts');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
+                    }
+
                     accordionState[key] = !accordionState[key];
                     group.classList.toggle('collapsed', !accordionState[key]);
                     group.classList.toggle('expanded', accordionState[key]);

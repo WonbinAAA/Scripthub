@@ -15,6 +15,21 @@
 <!-- Sidebar ถูกสร้างโดย sidebar.js -->
 <!-- <aside class="sidebar" id="sidebar"><div class="sidebar-header"><div class="header-left"><img src="Images/AAA.jpg" class="sidebar-avatar" alt="Aun's Scripts"><div class="sidebar-title">Aun's Scripts</div></div><button class="toggle" id="sideToggle" title="ยุบ/ขยายเมนู">☰</button></div><div class="sidebar-menu" id="sidebarMenu"><div class="menu-label">Menu</div><a class="menu-item" href="index.html#upload">⬆️ Upload Script</a><a class="menu-item" id="uploadWebMenuItem" href="#upload-web">🌐 Upload Web</a><div class="menu-label" style="margin-top:18px">Scripts List</div><button class="menu-item menu-toggle" id="scriptToggle" type="button"><span>📜 Script List</span><span class="menu-arrow">▼</span></button><div class="menu-children" id="scriptMenu"></div><button class="menu-item menu-toggle active" id="websiteToggle" type="button"><span>🌐 เว็บไซต์</span><span class="menu-arrow">▼</span></button><div class="menu-children" id="websiteMenu"><span class="menu-item menu-child">กำลังโหลด...</span></div></div></aside> -->
 <div class="main"><header class="topbar"><button class="toggle top-toggle" id="topToggle">☰</button><input id="search" class="search" placeholder="🔍 ค้นหาเว็บไซต์..."></header><main class="content"><div class="header"><h1 class="title">รายการเว็บไซต์</h1></div><div class="grid" id="websiteGrid">
+
+<!-- การ์ดเว็บไซต์ที่ 1 -->
+<div class="card" id="website-1" data-web-url="https://www.youtube.com/" data-name="ันี ">
+    <div>
+        <div class="file-title">ันี</div>
+        <div class="file-desc">เว็บไซต์</div>
+        <span class="file-meta">WEB</span>
+    </div>
+    <div class="card-actions">
+        <a href="https://www.youtube.com/" target="_blank" rel="noopener" class="btn-download">เปิดเว็บไซต์</a>
+        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+    </div>
+</div>
+
 <!-- WEBSITE_CARDS_END -->
 <div class="no-result" id="noResult">ไม่พบเว็บไซต์ที่ค้นหา</div></div></main><footer style="text-align:center;padding:20px;font-size:12px;color:var(--muted);border-top:1px solid var(--border);background:#fff">© 2026 สุกฤษฎิ์ กุมภาว์ • พัฒนาด้วย GitHub Pages</footer></div>
 <div class="modal" id="editModal"><div class="modal-box"><h2>แก้ไขเว็บไซต์</h2><div class="modal-field"><label>ชื่อเว็บไซต์</label><input id="editName"></div><div class="modal-field"><label>ลิงก์เว็บไซต์</label><input id="editUrl"></div><div class="modal-field"><label>คำอธิบาย</label><input id="editDesc"></div><div class="status" id="editStatus"></div><div class="modal-actions"><button class="btn cancel" id="cancelBtn">ยกเลิก</button><button class="btn" id="saveBtn">บันทึก</button></div></div></div>

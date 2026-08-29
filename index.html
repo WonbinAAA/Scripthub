@@ -603,15 +603,195 @@
 
 <body>
 
-    <!-- การ์ดที่ 8 -->
-<div class="card website-only-card" id="card-8" data-website-only="true" data-website-url="https://www.youtube.com/watch?v=MmiTMx4uRcQ" data-website-name="ทดสอบใหม่" data-name="ทดสอบใหม่ เว็บไซต์">
-    <div><div class="file-title">ทดสอบใหม่</div><div class="file-desc">เว็บไซต์</div></div>
+    <!-- Sidebar เมนูด้านซ้าย -->
+    <aside class="sidebar" id="sidebar">
+        <div class="sidebar-header">
+            <div class="header-left">
+                <img src="Images/AAA.jpg" alt="Aun's Scripts" class="sidebar-avatar">
+                <div class="sidebar-title">Aun's Scripts</div>
+            </div>
+            <button class="toggle-btn sidebar-toggle-btn" title="ยุบ/ขยายเมนู">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                </svg>
+            </button>
+        </div>
+        <div class="sidebar-menu" id="sidebarMenu">
+            <div class="menu-label">Menu</div>
+            <a href="#upload" class="menu-item" id="uploadMenuItem">⬆️ Upload Script</a>
+            <div class="menu-label" style="margin-top: 18px;">Scripts List</div>
+        </div>
+    </aside>
+
+    <!-- Main Content -->
+    <div class="main-container">
+        <header class="topbar">
+            <button class="toggle-btn topbar-toggle-btn" title="ยุบ/ขยายเมนู">
+                <svg width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"
+                    stroke-linecap="round" stroke-linejoin="round">
+                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2"></rect>
+                    <line x1="9" y1="3" x2="9" y2="21"></line>
+                </svg>
+            </button>
+            <input type="text" id="searchInput" class="search-input" placeholder="🔍 ค้นหาสคริปต์...">
+        </header>
+
+        <div class="content">
+            <!-- Upload Page -->
+            <section class="page-section" id="uploadPage">
+                <div class="upload-page">
+                    <div class="page-header">
+                        <h1 class="page-title">Upload Script</h1>
+                    </div>
+
+                    <div class="upload-panel">
+                        <div class="upload-title">⬆️ อัปโหลด Script</div>
+                        <div class="upload-note">
+                            เลือกไฟล์ Script ที่ต้องการอัปโหลด ระบบจะกำหนดปลายทางเป็น <strong>Scripts/</strong> ใน Repository
+                        </div>
+                        <div class="upload-row">
+                            <div class="upload-field">
+                                <label for="scriptFile">📜 Script (ไม่บังคับ หากเพิ่มเว็บไซต์อย่างเดียว)</label>
+                                <input type="file" id="scriptFile">
+                            </div>
+                            <div class="upload-field">
+                                <label for="scriptDescription">📝 คำอธิบาย</label>
+                                <input type="text" id="scriptDescription" placeholder="เช่น สคริปต์เปลี่ยนชื่อเครื่อง">
+                            </div>
+                            <div class="upload-field">
+                                <label for="scriptWebsiteUrl">🌐 เว็บไซต์ (ไม่บังคับ)</label>
+                                <input type="url" id="scriptWebsiteUrl" placeholder="https://wonbinaaa.github.io/Printer/">
+                            </div>
+                            <div class="upload-field">
+                                <label for="scriptWebsiteName">🏷️ ชื่อที่แสดงในเมนูเว็บไซต์ (ไม่บังคับ)</label>
+                                <input type="text" id="scriptWebsiteName" placeholder="เช่น Printer">
+                            </div>
+                            <button class="btn-upload" id="uploadBtn" type="button">Upload</button>
+                        </div>
+                        <div id="uploadStatus" class="upload-status"></div>
+                    </div>
+                </div>
+            </section>
+
+            <!-- Scripts List Page -->
+            <section class="page-section active" id="scriptsPage">
+                <div class="page-header">
+                    <h1 class="page-title">รายการสคริปต์ทั้งหมด</h1>
+                </div>
+
+                <!-- Grid แสดงสคริปต์ (4 ช่องแนวนอน) -->
+                <div class="script-grid" id="scriptGrid">
+
+                <!-- การ์ดที่ 1 -->
+                <div class="card" id="card-1" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
+                    <div>
+                        <div class="file-title">CleanBraveSafe.cmd</div>
+                        <div class="file-desc">ลบประวัติท่องเว็ป Brave</div>
+                        <span class="file-meta">.CMD • 1.04 KB</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanBraveSafe.cmd"
+                            class="btn-download">ดาวน์โหลด</a>
+                        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">
+                            ✎
+                        </button>
+                        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">
+                            🗑
+                        </button>
+                    </div>
+                </div>
+
+                <!-- การ์ดที่ 2 -->
+                <div class="card" id="card-2" data-name="renamedpc.rar เปลี่ยนชื่อเครื่อง">
+                    <div>
+                        <div class="file-title">RenamePC.rar</div>
+                        <div class="file-desc">ชุดแพ็กเกจสคริปต์เปลี่ยนชื่อเครื่องคอมพิวเตอร์พร้อมค่าตั้งค่า</div>
+                        <span class="file-meta">.RAR • 3 ไฟล์ ~3.87 KB</span>
+                    </div>
+                    <div class="card-actions">
+                        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/RenamePC.rar"
+                            class="btn-download">ดาวน์โหลด</a>
+                        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+                        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+                    </div>
+                </div>
+
+                <!-- การ์ดที่ 3 -->
+                <div class="card" id="card-3" data-uploaded-script="CleanBraveSafe.cmd" data-name="bootusbnof12.bat บูท ไม่ต้องกดคีย์บอร์ด">
+                <div>
+                    <div class="file-title">BootUSBNoF12.bat</div>
+                    <div class="file-desc">บูท ไม่ต้องกดคีย์บอร์ด</div>
+                    <span class="file-meta">.Bat ~4.74 KB</span>
+                </div>
+                <div class="card-actions">
+                    <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/BootUSBNoF12.bat"
+                       class="btn-download">ดาวน์โหลด</a>
+                    <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+                    <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+                </div>
+                </div>
+
+<!-- การ์ดที่ 4 -->
+<div class="card" id="card-4" data-uploaded-script="CleanChromeSafe.cmd" data-name="cleanchromesafe.cmd ลบประวัติเข้าเว็ป chrome">
+    <div>
+        <div class="file-title">CleanChromeSafe.cmd</div>
+        <div class="file-desc">ลบประวัติเข้าเว็ป Chrome</div>
+        <span class="file-meta">.CMD • 953 B</span>
+    </div>
     <div class="card-actions">
-        <a href="https://www.youtube.com/watch?v=MmiTMx4uRcQ" class="btn-website" target="_blank" rel="noopener">🌐 เปิดเว็บไซต์</a>
+        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanChromeSafe.cmd"
+            class="btn-download">ดาวน์โหลด</a>
         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
     </div>
-</div><!-- 💡 วิธีเพิ่มสคริปต์ใหม่: ก๊อปปี้บล็อก <div class="card">...</div> นี้ไปวางต่อข้างล่าง -->
+</div>
+
+<!-- การ์ดที่ 5 -->
+<div class="card" id="card-5" data-uploaded-script="CleanBraveSafe.cmd" data-website-name="ฟังเพลงเบาๆ" data-website-url="https://www.youtube.com/watch?v=xRxeFLk-Abs" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
+    <div>
+        <div class="file-title">CleanBraveSafe.cmd</div>
+        <div class="file-desc">ลบประวัติท่องเว็ป Brave</div>
+        <span class="file-meta">.CMD • 1.04 KB</span>
+    </div>
+    <div class="card-actions">
+        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanBraveSafe.cmd"
+            class="btn-download">ดาวน์โหลด</a>
+        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+    </div>
+</div>
+
+<!-- การ์ดที่ 6 -->
+<div class="card" id="card-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-website-url="https://www.youtube.com/" data-website-name="ลง Driver Printer ไม่ผ่าน" data-name="ลงprinter_hp_p1100.rar hp laserjet p1102 บน windows 11 ติดตั้ง driver แล้ว แต่ระบบยังไม่มองเห็นเป็น printer">
+    <div>
+        <div class="file-title">ลงPrinter_HP_P1100.rar</div>
+        <div class="file-desc">HP LaserJet P1102 บน Windows 11 ติดตั้ง Driver แล้ว แต่ระบบยังไม่มองเห็นเป็น Printer</div>
+        <span class="file-meta">.RAR • 905.33 KB</span>
+    </div>
+    <div class="card-actions">
+        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/%E0%B8%A5%E0%B8%87Printer_HP_P1100.rar"
+            class="btn-download">ดาวน์โหลด</a>
+        <a href="https://wonbinaaa.github.io/Printer/" class="btn-website" target="_blank" rel="noopener">🌐 ลง Driver Printer ไม่ผ่าน</a>
+        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+    </div>
+</div>
+
+
+
+<!-- การ์ดที่ 7 -->
+<div class="card website-only-card" id="card-7" data-website-only="true" data-website-url="https://www.youtube.com/watch?v=Xy4ODZZxVXc" data-website-name="ทดสอบ" data-name="ทดสอบ เว็บไซต์">
+    <div><div class="file-title">ทดสอบ</div><div class="file-desc">เว็บไซต์</div></div>
+    <div class="card-actions">
+        <a href="https://www.youtube.com/watch?v=Xy4ODZZxVXc" class="btn-website" target="_blank" rel="noopener">🌐 เปิดเว็บไซต์</a>
+        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
+        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
+    </div>
+</div>
+
+<!-- 💡 วิธีเพิ่มสคริปต์ใหม่: ก๊อปปี้บล็อก <div class="card">...</div> นี้ไปวางต่อข้างล่าง -->
                 </div>
                                
 <div id="noResult" class="no-result">ไม่พบสคริปต์ที่คุณค้นหา</div>

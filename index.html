@@ -781,13 +781,13 @@
 
 
 <!-- การ์ดที่ 7 -->
-<div class="card website-only-card" id="card-7" data-website-only="true" data-website-url="https://anime-your.com/ep/179879/" data-website-name="ทดสอบระบบตัวการ์ด" data-name="ทดสอบระบบตัวการ์ด เว็บไซต์">
+<div class="card website-only-card" id="card-7" data-website-only="true" data-website-url="https://anime-your.com/ep/179879/" data-website-name="ทดสอบระบบเพิ่มเติม" data-name="ทดสอบระบบเพิ่มเติม เว็บไซต์">
     <div>
-        <div class="file-title">ทดสอบระบบตัวการ์ด</div>
+        <div class="file-title">ทดสอบระบบเพิ่มเติม</div>
         <div class="file-desc">เว็บไซต์</div>
     </div>
     <div class="card-actions">
-        <a href="https://anime-your.com/ep/179879/" class="btn-website" target="_blank" rel="noopener">🌐 ทดสอบระบบตัวการ์ด</a>
+        <a href="https://anime-your.com/ep/179879/" class="btn-website" target="_blank" rel="noopener">🌐 เว็บไซต์</a>
         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
     </div>
@@ -1372,7 +1372,7 @@
                     editingCard.querySelector('.file-title').textContent = websiteName;
                     editingCard.querySelector('.file-desc').textContent = description || 'เว็บไซต์';
                     const webButton = editingCard.querySelector('.btn-website');
-                    if (webButton) { webButton.href = websiteUrl; webButton.textContent = `🌐 ${websiteName}`; }
+                    if (webButton) { webButton.href = websiteUrl; webButton.textContent = '🌐 เว็บไซต์'; }
                     forgetUploadedWebsite(oldWebsiteUrl);
                     rememberUploadedScript({
                         fileName: '',
@@ -1734,7 +1734,7 @@
                     if (actions) actions.insertBefore(button, actions.querySelector('.edit'));
                 }
                 button.href = websiteUrl;
-                button.textContent = `🌐 ${websiteName || 'เปิดเว็บไซต์'}`;
+                button.textContent = '🌐 เว็บไซต์';
             } else if (button) {
                 button.remove();
             }
@@ -1775,7 +1775,7 @@
                     <div class="file-desc"></div>
                 </div>
                 <div class="card-actions">
-                    <a class="btn-website" target="_blank" rel="noopener">🌐 เปิดเว็บไซต์</a>
+                    <a class="btn-website" target="_blank" rel="noopener">🌐 เว็บไซต์</a>
                     <button class="card-icon-btn edit" type="button" title="แก้ไข" data-action="edit">✎</button>
                     <button class="card-icon-btn delete" type="button" title="ลบ" data-action="delete">🗑</button>
                 </div>`;

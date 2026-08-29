@@ -224,9 +224,19 @@
 
         .upload-row {
             display: grid;
-            grid-template-columns: 1fr 1fr 1fr auto;
-            gap: 10px;
+            grid-template-columns: 1fr 1fr;
+            gap: 14px;
             align-items: end;
+        }
+
+        .upload-row .upload-field:nth-child(3),
+        .upload-row .upload-field:nth-child(4) {
+            grid-column: auto;
+        }
+
+        .upload-row .btn-upload {
+            grid-column: 1 / -1;
+            justify-self: center;
         }
 
         .upload-field label {
@@ -643,16 +653,20 @@
                         </div>
                         <div class="upload-row">
                             <div class="upload-field">
-                                <label for="scriptFile">เลือกไฟล์ Script</label>
+                                <label for="scriptFile">📜 Script (ไม่บังคับ หากเพิ่มเว็บไซต์อย่างเดียว)</label>
                                 <input type="file" id="scriptFile">
                             </div>
                             <div class="upload-field">
-                                <label for="scriptDescription">คำอธิบาย</label>
+                                <label for="scriptDescription">📝 คำอธิบาย</label>
                                 <input type="text" id="scriptDescription" placeholder="เช่น สคริปต์เปลี่ยนชื่อเครื่อง">
                             </div>
                             <div class="upload-field">
-                                <label for="scriptWebsiteUrl">🌐 URL เว็บไซต์ (ไม่บังคับ)</label>
+                                <label for="scriptWebsiteUrl">🌐 เว็บไซต์ (ไม่บังคับ)</label>
                                 <input type="url" id="scriptWebsiteUrl" placeholder="https://wonbinaaa.github.io/Printer/">
+                            </div>
+                            <div class="upload-field">
+                                <label for="scriptWebsiteName">🏷️ ชื่อที่แสดงในเมนูเว็บไซต์ (ไม่บังคับ)</label>
+                                <input type="text" id="scriptWebsiteName" placeholder="เช่น Printer">
                             </div>
                             <button class="btn-upload" id="uploadBtn" type="button">Upload</button>
                         </div>
@@ -750,16 +764,15 @@
 </div>
 
 <!-- การ์ดที่ 6 -->
-<div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-website-url="https://wonbinaaa.github.io/Printer/" data-name="ลงprinter_hp_p1100.rar แก้ปัญหา ลง driver printer hp p1100 ไม่ผ่านสักที">
+<div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-name="ลงprinter_hp_p1100.rar แก้ปัญหาลง printer ไม่ได้">
     <div>
         <div class="file-title">ลงPrinter_HP_P1100.rar</div>
-        <div class="file-desc">แก้ปัญหา ลง Driver Printer Hp P1100 ไม่ผ่านสักที</div>
+        <div class="file-desc">แก้ปัญหาลง printer ไม่ได้</div>
         <span class="file-meta">.RAR • 905.33 KB</span>
     </div>
     <div class="card-actions">
         <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/%E0%B8%A5%E0%B8%87Printer_HP_P1100.rar"
             class="btn-download">ดาวน์โหลด</a>
-        <a href="https://wonbinaaa.github.io/Printer/" class="btn-website" target="_blank" rel="noopener">🌐 เปิดเว็บไซต์</a>
         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
     </div>
@@ -781,6 +794,14 @@
                     <div class="edit-field">
                         <label for="editDescription">คำอธิบาย</label>
                         <input type="text" id="editDescription">
+                    </div>
+                    <div class="edit-field">
+                        <label for="editWebsiteUrl">🌐 เว็บไซต์</label>
+                        <input type="url" id="editWebsiteUrl" placeholder="https://...">
+                    </div>
+                    <div class="edit-field">
+                        <label for="editWebsiteName">🏷️ ชื่อที่แสดงในเมนูเว็บไซต์</label>
+                        <input type="text" id="editWebsiteName" placeholder="เช่น Printer">
                     </div>
                     <div id="editStatus" class="edit-status"></div>
                     <div class="edit-modal-actions">
@@ -864,6 +885,7 @@
 
             for (let i = 0; i < cards.length; i++) {
                 const card = cards[i];
+                if (card.dataset.websiteOnly === 'true') continue;
                 const title = card.querySelector('.file-title').innerText;
                 const cardId = card.id || `script-${i + 1}`;
                 card.id = cardId;
@@ -908,7 +930,7 @@
                 const card = cards[i];
                 const websiteUrl = card.dataset.websiteUrl || '';
                 if (!websiteUrl) continue;
-                const title = card.querySelector('.file-title')?.innerText || 'Website';
+                const title = card.dataset.websiteName || card.querySelector('.file-title')?.innerText || 'Website';
                 const websiteLink = document.createElement('a');
                 websiteLink.href = websiteUrl;
                 websiteLink.target = '_blank';
@@ -983,6 +1005,8 @@
             uploaded.push({
                 fileName,
                 description: String(script?.description || ''),
+                websiteUrl: String(script?.websiteUrl || ''),
+                websiteName: String(script?.websiteName || ''),
                 fileSizeBytes: Number(script?.fileSizeBytes || 0),
                 savedAt: Date.now()
             });
@@ -1034,7 +1058,7 @@
                 if (exists) continue;
 
                 remaining.push(script);
-                addUploadedCardImmediately(script.fileName, script.description, script.fileSizeBytes, true);
+                addUploadedCardImmediately(script.fileName, script.description, script.fileSizeBytes, true, script.websiteUrl || '', script.websiteName || '');
             }
 
             // เก็บเฉพาะรายการที่ยังต้องรอ GitHub Pages เท่านั้น
@@ -1063,6 +1087,8 @@
         const editModal = document.getElementById('editModal');
         const editFileName = document.getElementById('editFileName');
         const editDescription = document.getElementById('editDescription');
+        const editWebsiteUrl = document.getElementById('editWebsiteUrl');
+        const editWebsiteName = document.getElementById('editWebsiteName');
         const editStatus = document.getElementById('editStatus');
         const editCancelBtn = document.getElementById('editCancelBtn');
         const editSaveBtn = document.getElementById('editSaveBtn');
@@ -1073,7 +1099,7 @@
             const desc = card.querySelector('.file-desc');
             const uploadedName = card.dataset.uploadedScript || (title ? title.textContent.trim() : '');
 
-            if (!uploadedName) {
+            if (!uploadedName && card.dataset.websiteOnly !== 'true') {
                 alert('Card นี้ยังไม่ได้ผูกกับไฟล์ที่อยู่ใน /Scripts/');
                 return;
             }
@@ -1081,6 +1107,8 @@
             editingCard = card;
             editFileName.value = uploadedName;
             editDescription.value = desc ? desc.textContent.trim() : '';
+            editWebsiteUrl.value = card.dataset.websiteUrl || '';
+            editWebsiteName.value = card.dataset.websiteName || '';
             editStatus.textContent = '';
             editModal.classList.add('show');
             editFileName.focus();
@@ -1127,8 +1155,9 @@
             }
 
             if (button.dataset.action === 'delete') {
+                const isWebsiteOnly = card.dataset.websiteOnly === 'true';
                 const fileName = card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent.trim();
-                if (!fileName) return;
+                if (!fileName && !isWebsiteOnly) return;
 
                 if (typeof Swal === 'undefined') {
                     console.error('SweetAlert2 ยังไม่พร้อมใช้งาน');
@@ -1152,12 +1181,17 @@
                 try {
                     await sendAppsScript({
                         action: 'deleteScript',
-                        fileName: fileName
+                        fileName: fileName || '',
+                        websiteOnly: isWebsiteOnly,
+                        websiteId: card.id,
+                        websiteUrl: card.dataset.websiteUrl || ''
                     });
 
                     // จำสถานะการลบไว้ก่อน เพื่อป้องกัน Card เก่าจาก GitHub Pages/cache กลับมาเมื่อ Refresh
-                    rememberDeletedScript(fileName);
-                    forgetUploadedScript(fileName);
+                    if (fileName) {
+                        rememberDeletedScript(fileName);
+                        forgetUploadedScript(fileName);
+                    }
 
                     // ลบ Card ออกจากหน้าเว็บ
                     card.remove();
@@ -1171,7 +1205,7 @@
                     await Swal.fire({
                         icon: 'success',
                         title: 'ลบสำเร็จ',
-                        html: `<strong>${escapeHtmlForAlert(fileName)}</strong><br>ถูกลบออกจากระบบเรียบร้อยแล้ว`,
+                        html: `<strong>${escapeHtmlForAlert(isWebsiteOnly ? (card.dataset.websiteName || 'เว็บไซต์') : fileName)}</strong><br>ถูกลบออกจากระบบเรียบร้อยแล้ว`,
                         confirmButtonText: 'ตกลง',
                         timer: 1800,
                         timerProgressBar: true
@@ -1202,13 +1236,31 @@
         editSaveBtn.addEventListener('click', async () => {
             if (!editingCard) return;
 
-            const oldFileName = editingCard.dataset.uploadedScript;
+            const oldFileName = editingCard.dataset.uploadedScript || '';
             const newFileName = editFileName.value.trim();
             const description = editDescription.value.trim();
+            const websiteUrl = editWebsiteUrl.value.trim();
+            const websiteName = editWebsiteName.value.trim();
 
-            if (!newFileName) {
+            if (!oldFileName && !websiteUrl) {
+                editStatus.textContent = 'กรุณาระบุ URL เว็บไซต์สำหรับรายการนี้';
+                editWebsiteUrl.focus();
+                return;
+            }
+
+            if (!oldFileName && !websiteUrl) {
+                editStatus.textContent = 'กรุณาระบุ URL เว็บไซต์';
+                editWebsiteUrl.focus();
+                return;
+            }
+            if (oldFileName && !newFileName) {
                 editStatus.textContent = 'กรุณาระบุชื่อไฟล์';
                 editFileName.focus();
+                return;
+            }
+            if (websiteUrl && !websiteName) {
+                editStatus.textContent = 'กรุณาระบุชื่อที่แสดงในเมนูเว็บไซต์';
+                editWebsiteName.focus();
                 return;
             }
 
@@ -1221,7 +1273,12 @@
                     action: 'editScript',
                     oldFileName: oldFileName,
                     newFileName: newFileName,
-                    description: description
+                    description: description,
+                    websiteUrl: websiteUrl,
+                    websiteName: websiteName,
+                    websiteOnly: editingCard.dataset.websiteOnly === 'true',
+                    websiteId: editingCard.id,
+                    oldWebsiteUrl: editingCard.dataset.websiteUrl || ''
                 });
 
                 // อัปเดต localStorage ด้วย เพื่อไม่ให้ข้อมูลเก่าถูกนำกลับมาสร้าง Card หลัง Refresh
@@ -1234,8 +1291,24 @@
                     rememberUploadedScript({
                         fileName: result.fileName,
                         description: result.description,
+                        websiteUrl: websiteUrl,
+                        websiteName: websiteName,
                         fileSizeBytes: Number(editingCard.dataset.fileSizeBytes || 0)
                     });
+                }
+
+                if (editingCard.dataset.websiteOnly === 'true') {
+                    editingCard.dataset.websiteUrl = websiteUrl;
+                    editingCard.dataset.websiteName = websiteName;
+                    editingCard.dataset.name = `${websiteName} ${description}`.toLowerCase();
+                    editingCard.querySelector('.file-title').textContent = websiteName;
+                    editingCard.querySelector('.file-desc').textContent = description || 'เว็บไซต์';
+                    const webButton = editingCard.querySelector('.btn-website');
+                    if (webButton) { webButton.href = websiteUrl; webButton.textContent = `🌐 ${websiteName}`; }
+                    generateSidebarMenu();
+                    closeEditModal();
+                    uploadStatus.textContent = `✅ แก้ไขเว็บไซต์ ${websiteName} สำเร็จ`;
+                    return;
                 }
 
                 const extension = newFileName.includes('.')
@@ -1365,8 +1438,24 @@
             const description = scriptDescription.value.trim();
             const websiteUrl = scriptWebsiteUrl.value.trim();
 
-            if (!file) {
-                uploadStatus.textContent = 'กรุณาเลือกไฟล์ Script ก่อน';
+            if (!file && !websiteUrl) {
+                uploadStatus.textContent = 'กรุณาเลือกไฟล์ Script หรือกรอก URL เว็บไซต์อย่างน้อย 1 อย่าง';
+                return;
+            }
+
+            if (websiteUrl) {
+                try {
+                    const u = new URL(websiteUrl);
+                    if (u.protocol !== 'http:' && u.protocol !== 'https:') throw new Error();
+                } catch (error) {
+                    uploadStatus.textContent = '❌ URL เว็บไซต์ไม่ถูกต้อง';
+                    return;
+                }
+            }
+
+            if (websiteUrl && !document.getElementById('scriptWebsiteName').value.trim()) {
+                uploadStatus.textContent = 'กรุณาระบุชื่อที่แสดงในเมนูเว็บไซต์';
+                document.getElementById('scriptWebsiteName').focus();
                 return;
             }
 
@@ -1380,15 +1469,16 @@
             uploadStatus.textContent = 'กำลังส่งไฟล์ไปยัง GitHub...';
 
             try {
-                const base64 = await fileToBase64(file);
+                const base64 = file ? await fileToBase64(file) : ''; 
 
                 // ส่งเป็น text/plain เพื่อหลีกเลี่ยง CORS preflight ของ Apps Script
                 // ข้อมูลภายในยังเป็น JSON และเข้ากับ doPost(e) ที่เราเขียนไว้แล้ว
                 const payload = JSON.stringify({
                     action: 'uploadScript',
-                    fileName: file.name,
+                    fileName: file ? file.name : '',
                     description: description,
                     websiteUrl: websiteUrl,
+                    websiteName: document.getElementById('scriptWebsiteName').value.trim(),
                     fileBase64: base64
                 });
 
@@ -1407,7 +1497,7 @@
                 }
 
                 // แสดง Card ใหม่ทันทีในหน้าเว็บปัจจุบัน ไม่ต้องรอ GitHub Pages
-                const uploadedFileName = result.fileName || file.name;
+                const uploadedFileName = result.fileName || '';
 
                 // จำข้อมูล Upload สำเร็จไว้ก่อน เพื่อให้ Refresh ได้ทันที
                 // แม้ GitHub Pages ยังประมวลผล index.html เวอร์ชันใหม่ไม่เสร็จ
@@ -1415,21 +1505,34 @@
                     fileName: uploadedFileName,
                     description: description,
                     websiteUrl: websiteUrl,
-                    fileSizeBytes: file.size
+                    websiteName: document.getElementById('scriptWebsiteName').value.trim(),
+                    fileSizeBytes: file ? file.size : 0
                 });
 
-                addUploadedCardImmediately(
-                    uploadedFileName,
-                    description,
-                    file.size,
-                    false,
-                    websiteUrl
-                );
+                if (uploadedFileName) {
+                    addUploadedCardImmediately(
+                        uploadedFileName,
+                        description,
+                        file ? file.size : 0,
+                        false,
+                        websiteUrl,
+                        document.getElementById('scriptWebsiteName').value.trim()
+                    );
+                } else if (websiteUrl) {
+                    addWebsiteOnlyCardImmediately(
+                        websiteUrl,
+                        document.getElementById('scriptWebsiteName').value.trim(),
+                        description
+                    );
+                }
 
-                uploadStatus.textContent = `✅ Upload ${result.fileName || file.name} สำเร็จ และเพิ่ม Card แล้ว`;
+                uploadStatus.textContent = uploadedFileName
+                    ? `✅ Upload ${uploadedFileName} สำเร็จ และเพิ่ม Card แล้ว`
+                    : `✅ เพิ่มเว็บไซต์ ${document.getElementById('scriptWebsiteName').value.trim()} สำเร็จ`;
                 scriptFile.value = '';
                 scriptDescription.value = '';
                 scriptWebsiteUrl.value = '';
+                document.getElementById('scriptWebsiteName').value = '';
 
                 // หลัง Upload สำเร็จ ให้ไปหน้า Scripts List ทันที
                 showPage('scripts');
@@ -1447,7 +1550,7 @@
             }
         });
 
-        function addUploadedCardImmediately(fileName, description, fileSizeBytes, restoring = false, websiteUrl = '') {
+        function addUploadedCardImmediately(fileName, description, fileSizeBytes, restoring = false, websiteUrl = '', websiteName = '') {
             // ถ้าไฟล์นี้เคยถูกลบไว้ ให้ยกเลิกสถานะ deleted เพราะกำลัง Upload กลับมาใหม่
             const normalizedFileName = String(fileName || '').trim().toLowerCase();
             const deletedScripts = getDeletedScripts().filter(name => name !== normalizedFileName);
@@ -1487,6 +1590,7 @@
             card.dataset.uploadedScript = fileName;
             card.dataset.fileSizeBytes = String(fileSizeBytes || 0);
             card.dataset.websiteUrl = websiteUrl || '';
+            card.dataset.websiteName = websiteName || '';
 
             card.innerHTML = `
                 <div>
@@ -1519,6 +1623,36 @@
 
             // ตอน Restore หลัง Refresh ไม่ต้องทำอะไรเพิ่ม
             if (restoring) return;
+        }
+
+        function addWebsiteOnlyCardImmediately(websiteUrl, websiteName, description, restoring = false) {
+            const existing = Array.from(scriptGrid.querySelectorAll('[data-website-only="true"]')).some(card =>
+                (card.dataset.websiteUrl || '') === websiteUrl
+            );
+            if (existing) return;
+
+            const card = document.createElement('div');
+            card.className = 'card website-only-card';
+            card.dataset.websiteOnly = 'true';
+            card.dataset.websiteUrl = websiteUrl;
+            card.dataset.websiteName = websiteName;
+            card.dataset.name = `${websiteName} ${description}`.toLowerCase();
+            card.innerHTML = `
+                <div>
+                    <div class="file-title"></div>
+                    <div class="file-desc"></div>
+                </div>
+                <div class="card-actions">
+                    <a class="btn-website" target="_blank" rel="noopener">🌐 เปิดเว็บไซต์</a>
+                    <button class="card-icon-btn edit" type="button" title="แก้ไข" data-action="edit">✎</button>
+                    <button class="card-icon-btn delete" type="button" title="ลบ" data-action="delete">🗑</button>
+                </div>`;
+            card.querySelector('.file-title').textContent = websiteName;
+            card.querySelector('.file-desc').textContent = description || 'เว็บไซต์';
+            card.querySelector('.btn-website').href = websiteUrl;
+            scriptGrid.appendChild(card);
+            generateSidebarMenu();
+            if (!restoring) return;
         }
 
         function formatFileSize(bytes) {

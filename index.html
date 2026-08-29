@@ -764,26 +764,18 @@
 </div>
 
 <!-- การ์ดที่ 6 -->
-<div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-website-url="https://wonbinaaa.github.io/Printer/" data-website-name="HP LaserJet P1102 ลง Driver ไม่ผ่าน" data-name="ลงprinter_hp_p1100.rar hp laserjet p1102 บน windows 11 ติดตั้ง driver แล้ว แต่ระบบยังไม่มองเห็นเป็น printer">
+<div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-name="ลงprinter_hp_p1100.rar แก้ปัญหาลง printer ไม่ได้">
     <div>
         <div class="file-title">ลงPrinter_HP_P1100.rar</div>
-        <div class="file-desc">HP LaserJet P1102 บน Windows 11 ติดตั้ง Driver แล้ว แต่ระบบยังไม่มองเห็นเป็น Printer</div>
+        <div class="file-desc">แก้ปัญหาลง printer ไม่ได้</div>
         <span class="file-meta">.RAR • 905.33 KB</span>
     </div>
     <div class="card-actions">
         <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/%E0%B8%A5%E0%B8%87Printer_HP_P1100.rar"
             class="btn-download">ดาวน์โหลด</a>
-        <a href="https://wonbinaaa.github.io/Printer/" class="btn-website" target="_blank" rel="noopener">🌐 HP LaserJet P1102 ลง Driver ไม่ผ่าน</a>
         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
     </div>
-</div>
-
-
-
-<!-- เว็บไซต์ที่ website-1787977253891 -->
-<div class="card website-only-card" id="website-1787977253891" data-website-only="true" data-website-url="https://www.youtube.com/watch?v=z25XTpF8vyQ" data-website-name="ทดสอบ" data-name="ทดสอบ เว็บไซต์" style="display:none;">
-    <div><div class="file-title">ทดสอบ</div><div class="file-desc">เว็บไซต์</div></div>
 </div>
 
 <!-- 💡 วิธีเพิ่มสคริปต์ใหม่: ก๊อปปี้บล็อก <div class="card">...</div> นี้ไปวางต่อข้างล่าง -->
@@ -1004,10 +996,12 @@
 
         function rememberUploadedScript(script) {
             const fileName = String(script?.fileName || '').trim();
-            if (!fileName) return;
+            const websiteUrl = String(script?.websiteUrl || '').trim();
+            if (!fileName && !websiteUrl) return;
 
             const uploaded = getUploadedScripts().filter(item =>
-                String(item?.fileName || '').trim().toLowerCase() !== fileName.toLowerCase()
+                String(item?.fileName || '').trim().toLowerCase() !== fileName.toLowerCase() ||
+                String(item?.websiteUrl || '').trim().toLowerCase() !== websiteUrl.toLowerCase()
             );
 
             uploaded.push({
@@ -1028,6 +1022,16 @@
 
             const uploaded = getUploadedScripts().filter(item =>
                 String(item?.fileName || '').trim().toLowerCase() !== normalized
+            );
+            localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(uploaded));
+        }
+
+        function forgetUploadedWebsite(websiteUrl) {
+            const normalized = String(websiteUrl || '').trim().toLowerCase();
+            if (!normalized) return;
+
+            const uploaded = getUploadedScripts().filter(item =>
+                String(item?.websiteUrl || '').trim().toLowerCase() !== normalized
             );
             localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(uploaded));
         }
@@ -1066,7 +1070,12 @@
                 if (exists) continue;
 
                 remaining.push(script);
-                addUploadedCardImmediately(script.fileName, script.description, script.fileSizeBytes, true, script.websiteUrl || '', script.websiteName || '');
+                if (script.fileName) {
+                    addUploadedCardImmediately(script.fileName, script.description, script.fileSizeBytes, true, script.websiteUrl || '', script.websiteName || '');
+                }
+                if (script.websiteUrl && !script.fileName) {
+                    addWebsiteOnlyCardImmediately(script.websiteUrl, script.websiteName || 'Website', script.description || '', true);
+                }
             }
 
             // เก็บเฉพาะรายการที่ยังต้องรอ GitHub Pages เท่านั้น
@@ -1200,6 +1209,9 @@
                         rememberDeletedScript(fileName);
                         forgetUploadedScript(fileName);
                     }
+                    if (isWebsiteOnly) {
+                        forgetUploadedWebsite(card.dataset.websiteUrl || '');
+                    }
 
                     // ลบ Card ออกจากหน้าเว็บ
                     card.remove();
@@ -1306,6 +1318,7 @@
                 }
 
                 if (editingCard.dataset.websiteOnly === 'true') {
+                    const oldWebsiteUrl = editingCard.dataset.websiteUrl || '';
                     editingCard.dataset.websiteUrl = websiteUrl;
                     editingCard.dataset.websiteName = websiteName;
                     editingCard.dataset.name = `${websiteName} ${description}`.toLowerCase();
@@ -1313,6 +1326,14 @@
                     editingCard.querySelector('.file-desc').textContent = description || 'เว็บไซต์';
                     const webButton = editingCard.querySelector('.btn-website');
                     if (webButton) { webButton.href = websiteUrl; webButton.textContent = `🌐 ${websiteName}`; }
+                    forgetUploadedWebsite(oldWebsiteUrl);
+                    rememberUploadedScript({
+                        fileName: '',
+                        description: description,
+                        websiteUrl: websiteUrl,
+                        websiteName: websiteName,
+                        fileSizeBytes: 0
+                    });
                     generateSidebarMenu();
                     closeEditModal();
                     uploadStatus.textContent = `✅ แก้ไขเว็บไซต์ ${websiteName} สำเร็จ`;
@@ -1324,7 +1345,25 @@
                     : 'FILE';
 
                 editingCard.dataset.uploadedScript = result.fileName;
-                editingCard.dataset.name = `${result.fileName} ${result.description || ''}`.toLowerCase();
+                editingCard.dataset.websiteUrl = websiteUrl;
+                editingCard.dataset.websiteName = websiteName;
+                editingCard.dataset.name = `${result.fileName} ${result.description || ''} ${websiteName || ''}`.toLowerCase();
+                let websiteButton = editingCard.querySelector('.btn-website');
+                if (websiteUrl) {
+                    if (!websiteButton) {
+                        websiteButton = document.createElement('a');
+                        websiteButton.className = 'btn-website';
+                        websiteButton.target = '_blank';
+                        websiteButton.rel = 'noopener';
+                        websiteButton.textContent = '🌐 เว็บไซต์';
+                        const actions = editingCard.querySelector('.card-actions');
+                        actions.insertBefore(websiteButton, actions.querySelector('.edit'));
+                    }
+                    websiteButton.href = websiteUrl;
+                    websiteButton.textContent = `🌐 ${websiteName || 'เปิดเว็บไซต์'}`;
+                } else if (websiteButton) {
+                    websiteButton.remove();
+                }
                 editingCard.querySelector('.file-title').textContent = result.fileName;
                 editingCard.querySelector('.file-desc').textContent = result.description || 'ไม่มีคำอธิบาย';
                 editingCard.querySelector('.file-meta').textContent = `${extension} • ${editingCard.querySelector('.file-meta').textContent.split('•').slice(1).join('•').trim() || 'ขนาดไม่ระบุ'}`;

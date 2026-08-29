@@ -685,7 +685,7 @@
                 <div class="script-grid" id="scriptGrid">
 
                 <!-- การ์ดที่ 1 -->
-                <div class="card" id="script-1" data-name="show_sn_comname.hta serial number ชื่อคอมพิวเตอร์">
+                <div class="card" id="card-1" data-name="show_sn_comname.hta serial number ชื่อคอมพิวเตอร์">
                     <div>
                         <div class="file-title">Show_SN_ComName.hta</div>
                         <div class="file-desc">สคริปต์สำหรับดึงข้อมูล Serial Number และชื่อคอมพิวเตอร์</div>
@@ -704,7 +704,7 @@
                 </div>
 
                 <!-- การ์ดที่ 2 -->
-                <div class="card" id="script-2" data-name="renamedpc.rar เปลี่ยนชื่อเครื่อง">
+                <div class="card" id="card-2" data-name="renamedpc.rar เปลี่ยนชื่อเครื่อง">
                     <div>
                         <div class="file-title">RenamePC.rar</div>
                         <div class="file-desc">ชุดแพ็กเกจสคริปต์เปลี่ยนชื่อเครื่องคอมพิวเตอร์พร้อมค่าตั้งค่า</div>
@@ -719,7 +719,7 @@
                 </div>
 
                 <!-- การ์ดที่ 3 -->
-                <div class="card" id="script-3" data-uploaded-script="BootUSBNoF12.bat" data-name="bootusbnof12.bat บูท ไม่ต้องกดคีย์บอร์ด">
+                <div class="card" id="card-3" data-uploaded-script="BootUSBNoF12.bat" data-name="bootusbnof12.bat บูท ไม่ต้องกดคีย์บอร์ด">
                 <div>
                     <div class="file-title">BootUSBNoF12.bat</div>
                     <div class="file-desc">บูท ไม่ต้องกดคีย์บอร์ด</div>
@@ -734,7 +734,7 @@
                 </div>
 
 <!-- การ์ดที่ 4 -->
-<div class="card" id="script-4" data-uploaded-script="CleanChromeSafe.cmd" data-name="cleanchromesafe.cmd ลบประวัติเข้าเว็ป chrome">
+<div class="card" id="card-4" data-uploaded-script="CleanChromeSafe.cmd" data-name="cleanchromesafe.cmd ลบประวัติเข้าเว็ป chrome">
     <div>
         <div class="file-title">CleanChromeSafe.cmd</div>
         <div class="file-desc">ลบประวัติเข้าเว็ป Chrome</div>
@@ -749,7 +749,7 @@
 </div>
 
 <!-- การ์ดที่ 5 -->
-<div class="card" id="script-5" data-uploaded-script="CleanBraveSafe.cmd" data-website-name="HP_LaserJet_P1102 ลง Driver ไม่ผ่าน" data-website-url="https://wonbinaaa.github.io/Printer/" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
+<div class="card" id="card-5" data-uploaded-script="CleanBraveSafe.cmd" data-website-name="HP_LaserJet_P1102 ลง Driver ไม่ผ่าน" data-website-url="https://wonbinaaa.github.io/Printer/" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
     <div>
         <div class="file-title">CleanBraveSafe.cmd</div>
         <div class="file-desc">ลบประวัติท่องเว็ป Brave</div>
@@ -764,7 +764,7 @@
 </div>
 
 <!-- การ์ดที่ 6 -->
-<div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-website-url="https://www.youtube.com/" data-website-name="ลง Driver Printer ไม่ผ่าน" data-name="ลงprinter_hp_p1100.rar hp laserjet p1102 บน windows 11 ติดตั้ง driver แล้ว แต่ระบบยังไม่มองเห็นเป็น printer">
+<div class="card" id="card-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-website-url="https://www.youtube.com/" data-website-name="ลง Driver Printer ไม่ผ่าน" data-name="ลงprinter_hp_p1100.rar hp laserjet p1102 บน windows 11 ติดตั้ง driver แล้ว แต่ระบบยังไม่มองเห็นเป็น printer">
     <div>
         <div class="file-title">ลงPrinter_HP_P1100.rar</div>
         <div class="file-desc">HP LaserJet P1102 บน Windows 11 ติดตั้ง Driver แล้ว แต่ระบบยังไม่มองเห็นเป็น Printer</div>
@@ -1212,6 +1212,7 @@
                         fileName: fileName || '',
                         websiteOnly: isWebsiteOnly,
                         websiteId: card.id,
+                        cardId: card.id,
                         websiteUrl: card.dataset.websiteUrl || ''
                     });
 
@@ -1627,7 +1628,7 @@
             let maxNumber = 0;
 
             for (const card of cardsNow) {
-                const match = (card.id || '').match(/^script-(\\d+)$/);
+                const match = (card.id || '').match(/^card-(\\d+)$/);
                 if (match) {
                     maxNumber = Math.max(maxNumber, Number(match[1]));
                 }
@@ -1643,7 +1644,7 @@
 
             const card = document.createElement('div');
             card.className = 'card';
-            card.id = `script-${cardNumber}`;
+            card.id = `card-${cardNumber}`;
             card.dataset.name = `${fileName} ${description}`.toLowerCase();
             card.dataset.uploadedScript = fileName;
             card.dataset.fileSizeBytes = String(fileSizeBytes || 0);

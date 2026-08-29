@@ -1097,13 +1097,29 @@
 
                 const normalizedName = String(script.fileName || '').trim().toLowerCase();
                 const normalizedUrl = String(script.websiteUrl || '').trim().toLowerCase();
-                const existingCard = Array.from(scriptGrid.querySelectorAll('.card')).find(card => {
-                    const name = String(card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent || '').trim().toLowerCase();
-                    const url = String(card.dataset.websiteUrl || '').trim().toLowerCase();
-                    if (normalizedName) return name === normalizedName;
-                    return normalizedUrl && url === normalizedUrl;
-                });
+                const savedCardId = String(script.cardId || '').trim();
 
+                // card-N เป็นตัวระบุหลักเสมอ โดยเฉพาะ Website-only ที่ URL สามารถเปลี่ยนได้
+                // ห้ามใช้ URL ใหม่เป็นตัวตัดสินว่าจะสร้าง Card ใหม่หรือไม่
+                let existingCard = savedCardId
+                    ? document.getElementById(savedCardId)
+                    : null;
+
+                // Fallback สำหรับ LocalStorage รุ่นเก่าที่ยังไม่มี cardId
+                if (!existingCard) {
+                    existingCard = Array.from(scriptGrid.querySelectorAll('.card')).find(card => {
+                        const name = String(card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent || '').trim().toLowerCase();
+                        const url = String(card.dataset.websiteUrl || '').trim().toLowerCase();
+                        if (normalizedName) return name === normalizedName;
+                        return normalizedUrl && url === normalizedUrl;
+                    });
+                }
+
+                // ถ้าพบ Card เดิมจาก cardId ให้ถือว่าเป็น Card หลักของรายการนี้
+                // และอัปเดตข้อมูลลง Card เดิม ไม่สร้าง Card ใหม่
+                if (existingCard && existingCard.id) {
+                    script.cardId = existingCard.id;
+                }
                 remaining.push(script);
                 if (script.fileName) {
                     if (existingCard) {
@@ -1115,7 +1131,7 @@
                     if (existingCard) {
                         mergeWebsiteOnlyCard(existingCard, script.websiteUrl, script.websiteName || 'Website', script.description || '');
                     } else {
-                        addWebsiteOnlyCardImmediately(script.websiteUrl, script.websiteName || 'Website', script.description || '', true);
+                        addWebsiteOnlyCardImmediately(script.websiteUrl, script.websiteName || 'Website', script.description || '', true, script.cardId || '');
                     }
                 }
             }
@@ -1778,9 +1794,18 @@
             }
         }
 
-        function addWebsiteOnlyCardImmediately(websiteUrl, websiteName, description, restoring = false) {
+        function addWebsiteOnlyCardImmediately(websiteUrl, websiteName, description, restoring = false, savedCardId = '') {
+            // ถ้ามี cardId ให้ใช้ Card เดิมก่อน URL เสมอ
+            if (savedCardId) {
+                const savedCard = document.getElementById(savedCardId);
+                if (savedCard) {
+                    mergeWebsiteOnlyCard(savedCard, websiteUrl, websiteName, description);
+                    return;
+                }
+            }
+
             const existing = Array.from(scriptGrid.querySelectorAll('[data-website-only="true"]')).some(card =>
-                (card.dataset.websiteUrl || '') === websiteUrl
+                (card.dataset.websiteUrl || '').trim().toLowerCase() === websiteUrl.trim().toLowerCase()
             );
             if (existing) return;
 
@@ -1790,6 +1815,17 @@
             card.dataset.websiteUrl = websiteUrl;
             card.dataset.websiteName = websiteName;
             card.dataset.name = `${websiteName} ${description}`.toLowerCase();
+            if (/^card-\d+$/.test(savedCardId)) {
+                card.id = savedCardId;
+            } else {
+                const allCards = scriptGrid.getElementsByClassName('card');
+                let maxNumber = 0;
+                for (const existingCard of allCards) {
+                    const match = (existingCard.id || '').match(/^card-(\d+)$/);
+                    if (match) maxNumber = Math.max(maxNumber, Number(match[1]));
+                }
+                card.id = `card-${maxNumber + 1}`;
+            }
             card.innerHTML = `
                 <div>
                     <div class="file-title"></div>
@@ -1811,7 +1847,9 @@
                 const normalized = websiteUrl.trim().toLowerCase();
                 let changed = false;
                 pending.forEach(item => {
-                    if (String(item?.websiteUrl || '').trim().toLowerCase() === normalized) {
+                    const itemCardId = String(item?.cardId || '').trim();
+                    const itemUrl = String(item?.websiteUrl || '').trim().toLowerCase();
+                    if ((savedCardId && itemCardId === savedCardId) || (!savedCardId && itemUrl === normalized)) {
                         item.cardId = card.id;
                         changed = true;
                     }

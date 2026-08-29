@@ -764,7 +764,7 @@
 </div>
 
 <!-- การ์ดที่ 6 -->
-<div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-website-name="HP_LaserJet_P1102 ลง Driver ไม่ผ่าน" data-website-url="https://wonbinaaa.github.io/Printer/" data-name="ลงprinter_hp_p1100.rar แก้ปัญหาลง printer ไม่ได้">
+<div class="card" id="script-6" data-uploaded-script="ลงPrinter_HP_P1100.rar" data-name="ลงprinter_hp_p1100.rar แก้ปัญหาลง printer ไม่ได้">
     <div>
         <div class="file-title">ลงPrinter_HP_P1100.rar</div>
         <div class="file-desc">แก้ปัญหาลง printer ไม่ได้</div>
@@ -999,10 +999,13 @@
             const websiteUrl = String(script?.websiteUrl || '').trim();
             if (!fileName && !websiteUrl) return;
 
-            const uploaded = getUploadedScripts().filter(item =>
-                String(item?.fileName || '').trim().toLowerCase() !== fileName.toLowerCase() ||
-                String(item?.websiteUrl || '').trim().toLowerCase() !== websiteUrl.toLowerCase()
-            );
+            const uploaded = getUploadedScripts().filter(item => {
+                const itemFileName = String(item?.fileName || '').trim().toLowerCase();
+                const itemWebsiteUrl = String(item?.websiteUrl || '').trim().toLowerCase();
+                if (fileName && itemFileName === fileName.toLowerCase()) return false;
+                if (!fileName && websiteUrl && itemWebsiteUrl === websiteUrl.toLowerCase()) return false;
+                return true;
+            });
 
             uploaded.push({
                 fileName,
@@ -1057,24 +1060,31 @@
             const remaining = [];
 
             for (const script of uploaded) {
-                if (!script?.fileName || !isRecentUploadedScript(script.fileName)) continue;
+                if ((!script?.fileName && !script?.websiteUrl) || (script.fileName && !isRecentUploadedScript(script.fileName) && !script.websiteUrl)) continue;
                 if (isDeletedScript(script.fileName)) continue;
 
-                const normalizedName = script.fileName.trim().toLowerCase();
-                const exists = Array.from(scriptGrid.querySelectorAll('.card')).some(card => {
-                    const name = card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent.trim();
-                    return String(name || '').trim().toLowerCase() === normalizedName;
+                const normalizedName = String(script.fileName || '').trim().toLowerCase();
+                const normalizedUrl = String(script.websiteUrl || '').trim().toLowerCase();
+                const existingCard = Array.from(scriptGrid.querySelectorAll('.card')).find(card => {
+                    const name = String(card.dataset.uploadedScript || card.querySelector('.file-title')?.textContent || '').trim().toLowerCase();
+                    const url = String(card.dataset.websiteUrl || '').trim().toLowerCase();
+                    if (normalizedName) return name === normalizedName;
+                    return normalizedUrl && url === normalizedUrl;
                 });
-
-                // ถ้า index.html จาก GitHub Pages อัปเดตมาถึงแล้ว ไม่ต้องสร้าง Card ซ้ำ
-                if (exists) continue;
 
                 remaining.push(script);
                 if (script.fileName) {
-                    addUploadedCardImmediately(script.fileName, script.description, script.fileSizeBytes, true, script.websiteUrl || '', script.websiteName || '');
-                }
-                if (script.websiteUrl && !script.fileName) {
-                    addWebsiteOnlyCardImmediately(script.websiteUrl, script.websiteName || 'Website', script.description || '', true);
+                    if (existingCard) {
+                        mergeWebsiteIntoScriptCard(existingCard, script.websiteUrl || '', script.websiteName || '');
+                    } else {
+                        addUploadedCardImmediately(script.fileName, script.description, script.fileSizeBytes, true, script.websiteUrl || '', script.websiteName || '');
+                    }
+                } else if (script.websiteUrl) {
+                    if (existingCard) {
+                        mergeWebsiteOnlyCard(existingCard, script.websiteUrl, script.websiteName || 'Website', script.description || '');
+                    } else {
+                        addWebsiteOnlyCardImmediately(script.websiteUrl, script.websiteName || 'Website', script.description || '', true);
+                    }
                 }
             }
 
@@ -1670,6 +1680,44 @@
 
             // ตอน Restore หลัง Refresh ไม่ต้องทำอะไรเพิ่ม
             if (restoring) return;
+        }
+
+        function mergeWebsiteIntoScriptCard(card, websiteUrl, websiteName) {
+            if (!card) return;
+            card.dataset.websiteUrl = String(websiteUrl || '').trim();
+            card.dataset.websiteName = String(websiteName || '').trim();
+            let button = card.querySelector('.btn-website');
+            if (websiteUrl) {
+                if (!button) {
+                    button = document.createElement('a');
+                    button.className = 'btn-website';
+                    button.target = '_blank';
+                    button.rel = 'noopener';
+                    const actions = card.querySelector('.card-actions');
+                    if (actions) actions.insertBefore(button, actions.querySelector('.edit'));
+                }
+                button.href = websiteUrl;
+                button.textContent = `🌐 ${websiteName || 'เปิดเว็บไซต์'}`;
+            } else if (button) {
+                button.remove();
+            }
+        }
+
+        function mergeWebsiteOnlyCard(card, websiteUrl, websiteName, description) {
+            if (!card) return;
+            card.dataset.websiteOnly = 'true';
+            card.dataset.websiteUrl = String(websiteUrl || '').trim();
+            card.dataset.websiteName = String(websiteName || '').trim();
+            card.dataset.name = `${websiteName || ''} ${description || ''}`.toLowerCase();
+            const title = card.querySelector('.file-title');
+            const desc = card.querySelector('.file-desc');
+            const button = card.querySelector('.btn-website');
+            if (title) title.textContent = websiteName || 'Website';
+            if (desc) desc.textContent = description || 'เว็บไซต์';
+            if (button) {
+                button.href = websiteUrl;
+                button.textContent = `🌐 ${websiteName || 'เปิดเว็บไซต์'}`;
+            }
         }
 
         function addWebsiteOnlyCardImmediately(websiteUrl, websiteName, description, restoring = false) {

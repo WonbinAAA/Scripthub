@@ -123,45 +123,6 @@
             font-weight: 500;
         }
 
-        .menu-section-toggle {
-            width: 100%;
-            border: 0;
-            background: transparent;
-            color: var(--text-main);
-            text-align: left;
-            cursor: pointer;
-            font-family: 'Prompt', sans-serif;
-        }
-
-        .menu-section-toggle .menu-arrow {
-            float: right;
-            transition: transform 0.2s ease;
-        }
-
-        .menu-section-toggle.collapsed .menu-arrow {
-            transform: rotate(-90deg);
-        }
-
-        .menu-section-items {
-            overflow: hidden;
-            transition: max-height 0.25s ease;
-        }
-
-        .menu-section-items.collapsed {
-            max-height: 0 !important;
-        }
-
-        .website-menu-list {
-            padding-left: 8px;
-        }
-
-        .website-menu-empty {
-            display: block;
-            padding: 6px 12px 8px 20px;
-            color: var(--text-secondary);
-            font-size: 12px;
-        }
-
         /* Main Content พื้นที่แสดงผลหลัก */
         .main-container {
             margin-left: var(--sidebar-width);
@@ -263,7 +224,7 @@
 
         .upload-row {
             display: grid;
-            grid-template-columns: 1fr 1fr auto;
+            grid-template-columns: 1fr 1fr 1fr auto;
             gap: 10px;
             align-items: end;
         }
@@ -327,6 +288,12 @@
 
         .upload-page .upload-panel {
             margin-top: 10px;
+        }
+
+        @media (max-width: 1000px) {
+            .upload-row {
+                grid-template-columns: 1fr 1fr;
+            }
         }
 
         @media (max-width: 700px) {
@@ -466,6 +433,24 @@
 
         .btn-download {
             flex: 1;
+        }
+
+        .btn-website {
+            display: inline-flex;
+            align-items: center;
+            justify-content: center;
+            padding: 8px 12px;
+            border: 1px solid var(--border-color);
+            border-radius: 6px;
+            color: var(--accent-color);
+            background: #ffffff;
+            text-decoration: none;
+            font-size: 13px;
+            white-space: nowrap;
+        }
+
+        .btn-website:hover {
+            background: #eff6ff;
         }
 
         .card-icon-btn {
@@ -608,8 +593,8 @@
 
 <body>
 
-    <!-- Sidebar ถูกสร้างโดย sidebar.js -->
-    <!--
+    <!-- Sidebar เมนูด้านซ้าย -->
+    <aside class="sidebar" id="sidebar">
         <div class="sidebar-header">
             <div class="header-left">
                 <img src="Images/AAA.jpg" alt="Aun's Scripts" class="sidebar-avatar">
@@ -626,24 +611,10 @@
         <div class="sidebar-menu" id="sidebarMenu">
             <div class="menu-label">Menu</div>
             <a href="#upload" class="menu-item" id="uploadMenuItem">⬆️ Upload Script</a>
-            <a href="websites.html#upload-web" class="menu-item" id="uploadWebMenuItem">🌐 Upload Web</a>
             <div class="menu-label" style="margin-top: 18px;">Scripts List</div>
-            <div class="menu-section" id="scriptMenuSection">
-                <button class="menu-item menu-section-toggle" id="scriptListToggle" type="button">
-                    <span>📜 Script List</span><span class="menu-arrow">▼</span>
-                </button>
-                <div class="menu-section-items" id="scriptMenuItems"></div>
-            </div>
-            <div class="menu-section" id="websiteMenuSection" style="margin-top: 18px;">
-                <button class="menu-item menu-section-toggle" id="websiteToggle" type="button">
-                    <span>🌐 เว็บไซต์</span><span class="menu-arrow">▼</span>
-                </button>
-                <div class="menu-section-items website-menu-list" id="websiteMenuItems"></div>
-            </div>
         </div>
     </aside>
 
-    -->
     <!-- Main Content -->
     <div class="main-container">
         <header class="topbar">
@@ -678,6 +649,10 @@
                             <div class="upload-field">
                                 <label for="scriptDescription">คำอธิบาย</label>
                                 <input type="text" id="scriptDescription" placeholder="เช่น สคริปต์เปลี่ยนชื่อเครื่อง">
+                            </div>
+                            <div class="upload-field">
+                                <label for="scriptWebsiteUrl">🌐 URL เว็บไซต์ (ไม่บังคับ)</label>
+                                <input type="url" id="scriptWebsiteUrl" placeholder="https://wonbinaaa.github.io/Printer/">
                             </div>
                             <button class="btn-upload" id="uploadBtn" type="button">Upload</button>
                         </div>
@@ -820,20 +795,27 @@
         </footer>
     </div>
 
-    <script src="sidebar.js"></script>
     <script>
-        // Sidebar ถูกควบคุมโดย sidebar.js
         const sidebar = document.getElementById('sidebar');
+        const toggleBtns = document.querySelectorAll('.toggle-btn');
+
+        // แก้ไขตรงปุ่มกดสลับเมนู ให้รองรับทั้งคอมและมือถือ
+        toggleBtns.forEach(btn => {
+            btn.addEventListener('click', () => {
+                if (window.innerWidth <= 768) {
+                    sidebar.classList.toggle('mobile-show');
+                } else {
+                    sidebar.classList.toggle('collapsed');
+                }
+            });
+        });
 
         const scriptGrid = document.getElementById('scriptGrid');
         const sidebarMenu = document.getElementById('sidebarMenu');
         const cards = scriptGrid.getElementsByClassName('card');
-        const scriptMenuItems = document.getElementById('scriptMenuItems');
-        const websiteMenuItems = document.getElementById('websiteMenuItems');
         const uploadMenuItem = document.getElementById('uploadMenuItem');
         const uploadPage = document.getElementById('uploadPage');
         const scriptsPage = document.getElementById('scriptsPage');
-        const WEBSITE_PAGE_URL = 'websites.html';
 
         function showPage(page) {
             uploadPage.classList.toggle('active', page === 'upload');
@@ -867,10 +849,74 @@
         }
 
         function generateSidebarMenu() {
-            // Sidebar ถูกสร้างและควบคุมโดย sidebar.js เพียงไฟล์เดียว
-            if (window.AunSharedSidebar) window.AunSharedSidebar.refreshScripts();
-        }
+            const menuLabel = sidebarMenu.querySelector('.menu-label');
+            const uploadItem = document.getElementById('uploadMenuItem');
+            sidebarMenu.innerHTML = '';
+            sidebarMenu.appendChild(menuLabel);
+            sidebarMenu.appendChild(uploadItem);
 
+            const scriptsLabel = document.createElement('div');
+            scriptsLabel.className = 'menu-label';
+            scriptsLabel.style.marginTop = '18px';
+            scriptsLabel.textContent = 'Scripts List';
+            sidebarMenu.appendChild(scriptsLabel);
+
+            for (let i = 0; i < cards.length; i++) {
+                const card = cards[i];
+                const title = card.querySelector('.file-title').innerText;
+                const cardId = card.id || `script-${i + 1}`;
+                card.id = cardId;
+
+                const menuLink = document.createElement('a');
+                menuLink.href = `#${cardId}`;
+                menuLink.className = 'menu-item script-menu-item';
+                menuLink.dataset.page = 'scripts';
+                menuLink.innerText = `📄 ${title}`;
+
+                menuLink.addEventListener('click', (e) => {
+                    e.preventDefault();
+                    showPage('scripts');
+                    card.scrollIntoView({ behavior: 'smooth', block: 'center' });
+
+                    for (let c of cards) c.classList.remove('highlight');
+                    for (let m of sidebarMenu.getElementsByClassName('menu-item')) m.classList.remove('active');
+
+                    card.classList.add('highlight');
+                    menuLink.classList.add('active');
+
+                    // ถ้ากดบนมือถือ พอลือกเสร็จให้ปิดเมนูด้านซ้ายอัตโนมัติด้วย จะได้ดูเว็บสะดวก
+                    if (window.innerWidth <= 768) {
+                        sidebar.classList.remove('mobile-show');
+                    }
+
+                    setTimeout(() => {
+                        card.classList.remove('highlight');
+                    }, 1500);
+                });
+
+                sidebarMenu.appendChild(menuLink);
+            }
+
+            const websiteLabel = document.createElement('div');
+            websiteLabel.className = 'menu-label';
+            websiteLabel.style.marginTop = '18px';
+            websiteLabel.textContent = 'เว็บไซต์';
+            sidebarMenu.appendChild(websiteLabel);
+
+            for (let i = 0; i < cards.length; i++) {
+                const card = cards[i];
+                const websiteUrl = card.dataset.websiteUrl || '';
+                if (!websiteUrl) continue;
+                const title = card.querySelector('.file-title')?.innerText || 'Website';
+                const websiteLink = document.createElement('a');
+                websiteLink.href = websiteUrl;
+                websiteLink.target = '_blank';
+                websiteLink.rel = 'noopener';
+                websiteLink.className = 'menu-item';
+                websiteLink.innerText = `🌐 ${title}`;
+                sidebarMenu.appendChild(websiteLink);
+            }
+        }
 
         // ==============================
         // จำ Script ที่เพิ่งลบไว้ใน Browser ชั่วคราว
@@ -881,7 +927,6 @@
         const STORAGE_VERSION = 'v3';
         const DELETED_SCRIPTS_STORAGE_KEY = `aun_script_vault_deleted_scripts_${STORAGE_VERSION}`;
         const UPLOADED_SCRIPTS_STORAGE_KEY = `aun_script_vault_uploaded_scripts_${STORAGE_VERSION}`;
-        const EDITED_SCRIPTS_STORAGE_KEY = `aun_script_vault_edited_scripts_${STORAGE_VERSION}`;
 
         // ล้าง Storage รุ่นเก่าที่เราเคยใช้ก่อนหน้านี้ครั้งเดียว
         // ไม่แตะ localStorage ของเว็บไซต์อื่น
@@ -954,54 +999,6 @@
             localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(uploaded));
         }
 
-        function getEditedScripts() {
-            try {
-                const value = JSON.parse(localStorage.getItem(EDITED_SCRIPTS_STORAGE_KEY) || '[]');
-                return Array.isArray(value) ? value : [];
-            } catch (error) { return []; }
-        }
-
-        function rememberEditedScript(script) {
-            const fileName = String(script?.fileName || '').trim();
-            if (!fileName) return;
-            const edited = getEditedScripts().filter(item =>
-                String(item?.fileName || '').trim().toLowerCase() !== fileName.toLowerCase()
-            );
-            edited.push({
-                fileName,
-                description: String(script?.description || ''),
-                savedAt: Date.now()
-            });
-            localStorage.setItem(EDITED_SCRIPTS_STORAGE_KEY, JSON.stringify(edited));
-        }
-
-        function forgetEditedScript(fileName) {
-            const normalized = String(fileName || '').trim().toLowerCase();
-            const edited = getEditedScripts().filter(item =>
-                String(item?.fileName || '').trim().toLowerCase() !== normalized
-            );
-            localStorage.setItem(EDITED_SCRIPTS_STORAGE_KEY, JSON.stringify(edited));
-        }
-
-        function restoreRecentlyEditedCards() {
-            const edited = getEditedScripts();
-            const maxAge = 24 * 60 * 60 * 1000;
-            const remaining = [];
-            edited.forEach(item => {
-                if (!item?.fileName || Number(item.savedAt || 0) <= Date.now() - maxAge) return;
-                const card = Array.from(scriptGrid.querySelectorAll('.card')).find(c =>
-                    String(c.dataset.uploadedScript || c.querySelector('.file-title')?.textContent || '').trim().toLowerCase() === item.fileName.toLowerCase()
-                );
-                if (card) {
-                    card.querySelector('.file-title').textContent = item.fileName;
-                    card.querySelector('.file-desc').textContent = item.description || 'ไม่มีคำอธิบาย';
-                    card.dataset.name = `${item.fileName} ${item.description || ''}`.toLowerCase();
-                    remaining.push(item);
-                }
-            });
-            localStorage.setItem(EDITED_SCRIPTS_STORAGE_KEY, JSON.stringify(remaining));
-        }
-
         function isUploadedScript(fileName) {
             const normalized = String(fileName || '').trim().toLowerCase();
             return normalized !== '' && getUploadedScripts().some(item =>
@@ -1057,7 +1054,6 @@
 
         hideRememberedDeletedCards();
         restoreRecentlyUploadedCards();
-        restoreRecentlyEditedCards();
         generateSidebarMenu();
 
         // ==============================
@@ -1233,11 +1229,6 @@
                     String(item?.fileName || '').trim().toLowerCase() === oldFileName.trim().toLowerCase()
                 );
                 forgetUploadedScript(oldFileName);
-                forgetEditedScript(oldFileName);
-                rememberEditedScript({
-                    fileName: result.fileName,
-                    description: result.description
-                });
                 if (hadPendingUpload) {
                     rememberUploadedScript({
                         fileName: result.fileName,
@@ -1365,11 +1356,13 @@
         const uploadBtn = document.getElementById('uploadBtn');
         const scriptFile = document.getElementById('scriptFile');
         const scriptDescription = document.getElementById('scriptDescription');
+        const scriptWebsiteUrl = document.getElementById('scriptWebsiteUrl');
         const uploadStatus = document.getElementById('uploadStatus');
 
         uploadBtn.addEventListener('click', async () => {
             const file = scriptFile.files[0];
             const description = scriptDescription.value.trim();
+            const websiteUrl = scriptWebsiteUrl.value.trim();
 
             if (!file) {
                 uploadStatus.textContent = 'กรุณาเลือกไฟล์ Script ก่อน';
@@ -1394,6 +1387,7 @@
                     action: 'uploadScript',
                     fileName: file.name,
                     description: description,
+                    websiteUrl: websiteUrl,
                     fileBase64: base64
                 });
 
@@ -1419,18 +1413,22 @@
                 rememberUploadedScript({
                     fileName: uploadedFileName,
                     description: description,
+                    websiteUrl: websiteUrl,
                     fileSizeBytes: file.size
                 });
 
                 addUploadedCardImmediately(
                     uploadedFileName,
                     description,
-                    file.size
+                    file.size,
+                    false,
+                    websiteUrl
                 );
 
                 uploadStatus.textContent = `✅ Upload ${result.fileName || file.name} สำเร็จ และเพิ่ม Card แล้ว`;
                 scriptFile.value = '';
                 scriptDescription.value = '';
+                scriptWebsiteUrl.value = '';
 
                 // หลัง Upload สำเร็จ ให้ไปหน้า Scripts List ทันที
                 showPage('scripts');
@@ -1448,7 +1446,7 @@
             }
         });
 
-        function addUploadedCardImmediately(fileName, description, fileSizeBytes, restoring = false) {
+        function addUploadedCardImmediately(fileName, description, fileSizeBytes, restoring = false, websiteUrl = '') {
             // ถ้าไฟล์นี้เคยถูกลบไว้ ให้ยกเลิกสถานะ deleted เพราะกำลัง Upload กลับมาใหม่
             const normalizedFileName = String(fileName || '').trim().toLowerCase();
             const deletedScripts = getDeletedScripts().filter(name => name !== normalizedFileName);
@@ -1487,6 +1485,7 @@
             card.dataset.name = `${fileName} ${description}`.toLowerCase();
             card.dataset.uploadedScript = fileName;
             card.dataset.fileSizeBytes = String(fileSizeBytes || 0);
+            card.dataset.websiteUrl = websiteUrl || '';
 
             card.innerHTML = `
                 <div>
@@ -1496,6 +1495,7 @@
                 </div>
                 <div class="card-actions">
                     <a class="btn-download" target="_blank" rel="noopener">ดาวน์โหลด</a>
+                    ${websiteUrl ? '<a class="btn-website" target="_blank" rel="noopener">🌐 เว็บไซต์</a>' : ''}
                     <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
                     <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
                 </div>
@@ -1506,6 +1506,8 @@
             card.querySelector('.file-meta').textContent = `${extension} • ${sizeText}`;
             card.querySelector('.btn-download').href =
                 `https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/${encodedPath}`;
+            const websiteButton = card.querySelector('.btn-website');
+            if (websiteButton) websiteButton.href = websiteUrl;
 
             // Marker เป็น HTML comment จึงไม่สามารถค้นหาด้วย querySelector ได้
             // Card ใหม่จึงถูกเพิ่มท้าย Script Grid ซึ่งเป็นตำแหน่งก่อน Marker เสมอ
@@ -1539,11 +1541,6 @@
                 reader.onerror = () => reject(new Error('ไม่สามารถอ่านไฟล์ได้'));
                 reader.readAsDataURL(file);
             });
-        }
-
-        // เมื่อเข้าหน้า index.html#upload จาก Sidebar ให้เปิดหน้า Upload Script ทันที
-        if (window.location.hash === '#upload') {
-            showPage('upload');
         }
 
         searchInput.addEventListener('input', (e) => {

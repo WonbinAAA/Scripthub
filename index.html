@@ -2027,6 +2027,10 @@
                         event.preventDefault();
                         showPage('scripts');
                         window.scrollTo({ top: 0, behavior: 'smooth' });
+                    } else if (key === 'websites') {
+                        event.preventDefault();
+                        showPage('websites');
+                        window.scrollTo({ top: 0, behavior: 'smooth' });
                     }
 
                     accordionState[key] = !accordionState[key];
@@ -2038,6 +2042,11 @@
 
         // generateSidebarMenu() ถูกเรียกหลายครั้งหลัง Upload/Edit/Delete
         // จึงห่อฟังก์ชันเดิมไว้ เพื่อให้ Accordion ถูกสร้างใหม่โดยอัตโนมัติ
+        // หน้า Websites ใช้ Card เดิมทั้งหมด แต่แสดงเฉพาะ Card ที่มี Website URL
+        function showWebsitesOnly() {
+            showPage('websites');
+        }
+
         const originalGenerateSidebarMenu = generateSidebarMenu;
         generateSidebarMenu = function () {
             originalGenerateSidebarMenu();
@@ -2046,6 +2055,23 @@
 
         // จัดรูปแบบเมนูที่สร้างไปแล้วครั้งแรก
         decorateSidebarAccordion();
+
+        // เพิ่ม page mode สำหรับ Websites โดยกรอง Card เดิม ไม่สร้าง Card ใหม่
+        const originalShowPage = showPage;
+        showPage = function (page) {
+            originalShowPage(page);
+
+            if (page === 'websites') {
+                document.querySelectorAll('#scriptGrid .card').forEach(card => {
+                    const hasWebsite = !!String(card.dataset.websiteUrl || '').trim();
+                    card.style.display = hasWebsite ? '' : 'none';
+                });
+            } else {
+                document.querySelectorAll('#scriptGrid .card').forEach(card => {
+                    card.style.display = '';
+                });
+            }
+        };
     </script>
 
 </body>

@@ -685,14 +685,14 @@
                 <div class="script-grid" id="scriptGrid">
 
                 <!-- การ์ดที่ 1 -->
-                <div class="card" id="card-1" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
+                <div class="card" id="card-1" data-name="show_sn_comname.hta serial number ชื่อคอมพิวเตอร์">
                     <div>
-                        <div class="file-title">CleanBraveSafe.cmd</div>
-                        <div class="file-desc">ลบประวัติท่องเว็ป Brave</div>
-                        <span class="file-meta">.CMD • 1.04 KB</span>
+                        <div class="file-title">Show_SN_ComName.hta</div>
+                        <div class="file-desc">สคริปต์สำหรับดึงข้อมูล Serial Number และชื่อคอมพิวเตอร์</div>
+                        <span class="file-meta">.HTA • ~13.8 KB</span>
                     </div>
                     <div class="card-actions">
-                        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/CleanBraveSafe.cmd"
+                        <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/Show_SN_ComName.hta"
                             class="btn-download">ดาวน์โหลด</a>
                         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">
                             ✎
@@ -719,7 +719,7 @@
                 </div>
 
                 <!-- การ์ดที่ 3 -->
-                <div class="card" id="card-3" data-uploaded-script="CleanBraveSafe.cmd" data-name="bootusbnof12.bat บูท ไม่ต้องกดคีย์บอร์ด">
+                <div class="card" id="card-3" data-uploaded-script="BootUSBNoF12.bat" data-name="bootusbnof12.bat บูท ไม่ต้องกดคีย์บอร์ด">
                 <div>
                     <div class="file-title">BootUSBNoF12.bat</div>
                     <div class="file-desc">บูท ไม่ต้องกดคีย์บอร์ด</div>
@@ -749,7 +749,7 @@
 </div>
 
 <!-- การ์ดที่ 5 -->
-<div class="card" id="card-5" data-uploaded-script="CleanBraveSafe.cmd" data-website-name="" data-website-url="" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
+<div class="card" id="card-5" data-uploaded-script="CleanBraveSafe.cmd" data-website-name="HP_LaserJet_P1102 ลง Driver ไม่ผ่าน" data-website-url="https://wonbinaaa.github.io/Printer/" data-name="cleanbravesafe.cmd ลบประวัติท่องเว็ป brave">
     <div>
         <div class="file-title">CleanBraveSafe.cmd</div>
         <div class="file-desc">ลบประวัติท่องเว็ป Brave</div>
@@ -773,19 +773,7 @@
     <div class="card-actions">
         <a href="https://github.com/WonbinAAA/Scripthub/raw/refs/heads/main/Scripts/%E0%B8%A5%E0%B8%87Printer_HP_P1100.rar"
             class="btn-download">ดาวน์โหลด</a>
-        <a href="https://wonbinaaa.github.io/Printer/" class="btn-website" target="_blank" rel="noopener">🌐 ลง Driver Printer ไม่ผ่าน</a>
-        <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
-        <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
-    </div>
-</div>
-
-
-
-<!-- การ์ดที่ 7 -->
-<div class="card website-only-card" id="card-7" data-website-only="true" data-website-url="https://www.youtube.com/watch?v=Xy4ODZZxVXc" data-website-name="ทดสอบ" data-name="ทดสอบ เว็บไซต์">
-    <div><div class="file-title">ทดสอบ</div><div class="file-desc">เว็บไซต์</div></div>
-    <div class="card-actions">
-        <a href="https://www.youtube.com/watch?v=Xy4ODZZxVXc" class="btn-website" target="_blank" rel="noopener">🌐 เปิดเว็บไซต์</a>
+        <a href="https://www.youtube.com/" class="btn-website" target="_blank" rel="noopener">🌐 ลง Driver Printer ไม่ผ่าน</a>
         <button class="card-icon-btn edit" type="button" title="แก้ไข" aria-label="แก้ไข" data-action="edit">✎</button>
         <button class="card-icon-btn delete" type="button" title="ลบ" aria-label="ลบ" data-action="delete">🗑</button>
     </div>
@@ -960,7 +948,7 @@
         // ==============================
         // เปลี่ยน Storage เป็นรุ่นใหม่ เพื่อไม่ให้ข้อมูล localStorage รุ่นเก่าของ Chrome
         // มาปะปนกับข้อมูลปัจจุบันของ Script Hub
-        const STORAGE_VERSION = 'v3';
+        const STORAGE_VERSION = 'v4';
         const DELETED_SCRIPTS_STORAGE_KEY = `aun_script_vault_deleted_scripts_${STORAGE_VERSION}`;
         const UPLOADED_SCRIPTS_STORAGE_KEY = `aun_script_vault_uploaded_scripts_${STORAGE_VERSION}`;
 
@@ -970,7 +958,9 @@
             'aun_script_vault_deleted_scripts',
             'aun_script_vault_uploaded_scripts',
             'aun_script_vault_deleted_scripts_v2',
-            'aun_script_vault_uploaded_scripts_v2'
+            'aun_script_vault_uploaded_scripts_v2',
+            'aun_script_vault_deleted_scripts_v3',
+            'aun_script_vault_uploaded_scripts_v3'
         ];
         OLD_STORAGE_KEYS.forEach(key => {
             try { localStorage.removeItem(key); } catch (error) { /* ignore */ }
@@ -1001,8 +991,23 @@
         function getUploadedScripts() {
             try {
                 const value = JSON.parse(localStorage.getItem(UPLOADED_SCRIPTS_STORAGE_KEY) || '[]');
-                return Array.isArray(value) ? value : [];
+                if (!Array.isArray(value)) return [];
+
+                // LocalStorage ใช้เป็นข้อมูลชั่วคราวระหว่างรอ GitHub Pages เท่านั้น
+                // รายการเก่ากว่า 10 นาทีจะไม่ถูกนำกลับมาสร้าง Card อีก
+                const maxAge = 10 * 60 * 1000;
+                const now = Date.now();
+                const fresh = value.filter(item => {
+                    const savedAt = Number(item?.savedAt || 0);
+                    return savedAt > 0 && now - savedAt <= maxAge;
+                });
+
+                if (fresh.length !== value.length) {
+                    localStorage.setItem(UPLOADED_SCRIPTS_STORAGE_KEY, JSON.stringify(fresh));
+                }
+                return fresh;
             } catch (error) {
+                localStorage.removeItem(UPLOADED_SCRIPTS_STORAGE_KEY);
                 return [];
             }
         }
@@ -1073,7 +1078,8 @@
             const remaining = [];
 
             for (const script of uploaded) {
-                if ((!script?.fileName && !script?.websiteUrl) || (script.fileName && !isRecentUploadedScript(script.fileName) && !script.websiteUrl)) continue;
+                if ((!script?.fileName && !script?.websiteUrl) || !Number(script?.savedAt || 0)) continue;
+                if (Date.now() - Number(script.savedAt) > 10 * 60 * 1000) continue;
                 if (isDeletedScript(script.fileName)) continue;
 
                 const normalizedName = String(script.fileName || '').trim().toLowerCase();
